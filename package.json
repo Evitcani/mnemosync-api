@@ -1,0 +1,36 @@
+{
+  "name": "party-management-api",
+  "version": "1.0.0",
+  "description": "API for the party-management bot.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "g": "^2.0.1",
+    "inversify": "^5.0.1",
+    "mysql": "latest",
+    "pg": "^8.3.0",
+    "reflect-metadata": "^0.1.13",
+    "sqlstring": "^2.3.2",
+    "typeorm": "^0.2.25"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/express": "^4.17.6",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.5",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "ts-mockito": "^2.6.1",
+    "ts-node": "^8.10.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.3"
+  }
+}
