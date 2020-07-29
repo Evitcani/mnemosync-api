@@ -1,6 +1,6 @@
-import {BasicEmbed} from "../BasicEmbed";
 import {messageResponse} from "./MessageResponse";
 import {Character} from "../../../backend/entity/Character";
+import {BasicEmbed} from "../BasicEmbed";
 
 export const messageEmbed = {
     character: {

@@ -1,6 +1,6 @@
-import {MessageEmbed} from "discord.js";
-import {Bot} from "../../../../../bot/bot";
 import {CommandStrut} from "../../CommandStrut";
+import {Bot} from "../../../Bot";
+import {MessageEmbedReturn} from "../../../../models/MessageEmbedReturn";
 
 export abstract class BaseCommandDocumentation {
     public abstract getCommand(): string;
@@ -9,7 +9,7 @@ export abstract class BaseCommandDocumentation {
 
     public abstract getBasicDescription(): string;
 
-    public abstract getFullDescription(): MessageEmbed;
+    public abstract getFullDescription(): MessageEmbedReturn;
 
     public formatCommand(): string {
         return `\`${Bot.PREFIX}${this.getCommand()}\` - ${this.getBasicDescription()}`;

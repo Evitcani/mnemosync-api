@@ -1,11 +1,11 @@
-import {MessageEmbed} from "discord.js";
+import {MessageEmbedReturn} from "../models/MessageEmbedReturn";
 
 export class BasicEmbed {
     /**
      * Gets the basic embed with some fields.
      */
-    public static get() : MessageEmbed {
-        return new MessageEmbed()
+    public static get() : MessageEmbedReturn {
+        return new MessageEmbedReturn()
             .setColor('#0099ff')
             .setFooter('Created by @Evit_cani on Twitter.');
     }

@@ -11,8 +11,8 @@ export class App {
     }
 
     private setup() {
-        this.app.get("/api/help", (req, res) => {
-
+        this.app.get("/", (req, res) => {
+            res.send("Hello, world!");
         });
 
         this.app.listen(this.port, () => {

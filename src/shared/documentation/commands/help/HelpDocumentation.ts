@@ -1,10 +1,5 @@
 import {BaseCommandDocumentation} from "./commands/BaseCommandDocumentation";
-import {Subcommands} from "../Subcommands";
 import {Commands} from "../Commands";
-import {MessageEmbed} from "discord.js";
-import {BasicEmbed} from "../../BasicEmbed";
-import {Bot} from "../../../../bot/bot";
-import {CommandStrut} from "../CommandStrut";
 import {BankCommandDocumentation} from "./commands/BankCommandDocumentation";
 import {CalendarCommandDocumentation} from "./commands/CalendarCommandDocumentation";
 import {CharacterCommandDocumentation} from "./commands/CharacterCommandDocumentation";
@@ -17,6 +12,9 @@ import {RegisterCommandDocumentation} from "./commands/RegisterCommandDocumentat
 import {SendingCommandDocumentation} from "./commands/SendingCommandDocumentation";
 import {WhichCommandDocumentation} from "./commands/WhichCommandDocumentation";
 import {WorldCommandDocumentation} from "./commands/WorldCommandDocumentation";
+import {MessageEmbedReturn} from "../../../models/MessageEmbedReturn";
+import {BasicEmbed} from "../../BasicEmbed";
+import {Bot} from "../../Bot";
 
 export class HelpDocumentation {
     public static cmdMap: Map<string, BaseCommandDocumentation> = null;
@@ -34,7 +32,7 @@ export class HelpDocumentation {
     public static WHICH: BaseCommandDocumentation = new WhichCommandDocumentation();
     public static WORLD: BaseCommandDocumentation = new WorldCommandDocumentation();
 
-    static find(command: string): MessageEmbed {
+    static find(command: string): MessageEmbedReturn {
         if (this.cmdMap == null) {
             this.createMap();
         }
@@ -63,7 +61,7 @@ export class HelpDocumentation {
         // this.cmdMap.set(this.WORLD.getCommand(), this.WORLD);
     }
 
-    static get(): MessageEmbed {
+    static get(): MessageEmbedReturn {
         if (this.cmdMap == null) {
             this.createMap();
         }

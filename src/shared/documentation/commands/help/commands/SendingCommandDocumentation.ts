@@ -1,10 +1,10 @@
 import {BaseCommandDocumentation} from "./BaseCommandDocumentation";
 import {Commands} from "../../Commands";
-import {MessageEmbed} from "discord.js";
-import {BasicEmbed} from "../../../BasicEmbed";
 import {CommandStrut} from "../../CommandStrut";
 import {Subcommands} from "../../Subcommands";
-import {Bot} from "../../../../../bot/bot";
+import {Bot} from "../../../Bot";
+import {BasicEmbed} from "../../../BasicEmbed";
+import {MessageEmbedReturn} from "../../../../models/MessageEmbedReturn";
 
 export class SendingCommandDocumentation extends BaseCommandDocumentation {
     getBasicDescription(): string {
@@ -15,7 +15,7 @@ export class SendingCommandDocumentation extends BaseCommandDocumentation {
         return Commands.SENDING;
     }
 
-    getFullDescription(): MessageEmbed {
+    getFullDescription(): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(`Sending Command`)
             .setDescription(`${this.getBasicDescription()} To see unreplied messages, type ` +

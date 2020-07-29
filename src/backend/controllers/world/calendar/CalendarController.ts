@@ -3,8 +3,6 @@ import {Calendar} from "../../../entity/calendar/Calendar";
 import {TableName} from "../../../../shared/documentation/databases/TableName";
 import {injectable} from "inversify";
 import {NameValuePair} from "../../Base/NameValuePair";
-import {Message} from "discord.js";
-import {CalendarRelatedResponses} from "../../../../shared/documentation/client-responses/information/CalendarRelatedResponses";
 
 @injectable()
 export class CalendarController extends AbstractController<Calendar> {
@@ -43,30 +41,5 @@ export class CalendarController extends AbstractController<Calendar> {
                 console.error(err);
                 return null;
             });
-    }
-
-    public async calendarSelection(calendars: Calendar[], action: string, message: Message): Promise<Calendar> {
-        return message.channel.send(CalendarRelatedResponses.SELECT_CALENDAR(calendars, action)).then((msg) => {
-            return message.channel.awaitMessages(m => m.author.id === message.author.id, {
-                max: 1,
-                time: 10e3,
-                errors: ['time'],
-            }).then((input) => {
-                msg.delete({reason: "Removed calendar processing command."});
-                let content = input.first().content;
-                let choice = Number(content);
-                if (isNaN(choice) || choice >= calendars.length || choice < 0) {
-                    message.channel.send("Input doesn't make sense!");
-                    return null;
-                }
-
-                input.first().delete();
-                return calendars[choice];
-            }).catch(()=> {
-                msg.delete({reason: "Removed calendar processing command."});
-                message.channel.send("Message timed out.");
-                return null;
-            });
-        });
     }
 }

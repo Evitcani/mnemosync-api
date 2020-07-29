@@ -1,13 +1,11 @@
-import {MessageEmbed} from "discord.js";
 import {BasicEmbed} from "../../BasicEmbed";
-import {Bot} from "../../../../bot/bot";
-import {Subcommands} from "../../commands/Subcommands";
 import {Character} from "../../../../backend/entity/Character";
 import {World} from "../../../../backend/entity/World";
 import {Sending} from "../../../../backend/entity/Sending";
 import {SendingController} from "../../../../backend/controllers/character/SendingController";
 import {EncryptionUtility} from "../../../../backend/utilities/EncryptionUtility";
 import {messageResponse} from "../../messages/MessageResponse";
+import {MessageEmbedReturn} from "../../../models/MessageEmbedReturn";
 
 /**
  * Helps the sending command if something went wrong.
@@ -18,19 +16,19 @@ export class SendingHelpRelatedResponses {
      *
      * @param messageContents Original contents of the message.
      */
-    static MESSAGE_HAS_NO_DATE(messageContents: string): MessageEmbed {
+    static MESSAGE_HAS_NO_DATE(messageContents: string): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(messageResponse.sending.error.no_date.title())
             .setDescription(messageResponse.sending.error.no_date.desc(messageContents))
     }
 
-    static MESSAGE_HAS_NO_CONTENT(messageContents: string): MessageEmbed {
+    static MESSAGE_HAS_NO_CONTENT(messageContents: string): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(messageResponse.sending.error.no_message.title())
             .setDescription(messageResponse.sending.error.no_message.desc(messageContents))
     }
 
-    static CHECK_SENDINGS_FOR_WHICH (character: Character, world: World): MessageEmbed {
+    static CHECK_SENDINGS_FOR_WHICH (character: Character, world: World): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle("Choose the which you'd like to see messages for.")
             .setDescription(`Reply with the given number to decide which you'd like to sendings for.\n` +
@@ -38,13 +36,13 @@ export class SendingHelpRelatedResponses {
                 `[\`2\`] (\`Character\`) ${character.name}\n`);
     }
 
-    static NO_DEFAULT_WORLD_OR_CHARACTER (): MessageEmbed {
+    static NO_DEFAULT_WORLD_OR_CHARACTER (): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle("You have no default world or character.")
             .setDescription("Can't fetch messages for no one or nothing!");
     }
 
-    static PRINT_MESSAGES_FROM_WORLD (messages: Sending[], world: World, page: number, encryptionUtility: EncryptionUtility): MessageEmbed {
+    static PRINT_MESSAGES_FROM_WORLD (messages: Sending[], world: World, page: number, encryptionUtility: EncryptionUtility): MessageEmbedReturn {
         let messageStr = this.processMessages(messages, page, true, true, false, encryptionUtility);
         return BasicEmbed.get()
             .setTitle(`Unreplied Messages Sent to NPCs in ${world.name}`)
@@ -52,7 +50,7 @@ export class SendingHelpRelatedResponses {
             .setFooter(BasicEmbed.getPageFooter(page, SendingController.SENDING_LIMIT, (messages == null? 0 : messages.length)));
     }
 
-    static PRINT_MESSAGES_TO_CHARACTER (messages: Sending[], character: Character, page: number, encryptionUtility: EncryptionUtility): MessageEmbed {
+    static PRINT_MESSAGES_TO_CHARACTER (messages: Sending[], character: Character, page: number, encryptionUtility: EncryptionUtility): MessageEmbedReturn {
         let messageStr = this.processMessages(messages, page, false, true, false, encryptionUtility);
         return BasicEmbed.get()
             .setTitle(`Unreplied Messages Sent to ${character.name}`)
@@ -60,14 +58,14 @@ export class SendingHelpRelatedResponses {
             .setFooter(BasicEmbed.getPageFooter(page, SendingController.SENDING_LIMIT, (messages == null? 0 : messages.length)));
     }
 
-    static PRINT_MESSAGE_REPLY_TO_PLAYER (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbed {
+    static PRINT_MESSAGE_REPLY_TO_PLAYER (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbedReturn {
         let messageStr = this.processMessage(message, 0, true, true, true, encryptionUtility);
         return BasicEmbed.get()
             .setTitle(`Got a message reply!`)
             .setDescription(`Here is the reply:\n\n${messageStr}`);
     }
 
-    static PRINT_MESSAGE_TO_PLAYER (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbed {
+    static PRINT_MESSAGE_TO_PLAYER (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbedReturn {
         let messageStr = this.processMessage(message, 0, true, true, true, encryptionUtility);
         return BasicEmbed.get()
             .setTitle(`Got a new message!`)
@@ -75,7 +73,7 @@ export class SendingHelpRelatedResponses {
                 `Here is the message:\n\n${messageStr}`);
     }
 
-    static PRINT_FINISHED_INFORMING (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbed {
+    static PRINT_FINISHED_INFORMING (message: Sending, encryptionUtility: EncryptionUtility): MessageEmbedReturn {
         let messageStr = this.processMessage(message, 0, true, true, true, encryptionUtility);
         return BasicEmbed.get()
             .setTitle(`Finished informing all users of the reply.`)

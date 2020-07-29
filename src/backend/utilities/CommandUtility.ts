@@ -1,8 +1,8 @@
 import {Command} from "../../shared/models/generic/Command";
 import {Subcommand} from "../../shared/models/generic/Subcommand";
-import {Bot} from "../../bot/bot";
 import {StringUtility} from "./StringUtility";
 import {Commands} from "../../shared/documentation/commands/Commands";
+import {Bot} from "../../shared/documentation/Bot";
 
 /**
  * A utility for processing and understanding commands.

@@ -1,9 +1,9 @@
 import {BaseCommandDocumentation} from "./BaseCommandDocumentation";
 import {Commands} from "../../Commands";
-import {MessageEmbed} from "discord.js";
-import {BasicEmbed} from "../../../BasicEmbed";
 import {CommandStrut} from "../../CommandStrut";
-import {Bot} from "../../../../../bot/bot";
+import {Bot} from "../../../Bot";
+import {BasicEmbed} from "../../../BasicEmbed";
+import {MessageEmbedReturn} from "../../../../models/MessageEmbedReturn";
 
 export class QuoteCommandDocumentation extends BaseCommandDocumentation {
     getBasicDescription(): string {
@@ -14,7 +14,7 @@ export class QuoteCommandDocumentation extends BaseCommandDocumentation {
         return Commands.QUOTE;
     }
 
-    getFullDescription(): MessageEmbed {
+    getFullDescription(): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(`Quote Command`)
             .setDescription(`${this.getBasicDescription()} To get a random quote after setting up quotes channel, ` +

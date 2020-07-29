@@ -1,4 +1,3 @@
-import {Message, MessageEmbed} from "discord.js";
 import {BasicEmbed} from "../../BasicEmbed";
 import {Calendar} from "../../../../backend/entity/calendar/Calendar";
 import {Party} from "../../../../backend/entity/Party";
@@ -8,22 +7,21 @@ import {CalendarController} from "../../../../backend/controllers/world/calendar
 import {messageResponse} from "../../messages/MessageResponse";
 import {messageTypes} from "../../messages/MessageTypes";
 import {messageEmbed} from "../../messages/MessageEmbed";
+import {MessageEmbedReturn} from "../../../models/MessageEmbedReturn";
 
 export class CalendarRelatedResponses {
-    static SELECT_CALENDAR(calendars: Calendar[], action: string): MessageEmbed {
+    static SELECT_CALENDAR(calendars: Calendar[], action: string): MessageEmbedReturn {
         return messageEmbed.generic.select_from_the_following(messageTypes.calendar, action, calendars);
     }
 
-    static async PRINT_DATE(currentDate: CurrentDate, party: Party, message: Message,
-                            calendarController: CalendarController): Promise<MessageEmbed> {
+    static async PRINT_DATE(currentDate: CurrentDate, party: Party, calendarController: CalendarController): Promise<MessageEmbedReturn> {
         let calendar = await calendarController.get(currentDate.calendarId);
         if (calendar == null) {
-            await message.channel.send(messageResponse.generic.could_not_get.msg(messageTypes.calendar.singular));
-            return Promise.resolve(null);
+            return Promise.resolve(BasicEmbed.get().setDescription(messageResponse.generic.could_not_get.msg(messageTypes.calendar.singular)));
         }
 
         // Now get the date.
-        let date = await MessageUtility.getProperDate(currentDate.date, message, calendar, calendarController);
+        let date = await MessageUtility.getProperDate(currentDate.date, calendar, calendarController);
         if  (date == null) {
             return null;
         }

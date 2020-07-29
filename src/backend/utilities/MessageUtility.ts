@@ -1,9 +1,7 @@
-import {Collection, User as DiscordUser, Message, MessageEmbed, Snowflake} from "discord.js";
 import {Subcommands} from "../../shared/documentation/commands/Subcommands";
 import {StringUtility} from "./StringUtility";
 import {Command} from "../../shared/models/generic/Command";
 import {GameDate} from "../entity/GameDate";
-import {CurrentDate} from "../entity/CurrentDate";
 import {CalendarController} from "../controllers/world/calendar/CalendarController";
 import {CalendarMonth} from "../entity/calendar/CalendarMonth";
 import {Calendar} from "../entity/calendar/Calendar";
@@ -11,84 +9,15 @@ import {CalendarMoon} from "../entity/calendar/CalendarMoon";
 
 export class MessageUtility {
 
-    public static async sendPrivateMessages(discordIds: string[], message: Message, completionMessage: MessageEmbed, messageToSend: MessageEmbed): Promise<Message | Message[]> {
-        // No one to notify.
-        if (!discordIds || discordIds.length < 1) {
-            return message.channel.send("Couldn't figure out who to notify.");
-        }
-
-        let discordId, i;
-        for (i = 0; i < discordIds.length; i++) {
-            discordId = discordIds[i];
-            this.sendPrivateMessage(discordId, message, messageToSend);
-        }
-        return message.channel.send(completionMessage);
-    }
-
-    /**
-     * Does the DM.
-     *
-     * @param discordId
-     * @param message The message to send.
-     * @param messageToSend
-     */
-    public static async sendPrivateMessage(discordId: string, message: Message, messageToSend: MessageEmbed): Promise<Message> {
-        let member: DiscordUser;
-
-        if (message.client.users.cache == null || !message.client.users.cache.has(discordId)) {
-            member = await message.client.users.fetch(discordId);
-        } else {
-            member = message.client.users.cache.get(discordId);
-        }
-
-        // No member found, so can't send message.
-        if (!member) {
-            return null;
-        }
-
-        // Set the cache.
-        if (message.client.users.cache == null) {
-            message.client.users.cache = new Collection<Snowflake, DiscordUser>();
-        }
-        message.client.users.cache.set(member.id, member);
-
-        // Send the message.
-        return member.send(messageToSend);
-    }
-
-    /**
-     * Gets the page based on next or previous.
-     *
-     * @param command The commands to search for commands from.
-     */
-    public static getPage(command: Command): number {
-        let page = 0;
-        if (Subcommands.NEXT.isCommand(command)) {
-            const nextCmd = Subcommands.NEXT.getCommand(command);
-            page = StringUtility.getNumber(nextCmd.getInput());
-            if (page == null) {
-                if (nextCmd.getInput() == null) {
-                    page = 1;
-                } else  {
-                    page = 0
-                }
-            }
-        }
-
-        return page;
-    }
-
-    public static async processDateCommand(command: Command, message: Message): Promise<GameDate> {
+    public static async processDateCommand(command: Command): Promise<GameDate> {
         const dateCmd = Subcommands.DATE.getCommand(command);
         let input = dateCmd.getInput();
         if (input == null) {
-            await message.channel.send("There was no actual date given.");
             return Promise.resolve(null);
         }
         // Split the date and process.
         let dates = input.split("/");
         if (dates.length < 3) {
-            await message.channel.send("Date was malformed. Should be like `[day]/[month]/[year]`");
             return Promise.resolve(null);
         }
 
@@ -99,8 +28,6 @@ export class MessageUtility {
 
         // TODO: Better response here.
         if (day == null || month == null || year == null) {
-            await message.channel.send("Date was malformed. Day, month or year was not a number. Should be like " +
-                "`[# day]/[# month]/[# year]`");
             return Promise.resolve(null);
         }
 
@@ -113,12 +40,11 @@ export class MessageUtility {
         return Promise.resolve(inGameDate)
     }
 
-    public static async getProperDate(date: GameDate, message: Message, calendar: Calendar,
+    public static async getProperDate(date: GameDate, calendar: Calendar,
                                       calendarController: CalendarController): Promise<string> {
         if (calendar == null) {
             calendar = await calendarController.get(date.calendarId);
             if (calendar == null) {
-                await message.channel.send("Could not get a calendar.");
                 return Promise.resolve(null);
             }
         }

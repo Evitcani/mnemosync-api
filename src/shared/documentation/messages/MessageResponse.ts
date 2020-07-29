@@ -1,8 +1,8 @@
-import {Bot} from "../../../bot/bot";
 import {Commands} from "../commands/Commands";
 import {Subcommands} from "../commands/Subcommands";
 import {NonPlayableCharacter} from "../../../backend/entity/NonPlayableCharacter";
 import {StringUtility} from "../../../backend/utilities/StringUtility";
+import {Bot} from "../Bot";
 
 export const messageResponse = {
     character: {

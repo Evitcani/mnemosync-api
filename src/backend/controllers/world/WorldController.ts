@@ -4,11 +4,7 @@ import {TableName} from "../../../shared/documentation/databases/TableName";
 import {injectable} from "inversify";
 import {User} from "../../entity/User";
 import {StringUtility} from "../../utilities/StringUtility";
-import {Collection, Message} from "discord.js";
-import {WorldRelatedClientResponses} from "../../../shared/documentation/client-responses/information/WorldRelatedClientResponses";
 import {getConnection} from "typeorm";
-import {BaseQueryRunner} from "typeorm/query-runner/BaseQueryRunner";
-import {Nickname} from "../../entity/Nickname";
 
 @injectable()
 export class WorldController extends AbstractController<World> {
@@ -31,55 +27,6 @@ export class WorldController extends AbstractController<World> {
                 console.error(err);
                 return null;
             });
-    }
-
-    public async worldSelectionFromUser(user: User, message: Message): Promise<World> {
-        // If the default world is not null, then add the character on that world.
-        let worlds: World[] = [];
-        if (user.defaultWorld != null) {
-            worlds.push(user.defaultWorld);
-        }
-
-        if (user.defaultCharacter != null && user.defaultCharacter.party != null && user.defaultCharacter.party.world != null) {
-            worlds.push(user.defaultCharacter.party.world);
-        }
-
-        if (worlds.length < 1) {
-            await message.channel.send("No world to choose from!");
-            return Promise.resolve(null);
-        }
-
-        // No selection needed.
-        if (worlds.length == 1) {
-            return Promise.resolve(worlds[0]);
-        }
-
-        return this.worldSelection(worlds, message);
-    }
-
-    public async worldSelection(worlds: World[], message: Message): Promise<World> {
-        return message.channel.send(WorldRelatedClientResponses.SELECT_WORLD(worlds, "switch")).then((msg) => {
-            return message.channel.awaitMessages(m => m.author.id === message.author.id, {
-                max: 1,
-                time: 10e3,
-                errors: ['time'],
-            }).then((input) => {
-                msg.delete({reason: "Removed world processing command."});
-                let content = input.first().content;
-                let choice = Number(content);
-                if (isNaN(choice) || choice >= worlds.length || choice < 0) {
-                    message.channel.send("Input doesn't make sense!");
-                    return null;
-                }
-
-                input.first().delete();
-                return worlds[choice];
-            }).catch(()=> {
-                msg.delete({reason: "Removed world processing command."});
-                message.channel.send("Message timed out.");
-                return null;
-            });
-        });
     }
 
     /**
@@ -111,7 +58,7 @@ export class WorldController extends AbstractController<World> {
      * @param id The name of the world to get.
      * @param user
      */
-    public getDiscordId(id: string): Promise<Collection<string, string>> {
+    public getDiscordId(id: string): Promise<Map<string, string>> {
         return getConnection()
             .createQueryBuilder(User, "user")
             .leftJoinAndSelect(TableName.WORLD_OWNERS, "owners", `user.id = "owners"."usersId"`)
@@ -122,7 +69,7 @@ export class WorldController extends AbstractController<World> {
                     return null;
                 }
 
-                let input = new Collection<string, string>(), user: User, discordId: string, i;
+                let input = new Map<string, string>(), user: User, discordId: string, i;
                 for (i = 0; i < users.length; i++) {
                     user = users[i];
                     discordId = user.discord_id;

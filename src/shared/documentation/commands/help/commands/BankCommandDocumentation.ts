@@ -1,10 +1,10 @@
 import {BaseCommandDocumentation} from "./BaseCommandDocumentation";
 import {Commands} from "../../Commands";
-import {MessageEmbed} from "discord.js";
-import {BasicEmbed} from "../../../BasicEmbed";
-import {Bot} from "../../../../../bot/bot";
 import {CommandStrut} from "../../CommandStrut";
 import {Subcommands} from "../../Subcommands";
+import {MessageEmbedReturn} from "../../../../models/MessageEmbedReturn";
+import {BasicEmbed} from "../../../BasicEmbed";
+import {Bot} from "../../../Bot";
 
 export class BankCommandDocumentation extends BaseCommandDocumentation {
     getBasicDescription(): string {
@@ -15,7 +15,7 @@ export class BankCommandDocumentation extends BaseCommandDocumentation {
         return Commands.BANK;
     }
 
-    getFullDescription(): MessageEmbed {
+    getFullDescription(): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(`Bank Command`)
             .setDescription(`${this.getBasicDescription()} You must have a character in a party to be able to ` +

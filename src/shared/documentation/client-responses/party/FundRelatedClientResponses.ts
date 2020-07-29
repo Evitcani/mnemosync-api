@@ -1,17 +1,17 @@
 import {StringUtility} from "../../../../backend/utilities/StringUtility";
-import {Collection, MessageEmbed} from "discord.js";
 import {BasicEmbed} from "../../BasicEmbed";
-import {Bot} from "../../../../bot/bot";
 import {Commands} from "../../commands/Commands";
 import {Subcommands} from "../../commands/Subcommands";
+import {Bot} from "../../Bot";
+import {MessageEmbedReturn} from "../../../models/MessageEmbedReturn";
 
 /**
  * A class for formatting responses related to the `$FUND` and `$BANK` commands.
  */
 export class FundRelatedClientResponses {
-    private static responses: Collection<number, Collection<number, string>> = FundRelatedClientResponses.createResponses();
+    private static responses: Map<number, Map<number, string>> = FundRelatedClientResponses.createResponses();
 
-    static NO_DEFAULT_CHARACTER (): MessageEmbed {
+    static NO_DEFAULT_CHARACTER (): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(`No default character!`)
             .setDescription(`You have no default character.\n\n` +
@@ -24,7 +24,7 @@ export class FundRelatedClientResponses {
                 `\`${Bot.PREFIX}${Commands.WHICH} ${Subcommands.PARTY.name}\``);
     }
 
-    static CHARACTER_NOT_IN_PARTY (characterName: string): MessageEmbed {
+    static CHARACTER_NOT_IN_PARTY (characterName: string): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(`Default character is not in a party!`)
             .setDescription(`Your character, ${characterName}, is not in a party.\n\n` +
@@ -37,7 +37,7 @@ export class FundRelatedClientResponses {
                 `\`${Bot.PREFIX}${Commands.WHICH} ${Subcommands.PARTY.name}\``);
     }
 
-    static GET_MONEY(currentMoney: number, type: string, partyName: string): MessageEmbed {
+    static GET_MONEY(currentMoney: number, type: string, partyName: string): MessageEmbedReturn {
         let input = StringUtility.numberWithCommas(Math.abs(currentMoney));
 
         return BasicEmbed.get()
@@ -54,7 +54,7 @@ export class FundRelatedClientResponses {
      * @param difference The amount needed to complete the transaction.
      * @return An embed to send back to  the client.
      */
-    static NOT_ENOUGH_MONEY(currentMoney: number, amtToWithdraw: number, difference: number): MessageEmbed {
+    static NOT_ENOUGH_MONEY(currentMoney: number, amtToWithdraw: number, difference: number): MessageEmbedReturn {
         let input3 = StringUtility.numberWithCommas(Math.abs(difference));
 
         return this.getTwoInputEmbed(
@@ -64,7 +64,7 @@ export class FundRelatedClientResponses {
             `You don't have enough money to do that. You are short ${input3} gp!`);
     }
 
-    static UPDATED_MONEY (currentMoney: number, previousAmt: number, difference: number, isWithdrawn: boolean): MessageEmbed {
+    static UPDATED_MONEY (currentMoney: number, previousAmt: number, difference: number, isWithdrawn: boolean): MessageEmbedReturn {
         let input3 = StringUtility.numberWithCommas(Math.abs(difference));
 
         return this.getTwoInputEmbed(
@@ -77,7 +77,7 @@ export class FundRelatedClientResponses {
     private static getTwoInputEmbed(title: string,
                                       inputTitle1: string, currentMoney: number,
                                       inputTitle2: string, amtToWithdraw: number,
-                                      description: string): MessageEmbed {
+                                      description: string): MessageEmbedReturn {
         let input1 = StringUtility.numberWithCommas(Math.abs(currentMoney));
         let input2 = StringUtility.numberWithCommas(Math.abs(amtToWithdraw));
 
@@ -90,35 +90,38 @@ export class FundRelatedClientResponses {
 
     private static getResponseBasedOnAmount(amt: number): string {
         if (amt < 1) {
-            return FundRelatedClientResponses.responses.get(1).random();
+            return FundRelatedClientResponses.responses.get(1).get(StringUtility.getRandomInt(0,
+                FundRelatedClientResponses.responses.get(1).size))
         }
 
         if (amt < 10) {
-            return FundRelatedClientResponses.responses.get(10).random();
+            return FundRelatedClientResponses.responses.get(10).get(StringUtility.getRandomInt(0,
+                FundRelatedClientResponses.responses.get(10).size));
         }
 
-        return FundRelatedClientResponses.responses.get(100).random();
+        return FundRelatedClientResponses.responses.get(100).get(StringUtility.getRandomInt(0,
+            FundRelatedClientResponses.responses.get(100).size));
     }
 
-    private static createResponses(): Collection<number, Collection<number, string>> {
-        const collection = new Collection<number, Collection<number, string>>();
+    private static createResponses(): Map<number, Map<number, string>> {
+        const collection = new Map<number, Map<number, string>>();
 
         // Responses less than one.
-        let col = new Collection<number, string>();
+        let col = new Map<number, string>();
         col.set(0, "Keeping chump change, huh?");
         col.set(1, "Guess no one can be bothered to help the party out...");
         col.set(2, "Might want to do something about that soon.");
         collection.set(1, col);
 
         // Responses less than 10.
-        col = new Collection<number, string>();
+        col = new Map<number, string>();
         col.set(0, "Wow! So much money! You might be able to buy, what, a single banana?");
         col.set(1, "This is enough money for a single night at the Decadent Wyrm! ... If you flirt your way in.");
         col.set(2, "Could take that down to the Cat's Configuration! ... Only if you're living in the before-times " +
             "and you're Mila.");
         collection.set(10, col);
 
-        col = new Collection<number, string>();
+        col = new Map<number, string>();
         col.set(0, "Just got started, huh? We've all been level 3.");
         col.set(1, "Hmm... The party is running low. Might be time to ask your local knife collector for a side quest.");
         col.set(2, "That's almost two whole horses! But only draft horses. Isn't it weird the big horses cost less?");

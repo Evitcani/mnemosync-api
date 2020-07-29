@@ -1,9 +1,9 @@
 import {BaseCommandDocumentation} from "./BaseCommandDocumentation";
 import {Commands} from "../../Commands";
-import {MessageEmbed} from "discord.js";
-import {BasicEmbed} from "../../../BasicEmbed";
 import {CommandStrut} from "../../CommandStrut";
 import {Subcommands} from "../../Subcommands";
+import {MessageEmbedReturn} from "../../../../models/MessageEmbedReturn";
+import {BasicEmbed} from "../../../BasicEmbed";
 
 export class DateCommandDocumentation extends BaseCommandDocumentation {
     getBasicDescription(): string {
@@ -14,7 +14,7 @@ export class DateCommandDocumentation extends BaseCommandDocumentation {
         return Commands.DATE;
     }
 
-    getFullDescription(): MessageEmbed {
+    getFullDescription(): MessageEmbedReturn {
         return BasicEmbed.get()
             .setTitle(` Command`);
     }
