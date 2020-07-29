@@ -3,7 +3,7 @@ import { Application, Request, Response } from 'express';
 
 export class App {
     private app: Application;
-    private port = 8080 || process.env.PORT;
+    private port = process.env.PORT;
 
     constructor () {
         this.app = express();
@@ -12,6 +12,7 @@ export class App {
 
     private setup() {
         this.app.get("/", (req: Request, res: Response) => {
+            console.log("Able to do the get!");
             res.send("Hello, world!");
         });
 
