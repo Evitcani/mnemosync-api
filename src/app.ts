@@ -11,9 +11,9 @@ export class App {
     }
 
     private setup() {
-        this.app.get("/", (req: Request, res: Response) => {
+        this.app.get("/getHello", (req: Request, res: Response) => {
             console.log("Able to do the get!");
-            res.send("Hello, world!");
+            return res.status(200).send("Hello, world!");
         });
 
         this.app.listen(this.port, () => {
