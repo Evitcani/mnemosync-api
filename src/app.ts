@@ -1,7 +1,8 @@
-import express from "express";
+import * as express from "express";
+import { Application, Request, Response } from 'express';
 
 export class App {
-    private app;
+    private app: Application;
     private port = 8080 || process.env.PORT;
 
     constructor () {
@@ -10,7 +11,7 @@ export class App {
     }
 
     private setup() {
-        this.app.get("/", (req, res) => {
+        this.app.get("/", (req: Request, res: Response) => {
             res.send("Hello, world!");
         });
 
