@@ -15,8 +15,8 @@ import {CalendarMoon} from "./CalendarMoon";
 import {CalendarEra} from "./CalendarEra";
 import {GameDate} from "../GameDate";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {StringUtility} from "../../utilities/StringUtility";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.CALENDAR})
 export class Calendar {

@@ -1,8 +1,8 @@
 import {CurrentDate} from "../../../../../backend/entity/CurrentDate";
-import {CurrentDateDTO} from "../../model/CurrentDateDTO";
 import {CalendarConverter} from "./calendars/CalendarConverter";
 import {DateConverter} from "./DateConverter";
-import {DTOType} from "../../DTOType";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";
 
 export class CurrentDateConverter {
     public static convertVoToDto(vo: CurrentDate): CurrentDateDTO {
@@ -21,6 +21,7 @@ export class CurrentDateConverter {
 
         // Convert date.
         dto.date = {dtoType: DTOType.DATE};
+        dto.date.id = vo.date.id;
         DateConverter.convertExistingVoToDto(vo.date, dto.date);
 
         // Convert calendar.

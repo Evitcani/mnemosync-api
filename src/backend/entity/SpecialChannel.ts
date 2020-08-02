@@ -8,8 +8,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {StringUtility} from "../utilities/StringUtility";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.SPECIAL_CHANNEL})
 export class SpecialChannel {

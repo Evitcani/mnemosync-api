@@ -1,18 +1,17 @@
 import {
-    BeforeInsert, BeforeUpdate,
+    BeforeInsert,
+    BeforeUpdate,
     Column,
     CreateDateColumn,
-    Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne,
+    Entity,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
 import {Party} from "./Party";
-import {StringUtility} from "../utilities/StringUtility";
-import {NonPlayableCharacter} from "./NonPlayableCharacter";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {User} from "./User";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.WORLD})
 export class World {

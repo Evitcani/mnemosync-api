@@ -12,9 +12,9 @@ import {
 } from "typeorm";
 import {Party} from "./Party";
 import {Nickname} from "./Nickname";
-import {StringUtility} from "../utilities/StringUtility";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {World} from "./World";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.CHARACTER})
 export class Character {

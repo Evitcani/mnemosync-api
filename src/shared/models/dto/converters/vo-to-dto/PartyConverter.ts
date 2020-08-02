@@ -1,9 +1,7 @@
 import {Party} from "../../../../../backend/entity/Party";
-import {PartyDTO} from "../../model/PartyDTO";
-import {WorldConverter} from "./WorldConverter";
 import {PartyFundConverter} from "./PartyFundConverter";
-import {CurrentDateConverter} from "./CurrentDateConverter";
-import {DTOType} from "../../DTOType";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
 
 export class PartyConverter {
     public static convertVoToDto(vo: Party): PartyDTO {

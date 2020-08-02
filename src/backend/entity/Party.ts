@@ -10,10 +10,10 @@ import {
 } from "typeorm";
 import {Character} from "./Character";
 import {PartyFund} from "./PartyFund";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {CurrentDate} from "./CurrentDate";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.PARTY})
 export class Party {

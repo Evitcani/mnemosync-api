@@ -3,8 +3,8 @@ import {World} from "../../entity/World";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {injectable} from "inversify";
 import {User} from "../../entity/User";
-import {StringUtility} from "../../utilities/StringUtility";
 import {getConnection} from "typeorm";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export class WorldController extends AbstractController<World> {

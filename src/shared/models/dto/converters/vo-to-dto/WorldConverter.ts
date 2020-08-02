@@ -1,6 +1,6 @@
-import {WorldDTO} from "../../model/WorldDTO";
 import {World} from "../../../../../backend/entity/World";
-import {DTOType} from "../../DTOType";
+import {WorldDTO} from "@evitcani/mnemoshared/dist/src/dto/model/WorldDTO";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 
 export class WorldConverter {
     public static convertVoToDto(vo: World): WorldDTO {

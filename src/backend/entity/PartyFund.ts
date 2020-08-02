@@ -9,8 +9,8 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Party} from "./Party";
-import {StringUtility} from "../utilities/StringUtility";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.PARTY_FUND})
 export class PartyFund {

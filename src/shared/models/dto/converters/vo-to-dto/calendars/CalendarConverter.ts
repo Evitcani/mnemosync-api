@@ -1,21 +1,21 @@
 import {Calendar} from "../../../../../../backend/entity/calendar/Calendar";
-import {CalendarDTO} from "../../../model/calendar/CalendarDTO";
 import {DateConverter} from "../DateConverter";
-import {CalendarMoonDTO} from "../../../model/calendar/CalendarMoonDTO";
-import {CalendarMoonPhaseDTO} from "../../../model/calendar/CalendarMoonPhaseDTO";
 import {CalendarMoon} from "../../../../../../backend/entity/calendar/CalendarMoon";
 import {CalendarMoonPhase} from "../../../../../../backend/entity/calendar/CalendarMoonPhase";
 import {CalendarMonth} from "../../../../../../backend/entity/calendar/CalendarMonth";
-import {CalendarMonthDTO} from "../../../model/calendar/CalendarMonthDTO";
 import {CalendarEra} from "../../../../../../backend/entity/calendar/CalendarEra";
-import {CalendarEraDTO} from "../../../model/calendar/CalendarEraDTO";
 import {CalendarWeekDay} from "../../../../../../backend/entity/calendar/CalendarWeekDay";
-import {CalendarWeekDayDTO} from "../../../model/calendar/CalendarWeekDayDTO";
-import {WorldConverter} from "../WorldConverter";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
+import {CalendarMonthDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMonthDTO";
+import {CalendarEraDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarEraDTO";
+import {CalendarWeekDayDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarWeekDayDTO";
+import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
+import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
 
 export class CalendarConverter {
     public static convertVoToDto(vo: Calendar): CalendarDTO {
-        return this.convertExistingVoToDto(vo, {});
+        return this.convertExistingVoToDto(vo, {dtoType: DTOType.CALENDAR});
     }
 
     public static convertExistingVoToDto(vo: Calendar, dto: CalendarDTO): CalendarDTO {
@@ -32,13 +32,14 @@ export class CalendarConverter {
         dto.yearLength = vo.yearLength;
 
         // Convert date.
-        dto.epoch = {};
-        DateConverter.convertExistingVoToDto(vo.epoch, dto.epoch);
+        if (vo.epoch != null) {
+            dto.epoch = {dtoType: DTOType.DATE};
+            dto.epoch.id = vo.epoch.id;
+            DateConverter.convertExistingVoToDto(vo.epoch, dto.epoch);
+        }
 
         // Convert world.
-        dto.world = {};
-        dto.world.id = vo.worldId;
-        WorldConverter.convertExistingVoToDto(vo.world, dto.world);
+        dto.worldId = vo.worldId;
 
         // Convert week days.
         dto.week = [];
@@ -93,7 +94,7 @@ export class CalendarConverter {
             return null;
         }
 
-        let dto: CalendarMonthDTO = {};
+        let dto: CalendarMonthDTO = {dtoType: DTOType.CALENDAR_MONTH};
 
         dto.id = vo.id;
         dto.name = vo.name;
@@ -111,7 +112,7 @@ export class CalendarConverter {
             return null;
         }
 
-        let dto: CalendarEraDTO = {};
+        let dto: CalendarEraDTO = {dtoType: DTOType.CALENDAR_ERA};
 
         dto.id = vo.id;
         dto.name = vo.name;
@@ -119,11 +120,17 @@ export class CalendarConverter {
         dto.updatedDate = vo.updatedDate;
         dto.order = vo.order;
 
-        dto.start = {};
-        DateConverter.convertExistingVoToDto(vo.start, dto.start);
+        if (dto.start != null) {
+            dto.start = {dtoType: DTOType.DATE};
+            dto.start.id = vo.start.id;
+            DateConverter.convertExistingVoToDto(vo.start, dto.start);
+        }
 
-        dto.end = {};
-        DateConverter.convertExistingVoToDto(vo.end, dto.end);
+        if (vo.end != null) {
+            dto.end = {dtoType: DTOType.DATE};
+            dto.end.id = vo.end.id;
+            DateConverter.convertExistingVoToDto(vo.end, dto.end);
+        }
 
         return dto;
     }
@@ -133,7 +140,7 @@ export class CalendarConverter {
             return null;
         }
 
-        let dto: CalendarWeekDayDTO = {};
+        let dto: CalendarWeekDayDTO = {dtoType: DTOType.CALENDAR_WEEK_DAY};
 
         dto.id = vo.id;
         dto.name = vo.name;
@@ -150,7 +157,7 @@ export class CalendarConverter {
             return null;
         }
 
-        let dto: CalendarMoonDTO = {};
+        let dto: CalendarMoonDTO = {dtoType: DTOType.CALENDAR_MOON};
 
         dto.id = vo.id;
         dto.name = vo.name;
@@ -179,7 +186,7 @@ export class CalendarConverter {
             return null;
         }
 
-        let dto: CalendarMoonPhaseDTO = {};
+        let dto: CalendarMoonPhaseDTO = {dtoType: DTOType.CALENDAR_MOON_PHASE};
 
         dto.id = vo.id;
         dto.name = vo.name;

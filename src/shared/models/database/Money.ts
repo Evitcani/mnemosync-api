@@ -1,4 +1,4 @@
-import {MoneyArchetype} from "../generic/MoneyArchetype";
+import {MoneyArchetype} from "@evitcani/mnemoshared/dist/src/models/MoneyArchetype";
 
 export class Money {
     amount: number;

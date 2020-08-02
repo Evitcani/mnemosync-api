@@ -10,12 +10,12 @@ import {
 } from "typeorm";
 import {Character} from "./Character";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "../utilities/StringUtility";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.USER_TO_CHARACTER})
 export class Nickname {
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @CreateDateColumn()
     createdDate: Date;
@@ -30,7 +30,7 @@ export class Nickname {
     name: string;
 
     @Column()
-    characterId: number;
+    characterId: string;
 
     @ManyToOne(type => Character, {
         cascade: true,

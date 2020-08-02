@@ -10,7 +10,6 @@ import {CalendarMoonController} from "./backend/controllers/world/calendar/Calen
 import {CalendarMoonPhaseController} from "./backend/controllers/world/calendar/CalendarMoonPhaseController";
 import {CalendarWeekDayController} from "./backend/controllers/world/calendar/CalendarWeekDayController";
 import {CurrentDateController} from "./backend/controllers/world/calendar/CurrentDateController";
-import {NPCController} from "./backend/controllers/character/NPCController";
 import {PartyController} from "./backend/controllers/party/PartyController";
 import {PartyFundController} from "./backend/controllers/party/PartyFundController";
 import {SendingController} from "./backend/controllers/character/SendingController";
@@ -33,7 +32,6 @@ container.bind<CalendarMoonController>(TYPES.CalendarMoonController).to(Calendar
 container.bind<CalendarMoonPhaseController>(TYPES.CalendarMoonPhaseController).to(CalendarMoonPhaseController).inSingletonScope();
 container.bind<CalendarWeekDayController>(TYPES.CalendarWeekDayController).to(CalendarWeekDayController).inSingletonScope();
 container.bind<CurrentDateController>(TYPES.CurrentDateController).to(CurrentDateController).inSingletonScope();
-container.bind<NPCController>(TYPES.NPCController).to(NPCController).inSingletonScope();
 container.bind<PartyController>(TYPES.PartyController).to(PartyController).inSingletonScope();
 container.bind<PartyFundController>(TYPES.PartyFundController).to(PartyFundController).inSingletonScope();
 container.bind<SendingController>(TYPES.SendingController).to(SendingController).inSingletonScope();

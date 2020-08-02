@@ -8,10 +8,10 @@ import {
     JoinColumn, JoinTable, ManyToMany, ManyToOne,
     PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {Party} from "./Party";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.USER})
 export class User {

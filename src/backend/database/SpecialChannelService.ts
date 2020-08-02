@@ -1,9 +1,9 @@
 import {inject, injectable} from "inversify";
 import {DatabaseService} from "./base/DatabaseService";
 import {TYPES} from "../../types";
-import {StringUtility} from "../utilities/StringUtility";
 import {SpecialChannel} from "../entity/SpecialChannel";
 import {SpecialChannelDesignation} from "../../shared/enums/SpecialChannelDesignation";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export class SpecialChannelService {

@@ -1,8 +1,7 @@
 import {Character} from "../../../../../backend/entity/Character";
-import {CharacterDTO} from "../../model/CharacterDTO";
 import {NicknameConverter} from "./NicknameConverter";
-import {PartyConverter} from "./PartyConverter";
-import {DTOType} from "../../DTOType";
+import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDTO";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 
 export class CharacterConverter {
     public static convertVoToDto(vo: Character): CharacterDTO {
@@ -19,7 +18,7 @@ export class CharacterConverter {
         dto.name = vo.name;
         dto.createdDate = vo.createdDate;
         dto.updatedDate = vo.updatedDate;
-        dto.img_url = vo.img_url;
+        dto.img_url = vo.imgUrl;
 
         // Convert nicknames.
         dto.nicknames = [];
@@ -33,9 +32,7 @@ export class CharacterConverter {
         }
 
         // Convert party.
-        dto.party = {dtoType: DTOType.PARTY};
-        dto.party.id = vo.partyId;
-        PartyConverter.convertExistingVoToDto(vo.party, dto.party);
+        dto.partyId = vo.partyId;
 
         // Return
         return dto;

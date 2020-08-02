@@ -11,10 +11,10 @@ import {
 } from "typeorm";
 import {Character} from "./Character";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {GameDate} from "./GameDate";
 import {User} from "./User";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.SENDING})
 export class Sending {

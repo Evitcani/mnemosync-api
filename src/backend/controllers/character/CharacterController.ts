@@ -6,7 +6,7 @@ import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
 import {NameValuePair} from "../Base/NameValuePair";
 import {Party} from "../../entity/Party";
 import {getConnection} from "typeorm";
-import {StringUtility} from "../../utilities/StringUtility";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, Nickname> {
@@ -19,9 +19,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
      *
      * @param id The ID of the character to get.
      */
-    public async getById(id: number): Promise<Character> {
+    public async getById(id: string): Promise<Character> {
         // Not a valid argument.
-        if (id == null || id < 1) {
+        if (id == null) {
             return null;
         }
 

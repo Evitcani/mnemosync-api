@@ -10,9 +10,8 @@ import {
 } from "typeorm";
 import {Calendar} from "./Calendar";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {StringUtility} from "../../utilities/StringUtility";
-import {CalendarMonth} from "./CalendarMonth";
 import {CalendarMoonPhase} from "./CalendarMoonPhase";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.MOON})
 export class CalendarMoon {

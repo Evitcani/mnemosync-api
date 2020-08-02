@@ -1,9 +1,6 @@
-import {UserDTO} from "../../model/UserDTO";
 import {User} from "../../../../../backend/entity/User";
-import {WorldConverter} from "./WorldConverter";
-import {CharacterConverter} from "./CharacterConverter";
-import {PartyConverter} from "./PartyConverter";
-import {DTOType} from "../../DTOType";
+import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 
 export class UserConverter {
     public static convertVoToDto(vo: User): UserDTO {

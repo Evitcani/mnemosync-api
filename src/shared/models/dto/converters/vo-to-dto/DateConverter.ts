@@ -1,6 +1,6 @@
 import {GameDate} from "../../../../../backend/entity/GameDate";
-import {DateDTO} from "../../model/DateDTO";
-import {DTOType} from "../../DTOType";
+import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 
 export class DateConverter {
     public static convertVoToDto(vo: GameDate): DateDTO {
@@ -13,6 +13,10 @@ export class DateConverter {
         }
 
         // Convert simple items.
+        dto.id = vo.id;
+        dto.recurrence = vo.recurrence;
+        dto.name = vo.name;
+        dto.description = vo.description;
         dto.calendarId = vo.calendarId;
         dto.eraId = vo.eraId;
         dto.day = vo.day;

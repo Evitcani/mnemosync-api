@@ -3,7 +3,6 @@ import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {World} from "../../entity/World";
-import {NonPlayableCharacter} from "../../entity/NonPlayableCharacter";
 import {Character} from "../../entity/Character";
 import {Any, getConnection} from "typeorm";
 
@@ -49,8 +48,8 @@ export class SendingController extends AbstractController<Sending> {
             });
     }
 
-    public async getOne(page: number, world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending> {
-        return this.getByParams(page, 1, world, toNpc, toPlayer).then((messages) => {
+    public async getOne(page: number, world: World, toCharacter: Character): Promise<Sending> {
+        return this.getByParams(page, 1, world, toCharacter).then((messages) => {
             if (messages == null || messages.length < 1) {
                 return null;
             }
@@ -59,13 +58,13 @@ export class SendingController extends AbstractController<Sending> {
         });
     }
 
-    public async get(page: number, world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending[]> {
+    public async get(page: number, world: World, toCharacter: Character): Promise<Sending[]> {
         return this.getByParams(page * SendingController.SENDING_LIMIT, SendingController.SENDING_LIMIT,
-            world, toNpc, toPlayer);
+            world, toCharacter);
     }
 
     private async getByParams(skip: number, limit: number,
-                              world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending[]> {
+                              world: World, toCharacter: Character): Promise<Sending[]> {
         let flag = false, sub;
 
         let query = getConnection().createQueryBuilder(Sending, "msg");
@@ -75,18 +74,8 @@ export class SendingController extends AbstractController<Sending> {
             flag = true;
         }
 
-        if (toNpc != null) {
-            sub = `"msg"."to_npc_id" = '${toNpc.id}'`;
-            if (flag) {
-                query = query.andWhere(sub);
-            } else {
-                query = query.where(sub);
-            }
-            flag = true;
-        }
-
-        if (toPlayer != null) {
-            sub = `"msg"."to_player_character_id" = ${toPlayer.id}`;
+        if (toCharacter != null) {
+            sub = `"msg"."to_character_id" = ${toCharacter.id}`;
             if (flag) {
                 query = query.andWhere(sub);
             } else {

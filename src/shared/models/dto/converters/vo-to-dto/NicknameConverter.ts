@@ -1,9 +1,10 @@
 import {Nickname} from "../../../../../backend/entity/Nickname";
-import {NicknameDTO} from "../../model/NicknameDTO";
+import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO";
+import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 
 export class NicknameConverter {
     public static convertVoToDto(vo: Nickname): NicknameDTO {
-        return this.convertExistingVoToDto(vo, {});
+        return this.convertExistingVoToDto(vo, {dtoType: DTOType.NICKNAME});
     }
 
     public static convertExistingVoToDto(vo: Nickname, dto: NicknameDTO): NicknameDTO {
