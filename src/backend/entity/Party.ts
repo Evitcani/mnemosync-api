@@ -47,6 +47,9 @@ export class Party {
     })
     funds: PartyFund[];
 
+    @Column({name: "world_id"})
+    worldId?: string;
+
     @ManyToOne(type => World, campaign => campaign.parties, {
         eager: true,
         nullable: true,
@@ -54,6 +57,9 @@ export class Party {
     })
     @JoinColumn({name: "world_id"})
     world?: World;
+
+    @Column({name: "current_date_id"})
+    currentDateId?: string;
 
     @OneToOne(type => CurrentDate, date => date.party, {
         onDelete: "SET NULL",

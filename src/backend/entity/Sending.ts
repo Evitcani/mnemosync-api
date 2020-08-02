@@ -1,5 +1,6 @@
 import {
-    BeforeInsert, BeforeUpdate,
+    BeforeInsert,
+    BeforeUpdate,
     Column,
     CreateDateColumn,
     Entity,
@@ -8,7 +9,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {NonPlayableCharacter} from "./NonPlayableCharacter";
 import {Character} from "./Character";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {StringUtility} from "../utilities/StringUtility";
@@ -37,8 +37,13 @@ export class Sending {
     @JoinColumn({name: "world_id"})
     world?: World;
 
-    @Column( type => GameDate)
-    inGameDate: GameDate;
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: "date_id"})
+    date: GameDate;
 
     @Column("text")
     content: string;
@@ -55,49 +60,27 @@ export class Sending {
     @Column({nullable: true, name: "is_replied"})
     isReplied?: boolean;
 
-    @Column({name: "to_npc_id", nullable: true})
-    toNpcId?: string;
-
-    @ManyToOne(type => NonPlayableCharacter, {
-        nullable: true,
-        onDelete: "SET NULL",
-        eager: true
-    })
-    @JoinColumn({name: "to_npc_id"})
-    toNpc?: NonPlayableCharacter;
-
-    @Column({name: "from_npc_id", nullable: true})
-    fromNpcId?: string;
-
-    @ManyToOne(type => NonPlayableCharacter, {
-        nullable: true,
-        onDelete: "SET NULL",
-        eager: true
-    })
-    @JoinColumn({name: "from_npc_id"})
-    fromNpc?: NonPlayableCharacter;
-
-    @Column({name: "to_player_character_id", nullable: true})
-    toPlayerCharacterId?: number;
+    @Column({name: "to_character_id", nullable: true})
+    toCharacterId?: string;
 
     @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "to_player_character_id"})
-    toPlayerCharacter?: Character;
+    @JoinColumn({name: "to_character_id"})
+    toCharacter?: Character;
 
-    @Column({name: "from_player_character_id", nullable: true})
-    fromPlayerCharacterId?: number;
+    @Column({name: "from_character_id", nullable: true})
+    fromCharacterId?: string;
 
     @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "from_player_character_id"})
-    fromPlayerCharacter?: Character;
+    @JoinColumn({name: "from_character_id"})
+    fromCharacter?: Character;
 
     @ManyToOne(type => User, {
         nullable: true,

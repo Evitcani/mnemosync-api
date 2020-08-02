@@ -1,24 +1,25 @@
-import {TravelConfig} from "./TravelConfig";
 import {
-    BeforeInsert, BeforeUpdate,
-    Column, CreateDateColumn,
-    Entity, JoinColumn,
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
     ManyToOne,
-    OneToMany, OneToOne,
-    PrimaryGeneratedColumn, UpdateDateColumn
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
 } from "typeorm";
 import {Party} from "./Party";
 import {Nickname} from "./Nickname";
 import {StringUtility} from "../utilities/StringUtility";
-import {User} from "./User";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {World} from "./World";
 
 @Entity({name: TableName.CHARACTER})
 export class Character {
-    type = "Character";
-
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @CreateDateColumn()
     createdDate: Date;
@@ -26,19 +27,14 @@ export class Character {
     @UpdateDateColumn()
     updatedDate: Date;
 
-    @Column("text",{ nullable: true })
-    img_url?: string;
+    @Column("text",{ nullable: true, name: "image_url" })
+    imgUrl?: string;
 
     @Column("text")
     name: string;
 
-    @OneToOne(type => TravelConfig, travelConfig => travelConfig.character, {
-        eager: true,
-        nullable: true,
-        onDelete: "SET NULL"
-    })
-    @JoinColumn()
-    travel_config?: TravelConfig;
+    @Column({name: "is_npc", nullable: true})
+    isNPC?: boolean;
 
     @Column({nullable: true})
     partyId?: number;
@@ -56,15 +52,20 @@ export class Character {
     })
     nicknames: Nickname[];
 
-    @OneToMany(type => User, user => user.defaultCharacter, {
+    @Column({nullable: true, name: "world_id"})
+    worldId?: string;
+
+    @ManyToOne(type => World, {
+        nullable: true,
         onDelete: "SET NULL"
     })
-    defaultUsers: User[];
+    @JoinColumn({name: "world_id"})
+    world?: World;
 
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
         this.name = StringUtility.escapeSQLInput(this.name);
-        this.img_url = StringUtility.escapeSQLInput(this.img_url);
+        this.imgUrl = StringUtility.escapeSQLInput(this.imgUrl);
     }
 }

@@ -43,18 +43,6 @@ export class World {
     })
     parties?: Party[];
 
-    @OneToMany(type => NonPlayableCharacter, character => character.world, {
-        onDelete: "SET NULL",
-        nullable: true
-    })
-    npcs?: NonPlayableCharacter[];
-
-    @OneToMany(type => User, user => user.defaultWorld, {
-        onDelete: "SET NULL",
-        nullable: true
-    })
-    defaultOfUsers?: User[];
-
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {

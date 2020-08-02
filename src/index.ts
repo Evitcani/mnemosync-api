@@ -2,6 +2,10 @@ import "reflect-metadata";
 require('dotenv').config();
 import {createConnection} from "typeorm";
 import {App} from "./app";
+import container from "./inversify.config";
+import {TYPES} from "./types";
+
+let app: App = container.get<App>(TYPES.App);
 
 createConnection({
     type: "postgres",
@@ -11,7 +15,7 @@ createConnection({
     ],
     synchronize: true,
 }).then(() => {
-    new App();
+    app.setup();
 }).catch((err: Error) => {
     console.log('Unable to create connection!');
     console.error(err);

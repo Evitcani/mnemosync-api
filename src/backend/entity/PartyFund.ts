@@ -32,16 +32,7 @@ export class PartyFund {
     type: string;
 
     @Column({ nullable: true })
-    platinum?: number;
-
-    @Column({ nullable: true })
-    gold?: number;
-
-    @Column({ nullable: true })
-    silver?: number;
-
-    @Column({ nullable: true })
-    copper?: number;
+    amount?: number;
 
     @BeforeInsert()
     @BeforeUpdate()

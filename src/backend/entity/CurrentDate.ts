@@ -23,7 +23,12 @@ export class CurrentDate {
     @UpdateDateColumn({name: "updated_date"})
     updatedDate: Date;
 
-    @Column( type => GameDate)
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: "date_id"})
     date: GameDate;
 
     @Column({name: "calendar_id", nullable: true})

@@ -31,9 +31,9 @@ export class User {
     discord_id: string;
 
     @Column("int", {name: "default_character_id", nullable: true})
-    defaultCharacterId?: number;
+    defaultCharacterId?: string;
 
-    @ManyToOne(type => Character, character => character.defaultUsers, {
+    @ManyToOne(type => Character, {
         eager: true,
         nullable: true,
         onDelete: "SET NULL"
@@ -44,7 +44,7 @@ export class User {
     @Column({name: "default_world_id", nullable: true})
     defaultWorldId?: string;
 
-    @ManyToOne(type => World, world => world.defaultOfUsers, {
+    @ManyToOne(type => World, {
         eager: true,
         nullable: true,
         onDelete: "SET NULL"
@@ -53,7 +53,7 @@ export class User {
     defaultWorld?: World;
 
     @Column({name: "default_party_id", nullable: true})
-    defaultPartyId?: string;
+    defaultPartyId?: number;
 
     @ManyToOne(type => Party, {
         eager: true,
