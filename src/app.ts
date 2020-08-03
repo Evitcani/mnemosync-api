@@ -13,7 +13,7 @@ import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
 export class App {
     private app: Application;
     private port = process.env.PORT;
-    private oktaJwtVerifier: OktaJwtVerifier;
+    private oktaJwtVerifier;
 
     private userController: UserController;
 
