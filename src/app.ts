@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Application, Request, Response } from 'express';
-import * as OktaJwtVerifier from '@okta/jwt-verifier';
+import OktaJwtVerifier from '@okta/jwt-verifier';
 import * as bodyParser from "body-parser";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
@@ -17,11 +17,13 @@ export class App {
 
     private userController: UserController;
 
-    constructor (@inject(TYPES.UserController) userController: UserController,) {
+    constructor (@inject(TYPES.UserController) userController: UserController,
+                 @inject(TYPES.ClientID) clientID: string,
+                 @inject(TYPES.Issuer) issuer: string) {
         this.app = express();
         this.oktaJwtVerifier = new OktaJwtVerifier({
-            issuer: process.env.ISSUER,
-            clientId: process.env.CLIENT_ID
+            issuer: issuer,
+            clientId: clientID
         });
 
         this.userController = userController;

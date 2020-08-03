@@ -21,8 +21,10 @@ let container = new Container();
 
 container.bind<App>(TYPES.App).to(App).inSingletonScope();
 
-container.bind<string>(TYPES.DatabaseUrl).toConstantValue(process.env.DATABASE_URL);
+container.bind<string>(TYPES.ClientID).toConstantValue(process.env.CLIENT_ID);
 container.bind<string>(TYPES.CryptKey).toConstantValue(process.env.CRYPT_KEY);
+container.bind<string>(TYPES.DatabaseUrl).toConstantValue(process.env.DATABASE_URL);
+container.bind<string>(TYPES.Issuer).toConstantValue(process.env.ISSUER);
 
 container.bind<CharacterController>(TYPES.CharacterController).to(CharacterController).inSingletonScope();
 container.bind<CalendarController>(TYPES.CalendarController).to(CalendarController).inSingletonScope();

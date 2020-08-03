@@ -1,8 +1,10 @@
 export const TYPES = {
     App: Symbol("App"),
 
+    ClientID: Symbol("ClientID"),
     CryptKey: Symbol("CryptKey"),
     DatabaseUrl: Symbol("DatabaseUrl"),
+    Issuer: Symbol("Issuer"),
 
     CharacterController: Symbol("CharacterController"),
     CalendarController: Symbol("CalendarController"),
