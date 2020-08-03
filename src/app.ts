@@ -31,7 +31,8 @@ export class App {
         this.app.get("/api/users/:id", async (req: Request, res: Response) => {
             let params = req.params;
             let discordId = params.id;
-            let discordName = params.discord_name;
+            // @ts-ignore
+            let discordName: string = req.query.discord_name;
             if (discordId == null) {
                 return res.status(400);
             }
