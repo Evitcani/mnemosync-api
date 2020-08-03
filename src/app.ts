@@ -85,6 +85,7 @@ export class App {
             if (!claims.scp.includes(process.env.SCOPE)) {
                 throw new Error('Could not verify the proper scope')
             }
+            console.log("Completed authorization process successfully!");
             next();
         } catch (error) {
             console.error(error);
