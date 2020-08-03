@@ -81,7 +81,8 @@ export class App {
             next();
         } catch (error) {
             console.error(error);
-            res.status(401).send();
+            res.status(401);
+            next(error.message);
         }
     }
 }
