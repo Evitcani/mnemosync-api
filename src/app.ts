@@ -13,7 +13,7 @@ export class App {
     private app: Application;
     private port = process.env.PORT;
 
-    private routes: AbstractRoute<any>[];
+    private routes: AbstractRoute<any, any, any>[];
 
     constructor (@inject(TYPES.PartyRoute) partyRoute: PartyRoute,
                  @inject(TYPES.UserRoute) userRoute: UserRoute,) {
