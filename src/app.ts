@@ -33,7 +33,7 @@ export class App {
             let discordId = params.id;
             // @ts-ignore
             let discordName: string = req.query.discord_name;
-            if (discordId == null) {
+            if (discordId == null || discordName == null) {
                 return res.status(400);
             }
 
