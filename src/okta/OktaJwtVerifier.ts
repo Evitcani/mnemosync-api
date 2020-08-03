@@ -49,6 +49,7 @@ export class OktaJwtVerifier {
         console.log("Inside verifier...");
         return new Promise((resolve, reject) => {
             this.verifier.verify(accessTokenString, (err, jwt) => {
+                console.log(`Callback!`);
                 if (err) {
                     return reject(err);
                 }
