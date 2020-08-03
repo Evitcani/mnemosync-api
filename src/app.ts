@@ -26,6 +26,10 @@ export class App {
             clientId: clientID
         });
 
+        console.log(OktaJwtVerifier);
+        console.log(this.oktaJwtVerifier);
+        console.log(this.oktaJwtVerifier.clientId);
+
         this.userController = userController;
     }
 
