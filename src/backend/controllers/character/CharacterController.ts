@@ -163,12 +163,12 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .getSecondaryRepo()
             .createQueryBuilder("user")
             .leftJoinAndSelect(TableName.NICKNAME, "nickname",
-                `user.${ColumnName.CHARACTER_ID} = nickname.${ColumnName.CHARACTER_ID}`);
+                `"user"."${ColumnName.CHARACTER_ID}" = "nickname"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
             let sanitizedName = StringUtility.escapeSQLInput(params.name);
-            let str = `LOWER(nickname.name) LIKE LOWER('%${sanitizedName}%')`;
+            let str = `LOWER("nickname"."${ColumnName.NAME}") LIKE LOWER('%${sanitizedName}%')`;
 
             if (flag) {
                 query.andWhere(str);
@@ -181,7 +181,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         if (params.discord_id != null) {
             let sanitizedName = StringUtility.escapeSQLInput(params.discord_id);
-            let str = `user.${ColumnName.DISCORD_ID} = '${sanitizedName}'`;
+            let str = `"user"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
 
             if (flag) {
                 query.andWhere(str);
@@ -194,7 +194,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         if (params.world_id != null) {
             let sanitizedName = StringUtility.escapeSQLInput(params.world_id);
-            let str = `user.${ColumnName.WORLD_ID} = '${sanitizedName}'`;
+            let str = `"user"."${ColumnName.WORLD_ID}" = '${sanitizedName}'`;
 
             if (flag) {
                 query.andWhere(str);
@@ -206,7 +206,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.is_npc != null) {
-            let str = `user.${ColumnName.DISCORD_ID} IS `;
+            let str = `"user"."${ColumnName.DISCORD_ID}" IS `;
             if (!params.is_npc) {
                 str += `NOT `;
             }
