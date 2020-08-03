@@ -140,7 +140,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
      * Gets all the discord IDs related to this character.
      * @param characterId
      */
-    public async getDiscordId(characterId: number): Promise<Set<string>> {
+    public async getDiscordId(characterId: string): Promise<Set<string>> {
         return this.getSecondaryRepo().find({where: {characterId: characterId}}).then((nicknames) => {
             if (!nicknames || nicknames.length < 1) {
                 return null;
