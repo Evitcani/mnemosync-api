@@ -8,6 +8,7 @@ import {PartyRoute} from "./backend/routing/PartyRoute";
 import {UserRoute} from "./backend/routing/UserRoute";
 import {AbstractRoute} from "./backend/routing/AbstractRoute";
 import {SwaggerDefinition} from "../swagger/SwaggerDefinition";
+import {SwaggerUI} from "../swagger/SwaggerUI";
 
 @injectable()
 export class App {
@@ -25,9 +26,7 @@ export class App {
     }
 
     public setup() {
-        this.app.get(`/api/v1/docs`, (req, res) => {
-            return res.status(200).json(SwaggerDefinition.JSON);
-        });
+        SwaggerUI.setupRoutes(this.app);
 
         this.app.use(this.isAuthorized);
         //this.app.use(bodyParser.json());
