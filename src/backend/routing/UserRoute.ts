@@ -13,8 +13,12 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
     }
 
     defineRoutes(app: Application): void {
-        app.get("/api/users/:id", this.getUser);
-        app.put(``, this.put);
+        app.get("/api/users/:id", (req, res) => {
+            return this.getUser(req, res);
+        });
+        app.put(``, (req, res) => {
+            return this.put(req, res);
+        });
     }
 
     protected async put (req: Request, res: Response) {

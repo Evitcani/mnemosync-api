@@ -20,10 +20,18 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
     }
 
     defineRoutes(app: Application): void {
-        app.get(`/api/parties`, this.getByQuery);
-        app.post(`/api/parties`, this.post);
-        app.put(`/api/parties/:id`, this.post);
-        app.get(`/api/parties/:id`, this.get);
+        app.get(`/api/parties`, (req, res) => {
+            return this.getByQuery(req, res);
+        });
+        app.post(`/api/parties`, (req, res) => {
+            return this.post(req, res);
+        });
+        app.put(`/api/parties/:id`, (req, res) => {
+            return this.post(req, res);
+        });
+        app.get(`/api/parties/:id`, (req, res) => {
+            return this.get(req, res);
+        });
     }
 
     private async get(req: Request, res: Response) {
