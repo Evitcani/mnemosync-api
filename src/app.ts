@@ -31,21 +31,12 @@ export class App {
         this.app.get("/api/users/:id", async (req: Request, res: Response) => {
             let params = req.params;
             let discordId = params.id;
+            let discordName = params.discord_name;
             if (discordId == null) {
                 return res.status(400);
             }
 
-            let data: DataDTO = null;
-            if (req.body != null) {
-                data = req.body;
-            }
-
-            if (data == null || data.data == null || data.data.length <= 0) {
-                return res.status(400);
-            }
-
-            let dto: UserDTO = data.data[0];
-            let vo = await this.userController.get(dto.discord_id, dto.discord_name);
+            let vo = await this.userController.get(discordId, discordName);
 
             if (vo == null) {
                 return res.status(400);
