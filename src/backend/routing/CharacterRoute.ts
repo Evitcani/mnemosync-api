@@ -10,7 +10,7 @@ import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO"
 import {Nickname} from "../entity/Nickname";
 
 @injectable()
-export class CharacterRoute  extends AbstractRoute<CharacterController, CharacterConverter, Character> {
+export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character> {
 
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController) {
         super(characterController, new CharacterConverter());
@@ -78,6 +78,7 @@ export class CharacterRoute  extends AbstractRoute<CharacterController, Characte
         let query: CharacterQuery = this.parseQuery(req, ALL_CHARACTER_QUERY);
 
         let vo = await this.controller.getCharactersByParams(query);
+        console.log(`Found ${!vo ? '0' : vo.length} result(s)!`);
         return this.getOKResponseMulti(res, vo);
     }
 
