@@ -78,11 +78,12 @@ export class App {
             let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
             console.debug("Got authentication, starting verification process: " + auth);
             // @ts-ignore
-            const { claims } = await auth.verify(token, 'api').catch((err) => {
+            const jwt = await auth.verify(token, 'api').catch((err) => {
                 console.log("Could not verify token.");
                 return null;
             });
-            if (!claims.scp.includes(process.env.SCOPE)) {
+            // @ts-ignore
+            if (!jwt || !jwt.claims.scp.includes(process.env.SCOPE)) {
                 throw new Error('Could not verify the proper scope')
             }
             console.log("Completed authorization process successfully!");
