@@ -17,6 +17,8 @@ import {UserController} from "./backend/controllers/user/UserController";
 import {WorldController} from "./backend/controllers/world/WorldController";
 import {App} from "./app";
 import {Authorization} from "./Authorization";
+import {PartyRoute} from "./backend/routing/PartyRoute";
+import {UserRoute} from "./backend/routing/UserRoute";
 
 let container = new Container();
 
@@ -43,5 +45,8 @@ container.bind<UserController>(TYPES.UserController).to(UserController).inSingle
 container.bind<WorldController>(TYPES.WorldController).to(WorldController).inSingletonScope();
 
 container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService).inSingletonScope();
+
+container.bind<PartyRoute>(TYPES.PartyRoute).to(PartyRoute).inSingletonScope();
+container.bind<UserRoute>(TYPES.UserRoute).to(UserRoute).inSingletonScope();
 
 export default container;

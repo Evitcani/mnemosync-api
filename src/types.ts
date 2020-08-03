@@ -24,4 +24,7 @@ export const TYPES = {
     WorldController: Symbol("WorldController"),
 
     DatabaseService: Symbol("DatabaseService"),
+
+    UserRoute: Symbol("UserRoute"),
+    PartyRoute: Symbol("PartyRoute"),
 };

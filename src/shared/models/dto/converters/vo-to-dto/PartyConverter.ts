@@ -2,13 +2,32 @@ import {Party} from "../../../../../backend/entity/Party";
 import {PartyFundConverter} from "./PartyFundConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
+import {AbstractConverter} from "./AbstractConverter";
 
-export class PartyConverter {
-    public static convertVoToDto(vo: Party): PartyDTO {
-        return this.convertExistingVoToDto(vo, {dtoType: DTOType.PARTY});
+export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
+
+    convertExistingDtoToVo(vo: Party, dto: PartyDTO): Party {
+        if (!dto) {
+            return null;
+        }
+
+        // Convert simple items.
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.guildId = dto.guildId || null;
+        vo.creatorDiscordId = dto.creatorDiscordId || null;
+
+        // Convert current date.
+        vo.currentDateId = dto.currentDateId || null;
+
+        // Convert world.
+        vo.worldId = dto.worldId || null;
+
+        // Return
+        return vo;
     }
 
-    public static convertExistingVoToDto(vo: Party, dto: PartyDTO): PartyDTO {
+    convertExistingVoToDto(vo: Party, dto: PartyDTO): PartyDTO {
         if (!vo) {
             return null;
         }
@@ -40,5 +59,13 @@ export class PartyConverter {
 
         // Return
         return dto;
+    }
+
+    protected getNewDTO(): PartyDTO {
+        return {dtoType: DTOType.PARTY};
+    }
+
+    protected getNewVO(): Party {
+        return new Party();
     }
 }

@@ -25,6 +25,8 @@ tags:
     description: "Requests related to the current date."
   - name: Calendar Requests
     description: "Requests related to calendars."
+  - name: Special Channel Requests
+    description: "Requests related to special channels."
 paths:
   "/users/{discord_id}":
     get:
@@ -1707,6 +1709,37 @@ components:
           type: string
           format: date-time
           readOnly: true
+    SpecialChannelDTO:
+      description: 'Describes a special channel registered for special usage.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 178
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - special_channel
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        guildId:
+          type: string
+          example: '546764564'
     UserDTO:
       description: 'Describes a simple user.'
       type: object

@@ -1,70 +1,35 @@
 import * as express from "express";
-import { Application, Request, Response } from 'express';
-import * as bodyParser from "body-parser";
+import {Application, Request, Response} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
-import {UserController} from "./backend/controllers/user/UserController";
-import {UserConverter} from "./shared/models/dto/converters/vo-to-dto/UserConverter";
-import {DataDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DataDTO";
-import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
 import container from "./inversify.config";
 import {Authorization} from "./Authorization";
-import {CharacterController} from "./backend/controllers/character/CharacterController";
-import {CharacterConverter} from "./shared/models/dto/converters/vo-to-dto/CharacterConverter";
-import {PartyConverter} from "./shared/models/dto/converters/vo-to-dto/PartyConverter";
+import {PartyRoute} from "./backend/routing/PartyRoute";
+import {UserRoute} from "./backend/routing/UserRoute";
+import {AbstractRoute} from "./backend/routing/AbstractRoute";
 
 @injectable()
 export class App {
     private app: Application;
     private port = process.env.PORT;
 
-    private characterController: CharacterController;
-    private userController: UserController;
+    private routes: AbstractRoute<any>[];
 
-    constructor (@inject(TYPES.CharacterController) characterController: CharacterController,
-                 @inject(TYPES.UserController) userController: UserController) {
+    constructor (@inject(TYPES.PartyRoute) partyRoute: PartyRoute,
+                 @inject(TYPES.UserRoute) userRoute: UserRoute,) {
         this.app = express();
-        this.characterController = characterController;
-        this.userController = userController;
+        this.routes = [];
+        this.routes.push(partyRoute);
+        this.routes.push(userRoute);
     }
 
     public setup() {
         this.app.use(this.isAuthorized);
         //this.app.use(bodyParser.json());
 
-        this.app.get("/api/users/:id", async (req: Request, res: Response) => {
-            let params = req.params;
-            let discordId = params.id;
-            // @ts-ignore
-            let discordName: string = req.query.discord_name;
-            if (discordId == null || discordName == null) {
-                return res.status(400);
-            }
-
-            let vo = await this.userController.get(discordId, discordName);
-
-            if (vo == null) {
-                return res.status(400);
-            }
-
-            return App.getOKResponse(res, UserConverter.convertVoToDto(vo));
-        });
-
-        this.app.get("/api/parties", async (req: Request, res: Response) => {
-            let query = req.query;
-            // @ts-ignore
-            let characterId: string = query.character_id;
-            if (characterId == null) {
-                return res.status(400);
-            }
-
-            let character = await this.characterController.getById(characterId);
-
-            if (character == null || character.party == null) {
-                return res.status(200).json({data: null});
-            }
-
-            return App.getOKResponse(res, PartyConverter.convertVoToDto(character.party));
+        // Define all routes.
+        this.routes.forEach((route) => {
+            route.defineRoutes(this.app);
         });
 
         this.app.listen(this.port, () => {
@@ -73,9 +38,7 @@ export class App {
         });
     }
 
-    private static getOKResponse(res: Response, item: any) {
-        return res.status(200).json({data: item});
-    }
+
 
     private async isAuthorized(req: Request, res: Response, next) {
         try {
