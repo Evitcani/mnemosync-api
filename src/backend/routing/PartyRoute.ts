@@ -6,7 +6,7 @@ import {Application, Request, Response} from "express";
 import {PartyConverter} from "../../shared/models/dto/converters/vo-to-dto/PartyConverter";
 import {CharacterController} from "../controllers/character/CharacterController";
 import {Party} from "../entity/Party";
-import {ALL_PARTY_QUERY, PartyQuery} from "../../shared/models/queries/PartyQuery";
+import {ALL_PARTY_QUERY, PartyQuery} from "./queries/PartyQuery";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
@@ -24,10 +24,15 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
             return this.getByQuery(req, res);
         });
         app.post(`/api/parties`, (req, res) => {
-            return this.post(req, res);
+            return this.doBasicPost(req, res);
         });
         app.put(`/api/parties/:id`, (req, res) => {
-            return this.post(req, res);
+            let id = this.getNumberIdFromPath(req);
+            if (!id) {
+                return this.sendBadRequestResponse(res);
+            }
+
+            return this.doBasicPost(req, res, id);
         });
         app.get(`/api/parties/:id`, (req, res) => {
             return this.get(req, res);
@@ -35,28 +40,12 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
     }
 
     private async get(req: Request, res: Response) {
-        let params = req.params;
-        let idStr: string = params.id;
-        let id = StringUtility.getNumber(idStr);
+        let id = this.getNumberIdFromPath(req);
         if (!id) {
-            return res.status(400).json({data: null});
+            return this.sendBadRequestResponse(res);
         }
 
         let vo = await this.controller.getById(id);
-        return this.getOKResponse(res, vo);
-    }
-
-    private async post(req: Request, res: Response) {
-        let vo = this.getBodyFromRequest(req);
-        if (!vo) {
-            return res.status(400).json({data: null});
-        }
-
-        vo = await this.controller.save(vo);
-        if (!vo) {
-            return res.status(400).json({data: null});
-        }
-
         return this.getOKResponse(res, vo);
     }
 
@@ -89,5 +78,9 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
         }
 
         return res.status(400).json({data: null});
+    }
+
+    protected async controllerCreate(item: Party): Promise<Party> {
+        return this.controller.save(item);
     }
 }

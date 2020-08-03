@@ -37,6 +37,8 @@ export class Nickname {
     @JoinColumn({name: ColumnName.CHARACTER_ID})
     character: Character;
 
+    discordId: string;
+
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {

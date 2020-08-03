@@ -58,7 +58,7 @@ export class WorldController extends AbstractController<World> {
      * @param id The name of the world to get.
      * @param user
      */
-    public getDiscordId(id: string): Promise<Map<string, string>> {
+    public getDiscordId(id: string): Promise<Set<string>> {
         return getConnection()
             .createQueryBuilder(User, "user")
             .leftJoinAndSelect(TableName.WORLD_OWNERS, "owners", `user.id = "owners"."usersId"`)
@@ -69,11 +69,11 @@ export class WorldController extends AbstractController<World> {
                     return null;
                 }
 
-                let input = new Map<string, string>(), user: User, discordId: string, i;
+                let input = new Set<string>(), user: User, discordId: string, i;
                 for (i = 0; i < users.length; i++) {
                     user = users[i];
                     discordId = user.discord_id;
-                    input.set(discordId, discordId);
+                    input.add(discordId);
                 }
 
                 return input;

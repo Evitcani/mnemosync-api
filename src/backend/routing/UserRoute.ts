@@ -16,46 +16,36 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
         app.get("/api/users/:id", (req, res) => {
             return this.getUser(req, res);
         });
-        app.put(``, (req, res) => {
-            return this.put(req, res);
+        app.put(`/api/users/:id`, (req, res) => {
+            let discordId: string = this.getStringIdFromPath(req);
+            if (!discordId) {
+                return this.sendBadRequestResponse(res);
+            }
+            return this.doBasicPost(req, res, discordId);
         });
     }
 
-    protected async put (req: Request, res: Response) {
-        let params = req.params;
-        let discordId = params.id;
-        if (!discordId) {
-            return res.status(400).json({data: null});
-        }
-
-        let obj = this.getBodyFromRequest(req);
-        if (!obj) {
-            return res.status(400).json({data: null});
-        }
-
-        obj = await this.controller.save(obj);
-        if (!obj) {
-            return res.status(400).json({data: null});
-        }
-
-        return this.getOKResponse(res, obj);
-    }
-
     private async getUser(req: Request, res: Response) {
-        let params = req.params;
-        let discordId = params.id;
+        let discordId: string = this.getStringIdFromPath(req);
+        if (!discordId) {
+            return this.sendBadRequestResponse(res);
+        }
         // @ts-ignore
         let discordName: string = req.query.discord_name;
-        if (discordId == null || discordName == null) {
-            return res.status(400).json({data: null});
+        if (discordName == null) {
+            return this.sendBadRequestResponse(res);
         }
 
         let vo = await this.controller.get(discordId, discordName);
 
         if (vo == null) {
-            return res.status(400).json({data: null});
+            return this.sendBadRequestResponse(res);
         }
 
         return this.getOKResponse(res, vo);
+    }
+
+    protected async controllerCreate(item: User): Promise<User> {
+        return this.controller.save(item);
     }
 }

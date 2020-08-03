@@ -2,13 +2,21 @@ import {Character} from "../../../../../backend/entity/Character";
 import {NicknameConverter} from "./NicknameConverter";
 import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {AbstractConverter} from "./AbstractConverter";
 
-export class CharacterConverter {
-    public static convertVoToDto(vo: Character): CharacterDTO {
-        return this.convertExistingVoToDto(vo, {dtoType: DTOType.CHARACTER});
+export class CharacterConverter extends AbstractConverter<Character, CharacterDTO> {
+    private readonly nicknameConverter: NicknameConverter;
+
+    constructor() {
+        super();
+        this.nicknameConverter = new NicknameConverter();
     }
 
-    public static convertExistingVoToDto(vo: Character, dto: CharacterDTO): CharacterDTO {
+    public getNicknameConverter(): NicknameConverter {
+        return this.nicknameConverter;
+    }
+
+    public convertExistingVoToDto(vo: Character, dto: CharacterDTO): CharacterDTO {
         if (!vo) {
             return null;
         }
@@ -24,7 +32,7 @@ export class CharacterConverter {
         dto.nicknames = [];
         if (vo.nicknames != null && vo.nicknames.length > 0) {
             vo.nicknames.forEach((value) => {
-                let nickname = NicknameConverter.convertVoToDto(value);
+                let nickname = this.nicknameConverter.convertVoToDto(value);
                 if (nickname != null) {
                     dto.nicknames.push(nickname);
                 }
@@ -36,5 +44,36 @@ export class CharacterConverter {
 
         // Return
         return dto;
+    }
+
+    convertExistingDtoToVo(vo: Character, dto: CharacterDTO): Character {
+        if (!dto) {
+            return null;
+        }
+
+        vo.id = dto.id;
+        vo.name = dto.name;
+        vo.imgUrl = dto.img_url;
+        vo.partyId = dto.partyId;
+
+        vo.nicknames = [];
+        if (dto.nicknames != null && dto.nicknames.length > 0) {
+            dto.nicknames.forEach((value) => {
+                let nickname = this.nicknameConverter.convertDtoToVo(value);
+                if (nickname != null) {
+                    vo.nicknames.push(nickname);
+                }
+            });
+        }
+
+        return vo;
+    }
+
+    protected getNewDTO(): CharacterDTO {
+        return {dtoType: DTOType.CHARACTER};
+    }
+
+    protected getNewVO(): Character {
+        return new Character();
     }
 }

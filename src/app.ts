@@ -7,7 +7,6 @@ import {Authorization} from "./Authorization";
 import {PartyRoute} from "./backend/routing/PartyRoute";
 import {UserRoute} from "./backend/routing/UserRoute";
 import {AbstractRoute} from "./backend/routing/AbstractRoute";
-import {SwaggerDefinition} from "../swagger/SwaggerDefinition";
 import {SwaggerUI} from "../swagger/SwaggerUI";
 
 @injectable()
