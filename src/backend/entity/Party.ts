@@ -47,7 +47,7 @@ export class Party {
     })
     funds: PartyFund[];
 
-    @Column({name: "world_id"})
+    @Column({name: "world_id", nullable: true})
     worldId?: string;
 
     @ManyToOne(type => World, campaign => campaign.parties, {
@@ -58,7 +58,7 @@ export class Party {
     @JoinColumn({name: "world_id"})
     world?: World;
 
-    @Column({name: "current_date_id"})
+    @Column({name: "current_date_id", nullable: true})
     currentDateId?: string;
 
     @OneToOne(type => CurrentDate, date => date.party, {
