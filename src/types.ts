@@ -6,6 +6,8 @@ export const TYPES = {
     DatabaseUrl: Symbol("DatabaseUrl"),
     Issuer: Symbol("Issuer"),
 
+    Authorization: Symbol("Authorization"),
+
     CharacterController: Symbol("CharacterController"),
     CalendarController: Symbol("CalendarController"),
     CalendarEraController: Symbol("CalendarEraController"),

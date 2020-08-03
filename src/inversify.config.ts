@@ -16,10 +16,12 @@ import {SendingController} from "./backend/controllers/character/SendingControll
 import {UserController} from "./backend/controllers/user/UserController";
 import {WorldController} from "./backend/controllers/world/WorldController";
 import {App} from "./app";
+import {Authorization} from "./Authorization";
 
 let container = new Container();
 
 container.bind<App>(TYPES.App).to(App).inSingletonScope();
+container.bind<Authorization>(TYPES.Authorization).to(Authorization).inSingletonScope();
 
 container.bind<string>(TYPES.ClientID).toConstantValue(process.env.CLIENT_ID);
 container.bind<string>(TYPES.CryptKey).toConstantValue(process.env.CRYPT_KEY);

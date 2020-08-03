@@ -1,6 +1,5 @@
 import * as express from "express";
 import { Application, Request, Response } from 'express';
-import * as OktaJwtVerifier from '@okta/jwt-verifier';
 import * as bodyParser from "body-parser";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
@@ -8,27 +7,19 @@ import {UserController} from "./backend/controllers/user/UserController";
 import {UserConverter} from "./shared/models/dto/converters/vo-to-dto/UserConverter";
 import {DataDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DataDTO";
 import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
+import container from "./inversify.config";
+import {Authorization} from "./Authorization";
 
 @injectable()
 export class App {
     private app: Application;
     private port = process.env.PORT;
-    private oktaJwtVerifier;
+
 
     private userController: UserController;
 
-    constructor (@inject(TYPES.UserController) userController: UserController,
-                 @inject(TYPES.ClientID) clientID: string,
-                 @inject(TYPES.Issuer) issuer: string) {
+    constructor (@inject(TYPES.UserController) userController: UserController) {
         this.app = express();
-        this.oktaJwtVerifier = new OktaJwtVerifier({
-            issuer: issuer,
-            clientId: clientID
-        });
-
-        console.log(OktaJwtVerifier);
-        console.log(this.oktaJwtVerifier);
-        console.log(this.oktaJwtVerifier.clientId);
 
         this.userController = userController;
     }
@@ -69,7 +60,7 @@ export class App {
         });
     }
 
-    private async isAuthorized(req: Request, res, next) {
+    private async isAuthorized(req: Request, res: Response, next) {
         try {
             const authorization: string = req.header("Authorization");
             if (!authorization) {
@@ -81,13 +72,14 @@ export class App {
                 throw new Error('Expected a Bearer token');
             }
 
-            const { claims } = await this.oktaJwtVerifier.verifyAccessToken(token);
+            let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
+            const { claims } = await auth.get().verifyAccessToken(token);
             if (!claims.scp.includes(process.env.SCOPE)) {
                 throw new Error('Could not verify the proper scope')
             }
             next();
         } catch (error) {
-            next(error.message)
+            return res.status(401).send();
         }
     }
 }
