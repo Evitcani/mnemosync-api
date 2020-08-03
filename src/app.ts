@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Application, Request, Response } from 'express';
-import OktaJwtVerifier from '@okta/jwt-verifier';
+import * as OktaJwtVerifier from '@okta/jwt-verifier';
 import * as bodyParser from "body-parser";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
