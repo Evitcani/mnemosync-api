@@ -62,6 +62,7 @@ export class App {
 
     private async isAuthorized(req: Request, res: Response, next) {
         try {
+            console.debug("Begin authorization of request...");
             const authorization: string = req.header("Authorization");
             if (!authorization) {
                 throw new Error('You must send an Authorization header');
@@ -79,7 +80,8 @@ export class App {
             }
             next();
         } catch (error) {
-            return res.status(401).send();
+            console.error(error);
+            res.status(401).send();
         }
     }
 }
