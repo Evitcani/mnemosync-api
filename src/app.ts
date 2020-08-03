@@ -26,7 +26,7 @@ export class App {
 
     public setup() {
         this.app.use(this.isAuthorized);
-        this.app.use(bodyParser.json());
+        //this.app.use(bodyParser.json());
 
         this.app.get("/api/users/:id", async (req: Request, res: Response) => {
             let params = req.params;
