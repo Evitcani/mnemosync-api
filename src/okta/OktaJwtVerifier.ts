@@ -48,15 +48,18 @@ export class OktaJwtVerifier {
     verifyAccessToken(accessTokenString) {
         console.log("Inside verifier...");
         return new Promise((resolve, reject) => {
-            this.verifier.verify(accessTokenString, (err, jwt) => {
+            return this.verifier.verify(accessTokenString, (err, jwt) => {
                 console.log(`Callback!`);
                 if (err) {
+                    console.log(`Rejected!`);
                     return reject(err);
                 }
                 jwt.claims = jwt.body;
                 delete jwt.body;
                 const errors = [];
+                console.log(`Going through claims!`);
                 for (let claim of Object.keys(this.claimsToAssert)) {
+                    console.log(`Claim!: ${claim}`);
                     const actualValue = jwt.claims[claim];
                     const expectedValue = this.claimsToAssert[claim];
                     if (actualValue !== expectedValue) {
@@ -64,9 +67,10 @@ export class OktaJwtVerifier {
                     }
                 }
                 if (errors.length) {
+                    console.log(`Rejected!!`);
                     return reject(new Error(errors.join(', ')));
                 }
-                resolve(jwt);
+                return resolve(jwt);
             });
         });
     }
