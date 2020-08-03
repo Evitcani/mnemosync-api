@@ -58,18 +58,21 @@ export class OktaJwtVerifier {
                 delete jwt.body;
                 const errors = [];
                 console.log(`Going through claims!`);
-                for (let claim of Object.keys(this.claimsToAssert)) {
-                    console.log(`Claim!: ${claim}`);
-                    const actualValue = jwt.claims[claim];
-                    const expectedValue = this.claimsToAssert[claim];
-                    if (actualValue !== expectedValue) {
-                        errors.push(`claim '${claim}' value '${actualValue}' does not match expected value '${expectedValue}'`);
+                if (!!this.claimsToAssert) {
+                    for (let claim of Object.keys(this.claimsToAssert)) {
+                        console.log(`Claim!: ${claim}`);
+                        const actualValue = jwt.claims[claim];
+                        const expectedValue = this.claimsToAssert[claim];
+                        if (actualValue !== expectedValue) {
+                            errors.push(`claim '${claim}' value '${actualValue}' does not match expected value '${expectedValue}'`);
+                        }
+                    }
+                    if (errors.length) {
+                        console.log(`Rejected!!`);
+                        return reject(new Error(errors.join(', ')));
                     }
                 }
-                if (errors.length) {
-                    console.log(`Rejected!!`);
-                    return reject(new Error(errors.join(', ')));
-                }
+
                 return resolve(jwt);
             });
         });
