@@ -68,20 +68,25 @@ export class App {
                 throw new Error('You must send an Authorization header');
             }
 
+            console.debug("Authorization header found!");
             const [authType, token] = authorization.trim().split(' ');
             if (authType !== 'Bearer') {
                 throw new Error('Expected a Bearer token');
             }
 
+            console.debug("Proper token found!");
             let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
-            const { claims } = await auth.get().verifyAccessToken(token);
+            console.debug("Got authentication, starting verification process...");
+            const { claims } = await auth.get().verifyAccessToken(token).catch((err) => {
+                console.log("Could not verify token.");
+                return null;
+            });
             if (!claims.scp.includes(process.env.SCOPE)) {
                 throw new Error('Could not verify the proper scope')
             }
             next();
         } catch (error) {
             console.error(error);
-            res.status(401);
             next(error.message);
         }
     }
