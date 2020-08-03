@@ -13,7 +13,6 @@ import {
 import {Party} from "./Party";
 import {Nickname} from "./Nickname";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {World} from "./World";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 

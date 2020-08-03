@@ -3,7 +3,7 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {getManager} from "typeorm";
+import {Any, getManager} from "typeorm";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
@@ -117,23 +117,37 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     public async getCharactersByParams(params: CharacterQuery): Promise<Character[]> {
-        return this.getNicknameByNickname(params).then((nicknames) => {
+        let ids = await this.getNicknameByNickname(params).then((nicknames) => {
             if (nicknames == null || nicknames.length < 1) {
                 return null;
             }
 
-            let characters = new Map<string, Character>();
+            let ids = new Set<string>();
             nicknames.forEach((nickname) => {
-                characters.set(nickname.characterId, nickname.character);
+                ids.add(nickname.characterId);
             });
 
-            let ret: Character[] = [];
-            characters.forEach((character) => {
-                ret.push(character);
-            });
+            return ids;
+        });
 
-            return ret;
-        })
+        if (!ids) {
+            return Promise.resolve(null);
+        }
+
+        return this.getRepo().find({where: {id: Any(Array.from(ids.values()))}, relations: ["nicknames"]})
+            .then((characters) => {
+                // Check the party is valid.
+                if (!characters || characters.length < 1) {
+                    return null;
+                }
+
+                return characters;
+            })
+            .catch((err: Error) => {
+                console.error("ERR ::: Could not get characters.");
+                console.error(err);
+                return null;
+            });
     }
 
     /**
