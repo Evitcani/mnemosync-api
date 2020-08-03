@@ -9,18 +9,22 @@ import {DataDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DataDTO";
 import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
 import container from "./inversify.config";
 import {Authorization} from "./Authorization";
+import {CharacterController} from "./backend/controllers/character/CharacterController";
+import {CharacterConverter} from "./shared/models/dto/converters/vo-to-dto/CharacterConverter";
+import {PartyConverter} from "./shared/models/dto/converters/vo-to-dto/PartyConverter";
 
 @injectable()
 export class App {
     private app: Application;
     private port = process.env.PORT;
 
-
+    private characterController: CharacterController;
     private userController: UserController;
 
-    constructor (@inject(TYPES.UserController) userController: UserController) {
+    constructor (@inject(TYPES.CharacterController) characterController: CharacterController,
+                 @inject(TYPES.UserController) userController: UserController) {
         this.app = express();
-
+        this.characterController = characterController;
         this.userController = userController;
     }
 
@@ -43,7 +47,24 @@ export class App {
                 return res.status(400);
             }
 
-            return res.status(200).json(UserConverter.convertVoToDto(vo));
+            return res.status(200).json({data: UserConverter.convertVoToDto(vo)});
+        });
+
+        this.app.get("/parties", async (req: Request, res: Response) => {
+            let query = req.query;
+            // @ts-ignore
+            let characterId: string = query.character_id;
+            if (characterId == null) {
+                return res.status(400);
+            }
+
+            let character = await this.characterController.getById(characterId);
+
+            if (character == null || character.party == null) {
+                return res.status(200).json({data: null});
+            }
+
+            return res.status(200).json({data: PartyConverter.convertVoToDto(character.party)});
         });
 
         this.app.listen(this.port, () => {
