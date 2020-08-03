@@ -12,6 +12,8 @@ export class UserConverter {
             return null;
         }
 
+        console.log(vo);
+
         // Convert simple items.
         dto.id = vo.id;
         dto.discord_name = vo.discord_name;
