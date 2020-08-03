@@ -7,6 +7,7 @@ import {Authorization} from "./Authorization";
 import {PartyRoute} from "./backend/routing/PartyRoute";
 import {UserRoute} from "./backend/routing/UserRoute";
 import {AbstractRoute} from "./backend/routing/AbstractRoute";
+import {SwaggerDefinition} from "../swagger/SwaggerDefinition";
 
 @injectable()
 export class App {
@@ -30,6 +31,10 @@ export class App {
         // Define all routes.
         this.routes.forEach((route) => {
             route.defineRoutes(this.app);
+        });
+
+        this.app.get(`/api/v1/docs`, (req, res) => {
+            return res.status(200).json(SwaggerDefinition.JSON);
         });
 
         this.app.listen(this.port, () => {
