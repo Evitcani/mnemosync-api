@@ -175,6 +175,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             } else {
                 query.where(str);
             }
+
+            flag = true;
         }
 
         if (params.discord_id != null) {
@@ -186,6 +188,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             } else {
                 query.where(str);
             }
+
+            flag = true;
         }
 
         if (params.world_id != null) {
@@ -197,6 +201,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             } else {
                 query.where(str);
             }
+
+            flag = true;
         }
 
         if (params.is_npc != null) {
@@ -211,6 +217,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             } else {
                 query.where(str);
             }
+
+            flag = true;
         }
 
         if (!flag) {
