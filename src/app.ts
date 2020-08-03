@@ -42,21 +42,15 @@ export class App {
 
     private async isAuthorized(req: Request, res: Response, next) {
         try {
-            console.debug("Begin authorization of request...");
             const authorization: string = req.header("Authorization");
             if (!authorization) {
                 throw new Error('You must send an Authorization header');
             }
-
-            console.debug("Authorization header found!");
             const [authType, token] = authorization.trim().split(' ');
             if (authType !== 'Bearer') {
                 throw new Error('Expected a Bearer token');
             }
-
-            console.debug("Proper token found!");
             let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
-            console.debug("Got authentication, starting verification process: " + auth);
             // @ts-ignore
             const jwt = await auth.verify(token, 'api').catch((err) => {
                 console.log("Could not verify token.");
@@ -66,7 +60,6 @@ export class App {
             if (!jwt || !jwt.claims.scp.includes(process.env.SCOPE)) {
                 throw new Error('Could not verify the proper scope')
             }
-            console.log("Completed authorization process successfully!");
             next();
         } catch (error) {
             console.error(error);

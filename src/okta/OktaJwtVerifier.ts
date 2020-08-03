@@ -46,7 +46,6 @@ export class OktaJwtVerifier {
     }
 
     verifyAccessToken(accessTokenString) {
-        console.log("Inside verifier...");
         return new Promise((resolve, reject) => {
             this.verifier.verify(accessTokenString, (err, jwt) => {
                 if (err) {
@@ -68,8 +67,6 @@ export class OktaJwtVerifier {
                         return reject(new Error(errors.join(', ')));
                     }
                 }
-
-                console.log("Completed verification...");
 
                 resolve(jwt);
             });
