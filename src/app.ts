@@ -25,16 +25,16 @@ export class App {
     }
 
     public setup() {
+        this.app.get(`/api/v1/docs`, (req, res) => {
+            return res.status(200).json(SwaggerDefinition.JSON);
+        });
+
         this.app.use(this.isAuthorized);
         //this.app.use(bodyParser.json());
 
         // Define all routes.
         this.routes.forEach((route) => {
             route.defineRoutes(this.app);
-        });
-
-        this.app.get(`/api/v1/docs`, (req, res) => {
-            return res.status(200).json(SwaggerDefinition.JSON);
         });
 
         this.app.listen(this.port, () => {
