@@ -25,7 +25,7 @@ export class OktaJwtVerifier {
         // @ts-ignore
         this.clientId = options.clientId;
         // @ts-ignore
-        this.claimsToAssert = options.assertClaims || {};
+        this.claimsToAssert = options.assertClaims || null;
         // @ts-ignore
         this.jwksClient = jwksClient({
             // @ts-ignore
@@ -57,8 +57,9 @@ export class OktaJwtVerifier {
                 jwt.claims = jwt.body;
                 delete jwt.body;
                 const errors = [];
-                console.log(`Going through claims!`);
-                if (!!this.claimsToAssert) {
+
+                if (this.claimsToAssert != null) {
+                    console.log(`Going through claims!`);
                     for (let claim of Object.keys(this.claimsToAssert)) {
                         console.log(`Claim!: ${claim}`);
                         const actualValue = jwt.claims[claim];
@@ -71,9 +72,13 @@ export class OktaJwtVerifier {
                         console.log(`Rejected!!`);
                         return reject(new Error(errors.join(', ')));
                     }
+                } else {
+                    console.log("No claims to go through.")
                 }
 
-                return resolve(jwt);
+                console.log("Completed verification...");
+
+                return Promise.resolve(jwt);
             });
         });
     }
