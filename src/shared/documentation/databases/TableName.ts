@@ -7,7 +7,7 @@ export class TableName {
     public static MONTH = "calendar_months";
     public static MOON = "calendar_moons";
     public static MOON_PHASE = "calendar_moon_phases";
-    public static NPC = "npcs";
+    public static NICKNAME = "nicknames";
     public static PARTY = "parties";
     public static PARTY_FUND = "party_funds";
     public static PARTY_TO_GUILD = "party_to_guild";

@@ -9,6 +9,7 @@ export class ColumnName {
     public static GUILD_ID = "guild_id";
     public static ID = "id";
     public static IMG_URL = "img_url";
+    public static IS_NPC = "is_npc";
     public static MAP_URL = "map_url";
     public static NAME = "name";
     public static PARTY_ID = "party_id";
@@ -17,4 +18,5 @@ export class ColumnName {
     public static TRAVEL_CONFIG = "travel_config";
     public static TYPE = "type";
     public static UPDATED_DATE = "updated_date";
+    public static WORLD_ID = "world_id";
 }

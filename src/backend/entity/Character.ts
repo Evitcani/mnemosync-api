@@ -15,28 +15,29 @@ import {Nickname} from "./Nickname";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {World} from "./World";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.CHARACTER})
 export class Character {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({name: ColumnName.CREATED_DATE})
     createdDate: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
 
-    @Column("text",{ nullable: true, name: "image_url" })
+    @Column("text",{ nullable: true, name: ColumnName.IMG_URL })
     imgUrl?: string;
 
-    @Column("text")
+    @Column("text", {name: ColumnName.NAME})
     name: string;
 
-    @Column({name: "is_npc", nullable: true})
+    @Column({nullable: true, name: ColumnName.IS_NPC})
     isNPC?: boolean;
 
-    @Column({nullable: true})
+    @Column({nullable: true, name: ColumnName.PARTY_ID})
     partyId?: number;
 
     @ManyToOne(type => Party, party => party.members, {
@@ -44,23 +45,13 @@ export class Character {
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn()
+    @JoinColumn({name: ColumnName.PARTY_ID})
     party?: Party;
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
         onDelete: "SET NULL"
     })
     nicknames: Nickname[];
-
-    @Column({nullable: true, name: "world_id"})
-    worldId?: string;
-
-    @ManyToOne(type => World, {
-        nullable: true,
-        onDelete: "SET NULL"
-    })
-    @JoinColumn({name: "world_id"})
-    world?: World;
 
     @BeforeInsert()
     @BeforeUpdate()

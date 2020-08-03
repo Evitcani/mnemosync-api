@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.USER_TO_GUILD})
 export class Guild {
@@ -21,16 +22,16 @@ export class Guild {
     @UpdateDateColumn()
     updatedDate: Date;
 
-    @Column("text")
-    discord_id: string;
+    @Column("text", {name: ColumnName.DISCORD_ID})
+    discordId: string;
 
-    @Column("text")
-    guild_id: string;
+    @Column("text", {name: ColumnName.GUILD_ID})
+    guildId: string;
 
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
-        this.discord_id = StringUtility.escapeSQLInput(this.discord_id);
-        this.guild_id = StringUtility.escapeSQLInput(this.guild_id);
+        this.discordId = StringUtility.escapeSQLInput(this.discordId);
+        this.guildId = StringUtility.escapeSQLInput(this.guildId);
     }
 }

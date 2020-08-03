@@ -9,40 +9,37 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Character} from "./Character";
-import {TableName} from "../../shared/documentation/databases/TableName";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
+import {TableName} from "../../shared/documentation/databases/TableName";
 
-@Entity({name: TableName.USER_TO_CHARACTER})
+@Entity({name: TableName.NICKNAME})
 export class Nickname {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({name: ColumnName.CREATED_DATE})
     createdDate: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
-
-    @Column("text")
-    discord_id: string;
 
     @Column("text")
     name: string;
 
-    @Column()
+    @Column({name: ColumnName.CHARACTER_ID})
     characterId: string;
 
     @ManyToOne(type => Character, {
         cascade: true,
         eager: true
     })
-    @JoinColumn()
+    @JoinColumn({name: ColumnName.CHARACTER_ID})
     character: Character;
 
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
         this.name = StringUtility.escapeSQLInput(this.name);
-        this.discord_id = StringUtility.escapeSQLInput(this.discord_id);
     }
 }

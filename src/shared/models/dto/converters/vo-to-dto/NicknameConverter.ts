@@ -18,7 +18,6 @@ export class NicknameConverter {
         dto.updatedDate = vo.updatedDate;
         dto.name = vo.name;
         dto.characterId = vo.characterId;
-        dto.discordId = vo.discord_id;
 
         // Return
         return dto;

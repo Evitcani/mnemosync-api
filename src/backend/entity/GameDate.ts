@@ -1,4 +1,5 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: "game_dates"})
 export class GameDate {
@@ -14,7 +15,7 @@ export class GameDate {
     @Column({nullable: true})
     year: number;
 
-    @Column({nullable: true})
+    @Column({nullable: false})
     significant: boolean;
 
     @Column({nullable: true})
@@ -32,6 +33,6 @@ export class GameDate {
     @Column({nullable: true, name: "calendar_id"})
     calendarId?: string;
 
-    @Column({nullable: true, name: "party_id"})
+    @Column({nullable: true, name: ColumnName.PARTY_ID})
     partyId?: number;
 }
