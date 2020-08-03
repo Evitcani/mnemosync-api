@@ -76,7 +76,7 @@ export class App {
 
             console.debug("Proper token found!");
             let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
-            console.debug("Got authentication, starting verification process...");
+            console.debug("Got authentication, starting verification process: " + auth);
             const { claims } = await auth.get().verifyAccessToken(token, 'api').catch((err) => {
                 console.log("Could not verify token.");
                 return null;

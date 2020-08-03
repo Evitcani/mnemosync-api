@@ -1,10 +1,10 @@
-import * as OktaJwtVerifier from "@okta/jwt-verifier";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
+import {OktaJwtVerifier} from "./okta/OktaJwtVerifier";
 
 @injectable()
 export class Authorization {
-    private readonly oktaJwtVerifier;
+    private readonly oktaJwtVerifier: OktaJwtVerifier;
 
     constructor(@inject(TYPES.ClientID) clientID: string,
                 @inject(TYPES.Issuer) issuer: string) {
@@ -14,7 +14,7 @@ export class Authorization {
         });
     }
 
-    public get() {
-        return this.oktaJwtVerifier;
+    public verify(token, expectedAudience) {
+        return this.oktaJwtVerifier.verifyAccessToken(token);
     }
 }
