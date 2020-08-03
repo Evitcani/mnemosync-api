@@ -9,6 +9,9 @@
     "watch": "tsc -p tsconfig.json -w",
     "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\""
   },
+  "engines": {
+    "node": "12.13.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
