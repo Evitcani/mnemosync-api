@@ -19,6 +19,8 @@ import {App} from "./app";
 import {Authorization} from "./Authorization";
 import {PartyRoute} from "./backend/routing/PartyRoute";
 import {UserRoute} from "./backend/routing/UserRoute";
+import {CharacterRoute} from "./backend/routing/CharacterRoute";
+import {DiscordIDRoute} from "./backend/routing/DiscordIDRoute";
 
 let container = new Container();
 
@@ -46,6 +48,8 @@ container.bind<WorldController>(TYPES.WorldController).to(WorldController).inSin
 
 container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService).inSingletonScope();
 
+container.bind<CharacterRoute>(TYPES.CharacterRoute).to(CharacterRoute).inSingletonScope();
+container.bind<DiscordIDRoute>(TYPES.DiscordIDRoute).to(DiscordIDRoute).inSingletonScope();
 container.bind<PartyRoute>(TYPES.PartyRoute).to(PartyRoute).inSingletonScope();
 container.bind<UserRoute>(TYPES.UserRoute).to(UserRoute).inSingletonScope();
 

@@ -4,7 +4,7 @@ import {Application, Request, Response} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {WorldController} from "../controllers/world/WorldController";
-import {ALL_DISCORD_ID_QUERY, DiscordIDQuery} from "./queries/DiscordIDQuery";
+import {ALL_DISCORD_ID_QUERY, DiscordIDQuery} from "./queries/DisIDQuery";
 
 @injectable()
 export class DiscordIDRoute extends AbstractRoute<CharacterController, null, string> {

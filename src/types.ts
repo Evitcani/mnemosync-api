@@ -25,6 +25,8 @@ export const TYPES = {
 
     DatabaseService: Symbol("DatabaseService"),
 
+    CharacterRoute: Symbol("CharacterRoute"),
+    DiscordIDRoute: Symbol("DiscordIDRoute"),
     UserRoute: Symbol("UserRoute"),
     PartyRoute: Symbol("PartyRoute"),
 };

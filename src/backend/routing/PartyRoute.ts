@@ -7,7 +7,6 @@ import {PartyConverter} from "../../shared/models/dto/converters/vo-to-dto/Party
 import {CharacterController} from "../controllers/character/CharacterController";
 import {Party} from "../entity/Party";
 import {ALL_PARTY_QUERY, PartyQuery} from "./queries/PartyQuery";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, Party> {

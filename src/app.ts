@@ -1,5 +1,5 @@
 import * as express from "express";
-import {Application, Request, Response} from "express";
+import {Application, Request} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
 import container from "./inversify.config";
@@ -8,18 +8,24 @@ import {PartyRoute} from "./backend/routing/PartyRoute";
 import {UserRoute} from "./backend/routing/UserRoute";
 import {AbstractRoute} from "./backend/routing/AbstractRoute";
 import {SwaggerUI} from "../swagger/SwaggerUI";
+import {DiscordIDRoute} from "./backend/routing/DiscordIDRoute";
+import {CharacterRoute} from "./backend/routing/CharacterRoute";
 
 @injectable()
 export class App {
-    private app: Application;
+    private readonly app: Application;
     private port = process.env.PORT;
 
     private routes: AbstractRoute<any, any, any>[];
 
-    constructor (@inject(TYPES.PartyRoute) partyRoute: PartyRoute,
+    constructor (@inject(TYPES.CharacterRoute) characterRoute: CharacterRoute,
+                 @inject(TYPES.DiscordIDRoute) discordIDRoute: DiscordIDRoute,
+                 @inject(TYPES.PartyRoute) partyRoute: PartyRoute,
                  @inject(TYPES.UserRoute) userRoute: UserRoute,) {
         this.app = express();
         this.routes = [];
+        this.routes.push(characterRoute);
+        this.routes.push(discordIDRoute);
         this.routes.push(partyRoute);
         this.routes.push(userRoute);
     }
@@ -43,7 +49,7 @@ export class App {
 
 
 
-    private async isAuthorized(req: Request, res: Response, next) {
+    private async isAuthorized(req: Request, res, next) {
         try {
             const authorization: string = req.header("Authorization");
             if (!authorization) {
@@ -55,7 +61,7 @@ export class App {
             }
             let auth: Authorization = container.get<Authorization>(TYPES.Authorization);
             // @ts-ignore
-            const jwt = await auth.verify(token, 'api').catch((err) => {
+            const jwt = await auth.verify(token, 'api').catch(() => {
                 console.log("Could not verify token.");
                 return null;
             });
