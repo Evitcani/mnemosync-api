@@ -30,10 +30,20 @@ export class CalendarEra {
     @Column()
     order: number;
 
-    @Column( type => GameDate)
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: "start_date_id"})
     start: GameDate;
 
-    @Column( type => GameDate)
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: "end_date_id"})
     end?: GameDate;
 
     @ManyToOne(type => Calendar, calendar => calendar.eras,{

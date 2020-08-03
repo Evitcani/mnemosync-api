@@ -26,12 +26,15 @@ export class CalendarMoonPhase {
     name: string;
 
     @Column()
+    description: string;
+
+    @Column()
     order: number;
 
-    @Column({name: "viewing_angle_start"})
+    @Column("decimal", {name: "viewing_angle_start", precision: 7, scale: 4})
     viewingAngleStart: number;
 
-    @Column({name: "viewing_angle_end"})
+    @Column("decimal", {name: "viewing_angle_end", precision: 7, scale: 4})
     viewingAngleEnd: number;
 
     @ManyToOne(type => CalendarMoon, moon => moon.phases,{
