@@ -47,10 +47,10 @@ export class App {
                 return res.status(400);
             }
 
-            return res.status(200).json({data: UserConverter.convertVoToDto(vo)});
+            return App.getOKResponse(res, UserConverter.convertVoToDto(vo));
         });
 
-        this.app.get("/parties", async (req: Request, res: Response) => {
+        this.app.get("/api/parties", async (req: Request, res: Response) => {
             let query = req.query;
             // @ts-ignore
             let characterId: string = query.character_id;
@@ -64,13 +64,17 @@ export class App {
                 return res.status(200).json({data: null});
             }
 
-            return res.status(200).json({data: PartyConverter.convertVoToDto(character.party)});
+            return App.getOKResponse(res, PartyConverter.convertVoToDto(character.party));
         });
 
         this.app.listen(this.port, () => {
             // tslint:disable-next-line:no-console
             console.log(`server started at ${this.port}`);
         });
+    }
+
+    private static getOKResponse(res: Response, item: any) {
+        return res.status(200).json({data: item});
     }
 
     private async isAuthorized(req: Request, res: Response, next) {
