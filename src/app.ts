@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Application, Request, Response } from 'express';
 import * as OktaJwtVerifier from '@okta/jwt-verifier';
-import bodyParser from "body-parser";
+import * as bodyParser from "body-parser";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
 import {UserController} from "./backend/controllers/user/UserController";
