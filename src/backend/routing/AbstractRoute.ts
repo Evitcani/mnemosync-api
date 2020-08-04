@@ -51,6 +51,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
     protected getBodyFromRequest(req: Request, useConverter: boolean = true): J {
         let body: DataDTO = req.body;
         if (!req.body || !body.data || body.data.length <= 0) {
+            console.log("No body in request.");
             return null;
         }
 
@@ -62,6 +63,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             newObj = dto;
         }
         if (newObj == null) {
+            console.log("Object would not be converted.");
             return null;
         }
 
