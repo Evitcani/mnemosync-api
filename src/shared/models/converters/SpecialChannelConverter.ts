@@ -7,6 +7,7 @@ import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtil
 export class SpecialChannelConverter extends AbstractConverter <SpecialChannel, SpecialChannelDTO> {
     convertExistingDtoToVo(vo: SpecialChannel, dto: SpecialChannelDTO): SpecialChannel {
         if (!dto) {
+            console.log("Given no DTO.");
             return null;
         }
 
