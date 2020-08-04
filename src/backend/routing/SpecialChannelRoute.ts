@@ -18,15 +18,15 @@ export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController,
     }
 
     public defineRoutes(app: Application): void {
-        app.get(`/specialChannels`, (req, res) => {
+        app.get(`/api/specialChannels`, (req, res) => {
             return this.getByParams(req, res);
         });
 
-        app.post(`/specialChannels`, (req, res) => {
+        app.post(`/api/specialChannels`, (req, res) => {
             return this.doBasicPost(req, res);
         });
 
-        app.put(`/specialChannels/:id`, (req, res) => {
+        app.put(`/api/specialChannels/:id`, (req, res) => {
             let id = this.getStringIdFromPath(req);
             if (!id) {
                 return this.sendBadRequestResponse(res);
