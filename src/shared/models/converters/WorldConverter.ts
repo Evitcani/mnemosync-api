@@ -1,7 +1,8 @@
-import {World} from "../../../../../backend/entity/World";
+import {World} from "../../../backend/entity/World";
 import {WorldDTO} from "@evitcani/mnemoshared/dist/src/dto/model/WorldDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class WorldConverter extends AbstractConverter<World, WorldDTO> {
     public convertExistingVoToDto(vo: World, dto: WorldDTO): WorldDTO {
@@ -15,6 +16,7 @@ export class WorldConverter extends AbstractConverter<World, WorldDTO> {
         dto.updatedDate = vo.updatedDate;
         dto.guildId = vo.guildId;
         dto.mapUrl = vo.mapUrl;
+        dto.name = vo.name;
 
         // Return
         return dto;
@@ -26,9 +28,10 @@ export class WorldConverter extends AbstractConverter<World, WorldDTO> {
         }
 
         // Convert simple items.
-        vo.id = dto.id || null;
-        vo.guildId = dto.guildId || null;
-        vo.mapUrl = dto.mapUrl || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.guildId = StringUtility.escapeSQLInput(dto.guildId || null);
+        vo.mapUrl = StringUtility.escapeSQLInput(dto.mapUrl || null);
 
         // Return
         return vo;

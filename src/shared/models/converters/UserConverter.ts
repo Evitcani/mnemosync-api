@@ -1,7 +1,8 @@
-import {User} from "../../../../../backend/entity/User";
+import {User} from "../../../backend/entity/User";
 import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class UserConverter extends AbstractConverter<User, UserDTO> {
     public convertExistingVoToDto(vo: User, dto: UserDTO): UserDTO {
@@ -33,13 +34,13 @@ export class UserConverter extends AbstractConverter<User, UserDTO> {
             return null;
         }
 
-        vo.id = dto.id || null;
-        vo.discord_name = dto.discord_name || null;
-        vo.discord_id = dto.discord_id || null;
+        vo.id = this.checkNumber(dto.id || null);
+        vo.discord_name = StringUtility.escapeSQLInput(dto.discord_name || null);
+        vo.discord_id = StringUtility.escapeSQLInput(dto.discord_id || null);
 
-        vo.defaultWorldId = dto.defaultWorldId || null;
-        vo.defaultCharacterId = dto.defaultCharacterId || null;
-        vo.defaultPartyId = dto.defaultPartyId || null;
+        vo.defaultWorldId = StringUtility.escapeSQLInput(dto.defaultWorldId || null);
+        vo.defaultCharacterId = StringUtility.escapeSQLInput(dto.defaultCharacterId || null);
+        vo.defaultPartyId = this.checkNumber(dto.defaultPartyId || null);
 
         return vo;
     }

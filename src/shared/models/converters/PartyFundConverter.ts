@@ -1,8 +1,9 @@
-import {PartyFund} from "../../../../../backend/entity/PartyFund";
+import {PartyFund} from "../../../backend/entity/PartyFund";
 import {PartyFundDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyFundDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
 import {MoneyUtility} from "@evitcani/mnemoshared/dist/src/utilities/MoneyUtility";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class PartyFundConverter extends AbstractConverter<PartyFund, PartyFundDTO> {
 
@@ -28,11 +29,11 @@ export class PartyFundConverter extends AbstractConverter<PartyFund, PartyFundDT
         }
 
         // Convert simple items.
-        vo.id = dto.id || null;
-        vo.type = dto.type || null;
+        vo.id = this.checkNumber(dto.id || null);
+        vo.type = StringUtility.escapeSQLInput(dto.type || null);
 
         // Convert to base amount.
-        vo.amount = MoneyUtility.pileIntoCopper(dto) || null;
+        vo.amount = this.checkNumber(MoneyUtility.pileIntoCopper(dto) || null);
 
         // Return
         return vo;

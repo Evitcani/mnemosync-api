@@ -1,11 +1,16 @@
-import {CurrentDate} from "../../../../../backend/entity/CurrentDate";
+import {CurrentDate} from "../../../backend/entity/CurrentDate";
 import {CalendarConverter} from "./calendars/CalendarConverter";
 import {DateConverter} from "./DateConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";
 import {AbstractConverter} from "./AbstractConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
+/**
+ * Converts the current date object.
+ */
 export class CurrentDateConverter extends AbstractConverter<CurrentDate, CurrentDateDTO> {
+    /** Used to convert a date. */
     private dateConverter: DateConverter;
     private calendarConverter: CalendarConverter;
 
@@ -15,7 +20,7 @@ export class CurrentDateConverter extends AbstractConverter<CurrentDate, Current
         this.calendarConverter = new CalendarConverter();
     }
 
-    public convertExistingVoToDto(vo: CurrentDate, dto: CurrentDateDTO): CurrentDateDTO {
+    public convertExistingVoToDto(vo: CurrentDate, dto: CurrentDateDTO): CurrentDateDTO | null {
         if (!vo) {
             return null;
         }
@@ -39,13 +44,19 @@ export class CurrentDateConverter extends AbstractConverter<CurrentDate, Current
         return dto;
     }
 
-    convertExistingDtoToVo(vo: CurrentDate, dto: CurrentDateDTO): CurrentDate {
+    /**
+     * Converts the VO to DTO.
+     *
+     * @param vo The VO to convert.
+     * @param dto The DTO to convert.
+     */
+    convertExistingDtoToVo(vo: CurrentDate, dto: CurrentDateDTO): CurrentDate | null {
         if (!dto) {
             return null;
         }
 
         // Convert simple items.
-        dto.id = vo.id || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
 
         // Convert date.
         vo.date = this.dateConverter.convertDtoToVo(dto.date) || null;

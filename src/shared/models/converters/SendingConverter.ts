@@ -1,9 +1,10 @@
 import {AbstractConverter} from "./AbstractConverter";
-import {Sending} from "../../../../../backend/entity/Sending";
+import {Sending} from "../../../backend/entity/Sending";
 import {SendingDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SendingDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {User} from "../../../../../backend/entity/User";
+import {User} from "../../../backend/entity/User";
 import {DateConverter} from "./DateConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
     private dateConverter: DateConverter;
@@ -18,22 +19,22 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
             return null;
         }
 
-        vo.id = dto.id || null;
-        vo.worldId = dto.worldId || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.worldId = StringUtility.escapeSQLInput(dto.worldId || null);
 
         // First user.
         vo.sendingMessageFromUser = new User();
-        vo.sendingMessageFromUser.discord_name = dto.sendingReplyFromDiscordName || null;
-        vo.sendingMessageFromUser.discord_id = dto.sendingMessageFromDiscordId || null;
+        vo.sendingMessageFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName || null);
+        vo.sendingMessageFromUser.discord_id = StringUtility.escapeSQLInput(dto.sendingMessageFromDiscordId || null);
 
         // Second user.
         vo.sendingReplyFromUser = new User();
-        vo.sendingReplyFromUser.discord_name = dto.sendingReplyFromDiscordName || null;
-        vo.sendingReplyFromUser.discord_id = dto.sendingReplyFromDiscordId || null;
+        vo.sendingReplyFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName || null);
+        vo.sendingReplyFromUser.discord_id = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordId || null);
 
         // Messages
-        vo.reply = dto.reply || null;
-        vo.content = dto.content || null;
+        vo.reply = StringUtility.escapeSQLInput(dto.reply || null);
+        vo.content = StringUtility.escapeSQLInput(dto.content || null);
 
         // This part...
         vo.noReply = dto.noReply || false;
@@ -41,8 +42,8 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
         vo.isReplied = vo.noReply || vo.noConnection || vo.reply != null;
 
         // Character
-        vo.fromCharacterId = dto.fromCharacterId || null;
-        vo.toCharacterId = dto.toCharacterId || null;
+        vo.fromCharacterId = StringUtility.escapeSQLInput(dto.fromCharacterId || null);
+        vo.toCharacterId = StringUtility.escapeSQLInput(dto.toCharacterId || null);
         vo.date = this.dateConverter.convertDtoToVo(dto.inGameDate);
 
         return vo;

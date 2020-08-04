@@ -1,10 +1,10 @@
 import {AbstractRoute} from "./AbstractRoute";
 import {Application} from "express";
-import {DateConverter} from "../../shared/models/dto/converters/vo-to-dto/DateConverter";
 import {GameDate} from "../entity/GameDate";
 import {DateController} from "../controllers/world/calendar/DateController";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
+import {DateConverter} from "../../shared/models/converters/DateConverter";
 
 @injectable()
 export class DateRoute extends AbstractRoute<DateController, DateConverter, GameDate> {

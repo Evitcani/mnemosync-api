@@ -1,10 +1,10 @@
-import {Calendar} from "../../../../../../backend/entity/calendar/Calendar";
+import {Calendar} from "../../../../backend/entity/calendar/Calendar";
 import {DateConverter} from "../DateConverter";
-import {CalendarMoon} from "../../../../../../backend/entity/calendar/CalendarMoon";
-import {CalendarMoonPhase} from "../../../../../../backend/entity/calendar/CalendarMoonPhase";
-import {CalendarMonth} from "../../../../../../backend/entity/calendar/CalendarMonth";
-import {CalendarEra} from "../../../../../../backend/entity/calendar/CalendarEra";
-import {CalendarWeekDay} from "../../../../../../backend/entity/calendar/CalendarWeekDay";
+import {CalendarMoon} from "../../../../backend/entity/calendar/CalendarMoon";
+import {CalendarMoonPhase} from "../../../../backend/entity/calendar/CalendarMoonPhase";
+import {CalendarMonth} from "../../../../backend/entity/calendar/CalendarMonth";
+import {CalendarEra} from "../../../../backend/entity/calendar/CalendarEra";
+import {CalendarWeekDay} from "../../../../backend/entity/calendar/CalendarWeekDay";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
 import {CalendarMonthDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMonthDTO";
@@ -13,6 +13,7 @@ import {CalendarWeekDayDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calen
 import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
 import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
 import {AbstractConverter} from "../AbstractConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> {
     private dateConverter: DateConverter;
@@ -98,10 +99,10 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
             return null;
         }
 
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.description = dto.description || null;
-        vo.yearLength = dto.yearLength || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.description = StringUtility.escapeSQLInput(dto.description || null);
+        vo.yearLength = this.checkNumber(dto.yearLength || null);
 
         // Convert date.
         if (dto.epoch != null) {
@@ -111,7 +112,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         }
 
         // Convert world.
-        dto.worldId = vo.worldId || null;
+        dto.worldId = StringUtility.escapeSQLInput(vo.worldId || null);
 
         // Convert week days.
         vo.week = [];
@@ -199,11 +200,11 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMonth();
 
-        vo.id = dto.id;
-        vo.name = dto.name;
-        vo.description = dto.description;
-        vo.length = dto.length;
-        vo.order = dto.order;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.description = StringUtility.escapeSQLInput(dto.description || null);
+        vo.length = this.checkNumber(dto.length);
+        vo.order = this.checkNumber(dto.order);
 
         return vo;
     }
@@ -243,9 +244,9 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarEra();
 
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.order = dto.order || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.order = this.checkNumber(dto.order || null);
 
         if (!dto.start) {
             vo.start = this.dateConverter.convertDtoToVo(dto.start);
@@ -286,10 +287,10 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarWeekDay();
 
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.description = dto.description || null;
-        vo.order = dto.order || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.description = StringUtility.escapeSQLInput(dto.description || null);
+        vo.order = this.checkNumber(dto.order || null);
 
         return vo;
     }
@@ -330,11 +331,11 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMoon();
 
-        vo.id = dto.id;
-        vo.name = dto.name;
-        vo.cycle = dto.cycle;
-        vo.description = dto.description;
-        vo.shift = dto.shift;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.cycle = this.checkNumber(dto.cycle);
+        vo.description = StringUtility.escapeSQLInput(dto.description || null);
+        vo.shift = this.checkNumber(dto.shift);
 
         // Convert phases.
         vo.phases = [];
@@ -375,11 +376,11 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMoonPhase();
 
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.order = dto.order || null;
-        vo.viewingAngleEnd = dto.viewingAngleEnd || null;
-        vo.viewingAngleStart = dto.viewingAngleEnd || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.order = this.checkNumber(dto.order || null);
+        vo.viewingAngleEnd = this.checkNumber(dto.viewingAngleEnd || null);
+        vo.viewingAngleStart = this.checkNumber(dto.viewingAngleEnd || null);
 
         return vo;
     }

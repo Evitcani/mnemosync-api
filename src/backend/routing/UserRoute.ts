@@ -3,8 +3,8 @@ import {UserController} from "../controllers/user/UserController";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
-import {UserConverter} from "../../shared/models/dto/converters/vo-to-dto/UserConverter";
 import {User} from "../entity/User";
+import {UserConverter} from "../../shared/models/converters/UserConverter";
 
 @injectable()
 export class UserRoute extends AbstractRoute<UserController, UserConverter, User> {

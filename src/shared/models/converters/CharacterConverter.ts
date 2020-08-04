@@ -1,8 +1,9 @@
-import {Character} from "../../../../../backend/entity/Character";
+import {Character} from "../../../backend/entity/Character";
 import {NicknameConverter} from "./NicknameConverter";
 import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class CharacterConverter extends AbstractConverter<Character, CharacterDTO> {
     private readonly nicknameConverter: NicknameConverter;
@@ -51,10 +52,10 @@ export class CharacterConverter extends AbstractConverter<Character, CharacterDT
             return null;
         }
 
-        vo.id = dto.id;
-        vo.name = dto.name;
-        vo.imgUrl = dto.img_url;
-        vo.partyId = dto.partyId;
+        vo.id = StringUtility.escapeSQLInput(dto.id);
+        vo.name = StringUtility.escapeSQLInput(dto.name);
+        vo.imgUrl = StringUtility.escapeSQLInput(dto.img_url);
+        vo.partyId = this.checkNumber(dto.partyId);
 
         vo.nicknames = [];
         if (dto.nicknames != null && dto.nicknames.length > 0) {

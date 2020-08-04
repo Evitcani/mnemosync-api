@@ -1,8 +1,9 @@
-import {Party} from "../../../../../backend/entity/Party";
+import {Party} from "../../../backend/entity/Party";
 import {PartyFundConverter} from "./PartyFundConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
 import {AbstractConverter} from "./AbstractConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
     private partyFundConverter: PartyFundConverter;
@@ -17,16 +18,16 @@ export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
         }
 
         // Convert simple items.
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.guildId = dto.guildId || null;
-        vo.creatorDiscordId = dto.creatorDiscordId || null;
+        vo.id = this.checkNumber(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.guildId = StringUtility.escapeSQLInput(dto.guildId || null);
+        vo.creatorDiscordId =StringUtility.escapeSQLInput( dto.creatorDiscordId || null);
 
         // Convert current date.
-        vo.currentDateId = dto.currentDateId || null;
+        vo.currentDateId = StringUtility.escapeSQLInput(dto.currentDateId || null);
 
         // Convert world.
-        vo.worldId = dto.worldId || null;
+        vo.worldId = StringUtility.escapeSQLInput(dto.worldId || null);
 
         // Return
         return vo;

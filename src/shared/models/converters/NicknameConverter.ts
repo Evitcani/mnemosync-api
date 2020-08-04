@@ -1,7 +1,8 @@
-import {Nickname} from "../../../../../backend/entity/Nickname";
+import {Nickname} from "../../../backend/entity/Nickname";
 import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> {
     public convertExistingVoToDto(vo: Nickname, dto: NicknameDTO): NicknameDTO {
@@ -26,10 +27,10 @@ export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> 
         }
 
         // Convert simple items.
-        vo.id = dto.id || null;
-        vo.name = dto.name || null;
-        vo.characterId = dto.characterId || null;
-        vo.discordId = dto.discordId || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.characterId = StringUtility.escapeSQLInput(dto.characterId || null);
+        vo.discordId = StringUtility.escapeSQLInput(dto.discordId || null);
 
         // Return
         return vo;

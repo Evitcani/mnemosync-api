@@ -1,7 +1,8 @@
 import {AbstractConverter} from "./AbstractConverter";
-import {SpecialChannel} from "../../../../../backend/entity/SpecialChannel";
+import {SpecialChannel} from "../../../backend/entity/SpecialChannel";
 import {SpecialChannelDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SpecialChannelDTO";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class SpecialChannelConverter extends AbstractConverter <SpecialChannel, SpecialChannelDTO> {
     convertExistingDtoToVo(vo: SpecialChannel, dto: SpecialChannelDTO): SpecialChannel {
@@ -9,10 +10,10 @@ export class SpecialChannelConverter extends AbstractConverter <SpecialChannel, 
             return null;
         }
 
-        vo.id = dto.id || null;
-        vo.designation = dto.designation || null;
-        vo.channel_id = dto.channel_id || null;
-        vo.guild_id = dto.guild_id || null;
+        vo.id = this.checkNumber(dto.id || null);
+        vo.designation = this.checkNumber(dto.designation || null);
+        vo.channel_id = StringUtility.escapeSQLInput(dto.channel_id || null);
+        vo.guild_id = StringUtility.escapeSQLInput(dto.guild_id || null);
 
         return vo;
     }

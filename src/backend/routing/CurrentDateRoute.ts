@@ -2,9 +2,9 @@ import {AbstractRoute} from "./AbstractRoute";
 import {Application} from "express";
 import {CurrentDate} from "../entity/CurrentDate";
 import {CurrentDateController} from "../controllers/world/calendar/CurrentDateController";
-import {CurrentDateConverter} from "../../shared/models/dto/converters/vo-to-dto/CurrentDateConverter";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
+import {CurrentDateConverter} from "../../shared/models/converters/CurrentDateConverter";
 
 @injectable()
 export class CurrentDateRoute extends AbstractRoute<CurrentDateController, CurrentDateConverter, CurrentDate> {

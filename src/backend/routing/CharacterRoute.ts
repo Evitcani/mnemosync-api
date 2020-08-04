@@ -4,10 +4,10 @@ import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
 import {Character} from "../entity/Character";
-import {CharacterConverter} from "../../shared/models/dto/converters/vo-to-dto/CharacterConverter";
 import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO";
 import {Nickname} from "../entity/Nickname";
 import {ALL_CHARACTER_QUERY, CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
+import {CharacterConverter} from "../../shared/models/converters/CharacterConverter";
 
 @injectable()
 export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character> {

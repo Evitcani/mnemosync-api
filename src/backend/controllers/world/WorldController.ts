@@ -2,8 +2,7 @@ import {AbstractController} from "../Base/AbstractController";
 import {World} from "../../entity/World";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {injectable} from "inversify";
-import {User} from "../../entity/User";
-import {getConnection} from "typeorm";
+import {getManager} from "typeorm";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 import {WorldQuery} from "@evitcani/mnemoshared/dist/src/models/queries/WorldQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
@@ -31,26 +30,23 @@ export class WorldController extends AbstractController<World> {
             });
     }
 
-    /**
-     * Gets all parties in the given guild with a name similar.
-     *
-     * @param name The name of the world to get.
-     * @param user
-     */
-    public getByNameAndUser(name: string, user: User): Promise<World[]> {
-        let sanitizedName = StringUtility.escapeSQLInput(name);
+    public async saveUserToWorld (discordId: string, worldId: string): Promise<boolean> {
+        let sanitizedDiscordId = StringUtility.escapeSQLInput(discordId);
+        let sanitizedWorldId = StringUtility.escapeSQLInput(worldId);
 
-        return this
-            .getRepo()
-            .createQueryBuilder("world")
-            .leftJoinAndSelect(TableName.WORLD_OWNERS, "owners", `world.id = "owners"."worldsId"`)
-            .where(`"owners"."usersId" = ${user.id}`)
-            .andWhere(`LOWER(world.name) LIKE LOWER('%${sanitizedName}%')`)
-            .getMany()
-            .catch((err: Error) => {
-                console.error("ERR ::: Could not get worlds.");
+        return getManager().getRepository(TableName.WORLD_OWNERS).save(
+            {
+                discord_id: sanitizedDiscordId,
+                world_id: sanitizedWorldId
+            }).then((ret) => {
+                if (!ret) {
+                    return false;
+                }
+                return true;
+            }).catch((err: Error) => {
+                console.error("ERR ::: Could not add user to world.");
                 console.error(err);
-                return null;
+                return false;
             });
     }
 
@@ -58,37 +54,20 @@ export class WorldController extends AbstractController<World> {
      * Gets all parties in the given guild with a name similar.
      *
      * @param id The name of the world to get.
-     * @param user
      */
-    public getDiscordId(id: string): Promise<Set<string>> {
-        return getConnection()
-            .createQueryBuilder(User, "user")
-            .leftJoinAndSelect(TableName.WORLD_OWNERS, "owners", `user.id = "owners"."usersId"`)
-            .where(`"owners"."worldsId" = '${id}'`)
-            .getMany()
-            .then((users) => {
-                if (!users || users.length < 1) {
-                    return null;
-                }
-
-                let input = new Set<string>(), user: User, discordId: string, i;
-                for (i = 0; i < users.length; i++) {
-                    user = users[i];
-                    discordId = user.discord_id;
-                    input.add(discordId);
-                }
-
-                return input;
-            })
-            .catch((err: Error) => {
-                console.error("ERR ::: Could not get worlds.");
-                console.error(err);
+    public getDiscordId(id: string): Promise<string[]> {
+        return this.getAllByParamsExtra({id: id}).then((worlds) => {
+            if (!worlds || worlds.length <= 0) {
                 return null;
-            });
-    }
+            }
 
-    public static isWorld(obj: any): obj is World {
-        return ((obj as World).type != undefined && (obj as World).type == "World") || typeof (obj as World).id == "string";
+            let ids = new Set<string>();
+            worlds.forEach((world) => {
+                ids.add(world.discord_id)
+            });
+
+            return Array.from(ids);
+        });
     }
 
     public async getById(id: string): Promise<World> {
@@ -103,12 +82,29 @@ export class WorldController extends AbstractController<World> {
             return null;
         });
     }
-
     public async getAllByParams(params: WorldQuery): Promise<World[]> {
+        return this.getAllByParamsExtra(params).then((res) => {
+            if (!res || res.length <= 0) {
+                return null;
+            }
+
+            let worlds = new Map<string, World>();
+            res.forEach((world: World) => {
+                worlds.set(world.id, world);
+            });
+
+            return Array.from(worlds.values());
+        });
+    }
+
+    protected async getAllByParamsExtra(params: WorldQuery): Promise<any[]> {
         let nameStr = "world";
-        let query = this
-            .getRepo()
-            .createQueryBuilder(nameStr);
+        let secondStr = "owners";
+
+        let join = `"${nameStr}"."${ColumnName.ID}" = "${secondStr}"."${ColumnName.WORLD_ID}"`;
+        let query = getManager().getRepository(this.tableName)
+            .createQueryBuilder(nameStr)
+            .leftJoinAndSelect(TableName.WORLD_OWNERS, secondStr, join);
 
         let flag = false;
         if (params.name != null) {
@@ -126,7 +122,7 @@ export class WorldController extends AbstractController<World> {
 
         if (params.discord_id != null) {
             let sanitizedName = StringUtility.escapeSQLInput(params.discord_id);
-            let str = `"${nameStr}"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
+            let str = `"${secondStr}"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
 
             if (flag) {
                 query.andWhere(str);
@@ -137,14 +133,21 @@ export class WorldController extends AbstractController<World> {
             flag = true;
         }
 
-        if (params.ids != null) {
-            let str;
-            if (Array.isArray(params.ids)) {
-                str = `"${nameStr}"."${ColumnName.ID}" IN ('${params.ids.join("','")}')`;
-            } else {
-                str = `"${nameStr}"."${ColumnName.ID}" = '${params.ids}')`;
+        if (params.ids != null || params.id != null) {
+            if (params.ids == null) {
+                params.ids = [];
             }
 
+            if (!Array.isArray(params.ids)) {
+                let id = params.ids;
+                params.ids = [id];
+            }
+
+            if (params.id != null) {
+                params.ids.push(params.id);
+            }
+
+            let str = `"${nameStr}"."${ColumnName.ID}" IN ('${params.ids.join("','")}')`;
 
             if (flag) {
                 query.andWhere(str);
@@ -168,8 +171,7 @@ export class WorldController extends AbstractController<World> {
         }
 
         return query
-            .getMany()
-            .catch((err: Error) => {
+            .getMany().catch((err: Error) => {
                 console.error("ERR ::: Could not get worlds.");
                 console.error(err);
                 return null;

@@ -1,7 +1,8 @@
-import {GameDate} from "../../../../../backend/entity/GameDate";
+import {GameDate} from "../../../backend/entity/GameDate";
 import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class DateConverter extends AbstractConverter<GameDate, DateDTO> {
 
@@ -31,15 +32,15 @@ export class DateConverter extends AbstractConverter<GameDate, DateDTO> {
         }
 
         // Convert simple items.
-        vo.id = dto.id || null;
-        vo.recurrence = dto.recurrence || null;
-        vo.name = dto.name || null;
-        vo.description = dto.description || null;
-        vo.calendarId = dto.calendarId || null;
-        vo.eraId = dto.eraId || null;
-        vo.day = dto.day || null;
-        vo.month = dto.month || null;
-        vo.year = dto.year || null;
+        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.recurrence = StringUtility.escapeSQLInput(dto.recurrence || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name || null);
+        vo.description = StringUtility.escapeSQLInput(dto.description || null);
+        vo.calendarId = StringUtility.escapeSQLInput(dto.calendarId || null);
+        vo.eraId = StringUtility.escapeSQLInput(dto.eraId || null);
+        vo.day = this.checkNumber(dto.day || null);
+        vo.month = this.checkNumber(dto.month || null);
+        vo.year = this.checkNumber(dto.year || null);
         vo.significant = dto.significant || false;
 
         // Return
