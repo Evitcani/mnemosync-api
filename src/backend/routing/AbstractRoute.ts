@@ -49,7 +49,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
     protected getBodyFromRequest(req: Request): J
     protected getBodyFromRequest(req: Request, useConverter: boolean): J
     protected getBodyFromRequest(req: Request, useConverter: boolean = true): J {
-        let body: DataDTO = req.body;
+        let body: DataDTO = req.body == null ? null : req.body.data;
         if (body == null || body.data == null || body.data.length <= 0) {
             console.log("No body in request.");
             console.log(body.data);
