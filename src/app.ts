@@ -17,7 +17,7 @@ import {SendingRoute} from "./backend/routing/SendingRoute";
 import {PartyFundRoute} from "./backend/routing/PartyFundRoute";
 import {DateRoute} from "./backend/routing/DateRoute";
 import {CurrentDateRoute} from "./backend/routing/CurrentDateRoute";
-import bodyParser from "body-parser";
+import * as bodyParser from "body-parser";
 
 @injectable()
 export class App {
