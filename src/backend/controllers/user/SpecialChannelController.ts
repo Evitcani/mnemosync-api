@@ -25,13 +25,12 @@ export class SpecialChannelController extends AbstractController<SpecialChannel>
 
     public async get(guildId: string, designation: SpecialChannelDesignation): Promise<SpecialChannel> {
         if (!guildId || designation === null) {
-            console.log("Nothing here!");
             return Promise.resolve(null);
         }
 
         let sanitizedGuildId = StringUtility.escapeSQLInput(guildId);
 
-        this.getRepo().findOne({
+        return this.getRepo().findOne({
             where: {
                 guild_id: sanitizedGuildId,
                 designation: designation
