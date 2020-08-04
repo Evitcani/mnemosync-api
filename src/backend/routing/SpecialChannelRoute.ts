@@ -23,7 +23,10 @@ export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController,
         });
 
         app.post(`/api/specialChannels`, (req, res) => {
-            return this.doBasicPost(req, res);
+            return this.doBasicPost(req, res).catch((err) => {
+                console.log(err);
+                return null;
+            });
         });
 
         app.put(`/api/specialChannels/:id`, (req, res) => {
