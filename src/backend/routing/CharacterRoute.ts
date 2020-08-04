@@ -5,9 +5,9 @@ import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
 import {Character} from "../entity/Character";
 import {CharacterConverter} from "../../shared/models/dto/converters/vo-to-dto/CharacterConverter";
-import {ALL_CHARACTER_QUERY, CharacterQuery} from "./queries/CharacterQuery";
 import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO";
 import {Nickname} from "../entity/Nickname";
+import {ALL_CHARACTER_QUERY, CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
 
 @injectable()
 export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character> {
@@ -78,7 +78,6 @@ export class CharacterRoute extends AbstractRoute<CharacterController, Character
         let query: CharacterQuery = this.parseQuery(req, ALL_CHARACTER_QUERY);
 
         let vo = await this.controller.getCharactersByParams(query);
-        console.log(`Found ${!vo ? '0' : vo.length} result(s)!`);
         return this.getOKResponseMulti(res, vo);
     }
 

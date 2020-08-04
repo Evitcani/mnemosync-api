@@ -2,6 +2,8 @@ import {getManager, Repository, SelectQueryBuilder} from "typeorm";
 import {NameValuePair} from "./NameValuePair";
 import {injectable, unmanaged} from "inversify";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {Calendar} from "../../entity/calendar/Calendar";
+import {CalendarWeekDay} from "../../entity/calendar/CalendarWeekDay";
 
 @injectable()
 export abstract class AbstractController<T> {
@@ -81,5 +83,30 @@ export abstract class AbstractController<T> {
         }
 
         return query;
+    }
+
+    public async deleteBulk(id: string, items: any[]): Promise<boolean> {
+        let ids: string[] = [];
+        if (!items) {
+            items = [];
+        }
+
+        items.forEach((value) => {
+            if (value.id != null) {
+                ids.push(value.id);
+            }
+        });
+
+        return this
+            .getRepo()
+            .createQueryBuilder(`item`)
+            .where(`"item"."calendar_id" = '${id}'`)
+            .andWhere(`"item"."id" NOT IN ('${ids.join("','")}')`)
+            .delete().execute().then(() => {
+                return true;
+            }).catch((err) => {
+                console.error(err);
+                return false;
+            });
     }
 }

@@ -82,6 +82,9 @@ export class Sending {
     @JoinColumn({name: "from_character_id"})
     fromCharacter?: Character;
 
+    @Column({name: "sending_message_from_user_id", nullable: true})
+    sendingMessageFromUserId?: string;
+
     @ManyToOne(type => User, {
         nullable: true,
         onDelete: "SET NULL",
@@ -89,6 +92,9 @@ export class Sending {
     })
     @JoinColumn({name: "sending_message_from_user_id"})
     sendingMessageFromUser: User;
+
+    @Column({name: "sending_reply_from_user_id", nullable: true})
+    sendingReplyFromUserId?: string;
 
     @ManyToOne(type => User, {
         nullable: true,

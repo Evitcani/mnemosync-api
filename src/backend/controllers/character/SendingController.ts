@@ -1,17 +1,21 @@
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {World} from "../../entity/World";
 import {Character} from "../../entity/Character";
 import {Any, getConnection} from "typeorm";
+import {TYPES} from "../../../types";
+import {DateController} from "../world/calendar/DateController";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {
     public static SENDING_LIMIT = 10;
+    private dateController: DateController;
 
-    constructor() {
+    constructor(@inject(TYPES.DateController) dateController: DateController) {
         super(TableName.SENDING);
+        this.dateController = dateController;
     }
 
     /**
@@ -19,7 +23,9 @@ export class SendingController extends AbstractController<Sending> {
      *
      * @param sending
      */
-    public async create(sending: Sending): Promise<Sending> {
+    public async save(sending: Sending): Promise<Sending> {
+        sending.date = await this.dateController.save(sending.date);
+
         return this.getRepo().save(sending)
             .catch((err: Error) => {
                 console.error("ERR ::: Could not create new sending.");
@@ -34,8 +40,8 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
-        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toNpc", "fromNpc", "toPlayerCharacter",
-                "fromPlayerCharacter", "sendingReplyFromUser", "sendingMessageFromUser"]})
+        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toCharacter", "fromCharacter",
+                "sendingReplyFromUser", "sendingMessageFromUser"]})
             .then((sending) => {
                 // Check the party is valid.
 

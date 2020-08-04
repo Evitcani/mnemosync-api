@@ -7,12 +7,33 @@ import {Any, getManager} from "typeorm";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
-import {CharacterQuery} from "../../routing/queries/CharacterQuery";
+import {CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
 
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, UserToCharacter> {
     constructor() {
         super(TableName.CHARACTER, TableName.USER_TO_CHARACTER);
+    }
+
+    public async getWorldIdsByCharacterId(id: string): Promise<string[]> {
+        let ids = [];
+        let users = await this.getSecondaryRepo().find({where: {characterId: id}});
+        if (users && users.length > 0) {
+            users.forEach((value) => {
+                ids.push(value.worldId);
+            });
+        }
+
+        let character = await this.getById(id);
+        if (character && character.party != null && character.party.worldId != null) {
+            ids.push(character.party.worldId);
+        }
+
+        if (ids.length <= 0) {
+            return Promise.resolve(null);
+        }
+
+        return Promise.resolve(ids);
     }
 
     /**

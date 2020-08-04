@@ -26,10 +26,10 @@ export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> 
         }
 
         // Convert simple items.
-        vo.id = dto.id;
-        vo.name = dto.name;
-        vo.characterId = dto.characterId;
-        vo.discordId = dto.discordId;
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.characterId = dto.characterId || null;
+        vo.discordId = dto.discordId || null;
 
         // Return
         return vo;

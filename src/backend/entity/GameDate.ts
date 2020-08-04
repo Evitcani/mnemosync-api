@@ -1,7 +1,8 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
+import {TableName} from "../../shared/documentation/databases/TableName";
 
-@Entity({name: "game_dates"})
+@Entity({name: TableName.GAME_DATE})
 export class GameDate {
     @PrimaryGeneratedColumn('uuid')
     id: string;

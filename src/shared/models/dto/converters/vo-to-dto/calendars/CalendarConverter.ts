@@ -12,13 +12,17 @@ import {CalendarEraDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/
 import {CalendarWeekDayDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarWeekDayDTO";
 import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
 import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
+import {AbstractConverter} from "../AbstractConverter";
 
-export class CalendarConverter {
-    public static convertVoToDto(vo: Calendar): CalendarDTO {
-        return this.convertExistingVoToDto(vo, {dtoType: DTOType.CALENDAR});
+export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> {
+    private dateConverter: DateConverter;
+
+    constructor() {
+        super();
+        this.dateConverter = new DateConverter();
     }
 
-    public static convertExistingVoToDto(vo: Calendar, dto: CalendarDTO): CalendarDTO {
+    public convertExistingVoToDto(vo: Calendar, dto: CalendarDTO): CalendarDTO {
         if (!vo) {
             return null;
         }
@@ -35,7 +39,7 @@ export class CalendarConverter {
         if (vo.epoch != null) {
             dto.epoch = {dtoType: DTOType.DATE};
             dto.epoch.id = vo.epoch.id;
-            DateConverter.convertExistingVoToDto(vo.epoch, dto.epoch);
+            this.dateConverter.convertExistingVoToDto(vo.epoch, dto.epoch);
         }
 
         // Convert world.
@@ -89,7 +93,88 @@ export class CalendarConverter {
         return dto;
     }
 
-    protected static convertMonthVoToDto (vo: CalendarMonth): CalendarMonthDTO {
+    public convertExistingDtoToVo(vo: Calendar, dto: CalendarDTO): Calendar {
+        if (!dto) {
+            return null;
+        }
+
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.description = dto.description || null;
+        vo.yearLength = dto.yearLength || null;
+
+        // Convert date.
+        if (dto.epoch != null) {
+            vo.epoch = this.dateConverter.convertDtoToVo(dto.epoch);
+        } else {
+            vo.epoch = null;
+        }
+
+        // Convert world.
+        dto.worldId = vo.worldId || null;
+
+        // Convert week days.
+        vo.week = [];
+        if (dto.week != null && dto.week.length > 0) {
+            dto.week.forEach((value) => {
+                let item = this.convertWeekDayDtoToVo(value);
+                if (item != null) {
+                    vo.week.push(item);
+                }
+            })
+        } else {
+            vo.week = null;
+        }
+
+        // Convert months.
+        vo.months = [];
+        if (dto.months != null && dto.months.length > 0) {
+            dto.months.forEach((value) => {
+                let item = this.convertMonthDtoToVo(value);
+                if (item != null) {
+                    vo.months.push(item);
+                }
+            })
+        } else {
+            vo.months = null;
+        }
+
+        // Convert moons.
+        vo.moons = [];
+        if (dto.moons != null && dto.moons.length > 0) {
+            dto.moons.forEach((value) => {
+                let item = this.convertMoonDtoToVo(value);
+                if (item != null) {
+                    vo.moons.push(item);
+                }
+            })
+        } else {
+            vo.moons = null;
+        }
+
+        // Convert eras.
+        vo.eras = [];
+        if (dto.eras != null && dto.eras.length > 0) {
+            dto.eras.forEach((value) => {
+                let item = this.convertEraDtoToVo(value);
+                if (item != null) {
+                    vo.eras.push(item);
+                }
+            })
+        } else {
+            vo.eras = null;
+        }
+
+        return vo;
+    }
+    protected getNewDTO(): CalendarDTO {
+        throw {dtoType: DTOType.CALENDAR};
+    }
+    protected getNewVO(): Calendar {
+        throw new Calendar();
+    }
+
+    protected convertMonthVoToDto (vo: CalendarMonth): CalendarMonthDTO {
         if (!vo) {
             return null;
         }
@@ -107,7 +192,23 @@ export class CalendarConverter {
         return dto;
     }
 
-    protected static convertEraVoToDto (vo: CalendarEra): CalendarEraDTO {
+    protected convertMonthDtoToVo (dto: CalendarMonthDTO): CalendarMonth {
+        if (!dto) {
+            return null;
+        }
+
+        let vo = new CalendarMonth();
+
+        vo.id = dto.id;
+        vo.name = dto.name;
+        vo.description = dto.description;
+        vo.length = dto.length;
+        vo.order = dto.order;
+
+        return vo;
+    }
+
+    protected convertEraVoToDto (vo: CalendarEra): CalendarEraDTO {
         if (!vo) {
             return null;
         }
@@ -123,19 +224,45 @@ export class CalendarConverter {
         if (dto.start != null) {
             dto.start = {dtoType: DTOType.DATE};
             dto.start.id = vo.start.id;
-            DateConverter.convertExistingVoToDto(vo.start, dto.start);
+            this.dateConverter.convertExistingVoToDto(vo.start, dto.start);
         }
 
         if (vo.end != null) {
             dto.end = {dtoType: DTOType.DATE};
             dto.end.id = vo.end.id;
-            DateConverter.convertExistingVoToDto(vo.end, dto.end);
+            this.dateConverter.convertExistingVoToDto(vo.end, dto.end);
         }
 
         return dto;
     }
 
-    protected static convertWeekDayVoToDto (vo: CalendarWeekDay): CalendarWeekDayDTO {
+    protected convertEraDtoToVo (dto: CalendarEraDTO): CalendarEra {
+        if (!dto) {
+            return null;
+        }
+
+        let vo = new CalendarEra();
+
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.order = dto.order || null;
+
+        if (!dto.start) {
+            vo.start = this.dateConverter.convertDtoToVo(dto.start);
+        } else {
+            vo.start = null;
+        }
+
+        if (!vo.end) {
+            vo.end = this.dateConverter.convertDtoToVo(dto.end);
+        } else {
+            vo.end = null;
+        }
+
+        return vo;
+    }
+
+    protected convertWeekDayVoToDto (vo: CalendarWeekDay): CalendarWeekDayDTO {
         if (!vo) {
             return null;
         }
@@ -152,7 +279,22 @@ export class CalendarConverter {
         return dto;
     }
 
-    protected static convertMoonVoToDto (vo: CalendarMoon): CalendarMoonDTO {
+    protected convertWeekDayDtoToVo (dto: CalendarWeekDayDTO): CalendarWeekDay {
+        if (!dto) {
+            return null;
+        }
+
+        let vo = new CalendarWeekDay();
+
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.description = dto.description || null;
+        vo.order = dto.order || null;
+
+        return vo;
+    }
+
+    protected convertMoonVoToDto (vo: CalendarMoon): CalendarMoonDTO {
         if (!vo) {
             return null;
         }
@@ -181,7 +323,34 @@ export class CalendarConverter {
         return dto;
     }
 
-    protected static convertMoonPhaseVoToDto(vo: CalendarMoonPhase): CalendarMoonPhaseDTO {
+    protected convertMoonDtoToVo (dto: CalendarMoonDTO): CalendarMoon {
+        if (!dto) {
+            return null;
+        }
+
+        let vo = new CalendarMoon();
+
+        vo.id = dto.id;
+        vo.name = dto.name;
+        vo.cycle = dto.cycle;
+        vo.description = dto.description;
+        vo.shift = dto.shift;
+
+        // Convert phases.
+        vo.phases = [];
+        if (dto.phases != null && dto.phases.length > 0) {
+            dto.phases.forEach((value) => {
+                let item = this.convertMoonPhaseDtoToVo(value);
+                if (item != null) {
+                    vo.phases.push(item);
+                }
+            })
+        }
+
+        return vo;
+    }
+
+    protected convertMoonPhaseVoToDto(vo: CalendarMoonPhase): CalendarMoonPhaseDTO {
         if (!vo) {
             return null;
         }
@@ -197,5 +366,21 @@ export class CalendarConverter {
         dto.viewingAngleStart = vo.viewingAngleEnd;
 
         return dto;
+    }
+
+    protected convertMoonPhaseDtoToVo(dto: CalendarMoonPhaseDTO): CalendarMoonPhase {
+        if (!dto) {
+            return null;
+        }
+
+        let vo = new CalendarMoonPhase();
+
+        vo.id = dto.id || null;
+        vo.name = dto.name || null;
+        vo.order = dto.order || null;
+        vo.viewingAngleEnd = dto.viewingAngleEnd || null;
+        vo.viewingAngleStart = dto.viewingAngleEnd || null;
+
+        return vo;
     }
 }

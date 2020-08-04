@@ -46,6 +46,9 @@ export class CalendarEra {
     @JoinColumn({name: "end_date_id"})
     end?: GameDate;
 
+    @Column({name: "calendar_id"})
+    calendarId: string;
+
     @ManyToOne(type => Calendar, calendar => calendar.eras,{
         cascade: true
     })

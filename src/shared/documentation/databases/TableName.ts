@@ -4,6 +4,7 @@ export class TableName {
     public static CHARACTER_TO_NICKNAME = "character_to_nickname";
     public static CURRENT_DATE = "current_dates";
     public static ERA = "calendar_eras";
+    public static GAME_DATE = "game_dates";
     public static MONTH = "calendar_months";
     public static MOON = "calendar_moons";
     public static MOON_PHASE = "calendar_moon_phases";

@@ -43,6 +43,9 @@ export class CalendarMoon {
     })
     phases?: CalendarMoonPhase[];
 
+    @Column({name: "calendar_id"})
+    calendarId: string;
+
     @ManyToOne(type => Calendar, calendar => calendar.moons,{
         cascade: true
     })

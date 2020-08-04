@@ -10,6 +10,13 @@ import {AbstractRoute} from "./backend/routing/AbstractRoute";
 import {SwaggerUI} from "../swagger/SwaggerUI";
 import {DiscordIDRoute} from "./backend/routing/DiscordIDRoute";
 import {CharacterRoute} from "./backend/routing/CharacterRoute";
+import {CalendarRoute} from "./backend/routing/CalendarRoute";
+import {WorldRoute} from "./backend/routing/WorldRoute";
+import {SpecialChannelRoute} from "./backend/routing/SpecialChannelRoute";
+import {SendingRoute} from "./backend/routing/SendingRoute";
+import {PartyFundRoute} from "./backend/routing/PartyFundRoute";
+import {DateRoute} from "./backend/routing/DateRoute";
+import {CurrentDateRoute} from "./backend/routing/CurrentDateRoute";
 
 @injectable()
 export class App {
@@ -18,16 +25,30 @@ export class App {
 
     private routes: AbstractRoute<any, any, any>[];
 
-    constructor (@inject(TYPES.CharacterRoute) characterRoute: CharacterRoute,
+    constructor (@inject(TYPES.CalendarRoute) calendarRoute: CalendarRoute,
+                 @inject(TYPES.CharacterRoute) characterRoute: CharacterRoute,
+                 @inject(TYPES.CurrentDateRoute) currentDateRoute: CurrentDateRoute,
+                 @inject(TYPES.DateRoute) dateRoute: DateRoute,
                  @inject(TYPES.DiscordIDRoute) discordIDRoute: DiscordIDRoute,
                  @inject(TYPES.PartyRoute) partyRoute: PartyRoute,
-                 @inject(TYPES.UserRoute) userRoute: UserRoute,) {
+                 @inject(TYPES.PartyFundRoute) partyFundRoute: PartyFundRoute,
+                 @inject(TYPES.SendingRoute) sendingRoute: SendingRoute,
+                 @inject(TYPES.SpecialChannelRoute) specialChannelRoute: SpecialChannelRoute,
+                 @inject(TYPES.UserRoute) userRoute: UserRoute,
+                 @inject(TYPES.WorldRoute) worldRoute: WorldRoute,) {
         this.app = express();
         this.routes = [];
+        this.routes.push(calendarRoute);
         this.routes.push(characterRoute);
+        this.routes.push(currentDateRoute);
+        this.routes.push(dateRoute);
         this.routes.push(discordIDRoute);
         this.routes.push(partyRoute);
+        this.routes.push(partyFundRoute);
+        this.routes.push(sendingRoute);
+        this.routes.push(specialChannelRoute);
         this.routes.push(userRoute);
+        this.routes.push(worldRoute);
     }
 
     public setup() {

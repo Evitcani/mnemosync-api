@@ -5,6 +5,8 @@ import {injectable} from "inversify";
 import {User} from "../../entity/User";
 import {getConnection} from "typeorm";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {WorldQuery} from "@evitcani/mnemoshared/dist/src/models/queries/WorldQuery";
+import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 
 @injectable()
 export class WorldController extends AbstractController<World> {
@@ -20,7 +22,7 @@ export class WorldController extends AbstractController<World> {
      *
      * @param world The world to create.
      */
-    public async create(world: World): Promise<World> {
+    public async save(world: World): Promise<World> {
         return this.getRepo().save(world)
             .catch((err: Error) => {
                 console.error("ERR ::: Could not create new world.");
@@ -87,5 +89,90 @@ export class WorldController extends AbstractController<World> {
 
     public static isWorld(obj: any): obj is World {
         return ((obj as World).type != undefined && (obj as World).type == "World") || typeof (obj as World).id == "string";
+    }
+
+    public async getById(id: string): Promise<World> {
+        return this.getRepo().findOne({where: {id: id}}).then((world) => {
+            if (!world) {
+                return null
+            }
+
+            return world;
+        }).catch((err) => {
+            console.error(err);
+            return null;
+        });
+    }
+
+    public async getAllByParams(params: WorldQuery): Promise<World[]> {
+        let nameStr = "world";
+        let query = this
+            .getRepo()
+            .createQueryBuilder(nameStr);
+
+        let flag = false;
+        if (params.name != null) {
+            let sanitizedName = StringUtility.escapeSQLInput(params.name);
+            let str = `LOWER("${nameStr}"."${ColumnName.NAME}") LIKE LOWER('%${sanitizedName}%')`;
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (params.discord_id != null) {
+            let sanitizedName = StringUtility.escapeSQLInput(params.discord_id);
+            let str = `"${nameStr}"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (params.ids != null) {
+            let str;
+            if (Array.isArray(params.ids)) {
+                str = `"${nameStr}"."${ColumnName.ID}" IN ('${params.ids.join("','")}')`;
+            } else {
+                str = `"${nameStr}"."${ColumnName.ID}" = '${params.ids}')`;
+            }
+
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (!flag) {
+            return Promise.resolve(null);
+        }
+
+        if (params.limit != null) {
+            query.take(params.limit)
+        }
+
+        if (params.skip != null) {
+            query.skip(params.skip);
+        }
+
+        return query
+            .getMany()
+            .catch((err: Error) => {
+                console.error("ERR ::: Could not get worlds.");
+                console.error(err);
+                return null;
+            });
     }
 }

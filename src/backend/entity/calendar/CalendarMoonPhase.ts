@@ -37,6 +37,9 @@ export class CalendarMoonPhase {
     @Column("decimal", {name: "viewing_angle_end", precision: 7, scale: 4})
     viewingAngleEnd: number;
 
+    @Column({name: "calendar_moon_id"})
+    moonId: string;
+
     @ManyToOne(type => CalendarMoon, moon => moon.phases,{
         cascade: true
     })

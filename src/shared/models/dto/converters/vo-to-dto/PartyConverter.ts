@@ -5,6 +5,11 @@ import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
 import {AbstractConverter} from "./AbstractConverter";
 
 export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
+    private partyFundConverter: PartyFundConverter;
+
+    constructor() {
+        super();
+    }
 
     convertExistingDtoToVo(vo: Party, dto: PartyDTO): Party {
         if (!dto) {
@@ -44,7 +49,7 @@ export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
         dto.funds = [];
         if (vo.funds != null && vo.funds.length > 0) {
             vo.funds.forEach((value) => {
-                let fund = PartyFundConverter.convertVoToDto(value);
+                let fund = this.partyFundConverter.convertVoToDto(value);
                 if (fund != null) {
                     dto.funds.push(fund);
                 }
