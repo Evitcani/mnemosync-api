@@ -38,8 +38,8 @@ export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController,
 
     protected async getByParams(req: Request, res: Response) {
         let query: {
-            guild_id: string,
-            designation: SpecialChannelDesignation
+            guild_id?: string,
+            designation?: SpecialChannelDesignation
         } = this.parseQuery(req, ['guild_id', 'designation']);
 
         let specialChannel = await this.controller.get(query.guild_id, query.designation);
