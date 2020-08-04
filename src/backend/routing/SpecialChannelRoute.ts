@@ -1,5 +1,5 @@
 import {AbstractRoute} from "./AbstractRoute";
-import {Application, Response} from "express";
+import {Application, Request, Response} from "express";
 import {SpecialChannel} from "../entity/SpecialChannel";
 import {SpecialChannelController} from "../controllers/user/SpecialChannelController";
 import {inject, injectable} from "inversify";
