@@ -17,6 +17,7 @@ import {SendingRoute} from "./backend/routing/SendingRoute";
 import {PartyFundRoute} from "./backend/routing/PartyFundRoute";
 import {DateRoute} from "./backend/routing/DateRoute";
 import {CurrentDateRoute} from "./backend/routing/CurrentDateRoute";
+import bodyParser from "body-parser";
 
 @injectable()
 export class App {
@@ -55,7 +56,7 @@ export class App {
         SwaggerUI.setupRoutes(this.app);
 
         this.app.use(this.isAuthorized);
-        //this.app.use(bodyParser.json());
+        this.app.use(bodyParser.json());
 
         // Define all routes.
         this.routes.forEach((route) => {

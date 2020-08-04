@@ -30,7 +30,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
     protected getOKResponseMulti(res: Response, items: J[])
     protected getOKResponseMulti(res: Response, items: J[], useConverter: boolean = true) {
         let dtos;
-        if (!items || items.length < 1) {
+        if (items == null || items.length < 1) {
             dtos = null
         } else {
             dtos = [];
@@ -52,6 +52,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         let body: DataDTO = req.body;
         if (body == null || body.data == null || body.data.length <= 0) {
             console.log("No body in request.");
+            console.log(body.data);
             return null;
         }
 
