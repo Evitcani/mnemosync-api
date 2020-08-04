@@ -24,7 +24,8 @@ export class SpecialChannelController extends AbstractController<SpecialChannel>
     }
 
     public async get(guildId: string, designation: SpecialChannelDesignation): Promise<SpecialChannel> {
-        if (!guildId || designation == null) {
+        if (!guildId || designation === null) {
+            console.log("Nothing here!");
             return Promise.resolve(null);
         }
 
