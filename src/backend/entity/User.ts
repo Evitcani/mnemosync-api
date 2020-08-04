@@ -63,10 +63,6 @@ export class User {
     @JoinColumn({name: "default_party_id"})
     defaultParty?: Party;
 
-    @ManyToMany(type => World, {nullable: true})
-    @JoinTable({name: TableName.WORLD_OWNERS})
-    campaignsDMing?: World[];
-
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
