@@ -14,28 +14,30 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
 
     constructor(@inject(TYPES.PartyController) controller: PartyController,
                 @inject(TYPES.CharacterController) characterController: CharacterController) {
-        super(controller, new PartyConverter());
+        super(`parties`, controller, new PartyConverter());
         this.characterController = characterController;
     }
 
     defineRoutes(app: Application): void {
-        app.get(`/api/parties`, (req, res) => {
-            return this.getByQuery(req, res);
-        });
-        app.post(`/api/parties`, (req, res) => {
-            return this.doBasicPost(req, res);
-        });
-        app.put(`/api/parties/:id`, (req, res) => {
-            let id = this.getNumberIdFromPath(req);
-            if (!id) {
-                return this.sendBadRequestResponse(res);
-            }
+        app.route(`${this.getBaseUrl()}`)
+            .get((req, res) => {
+                return this.getByQuery(req, res);
+            })
+            .post((req, res) => {
+                return this.doBasicPost(req, res);
+            });
+        app.route(`${this.getBaseUrl()}/:id`)
+            .put((req, res) => {
+                let id = this.getNumberIdFromPath(req);
+                if (!id) {
+                    return this.sendBadRequestResponse(res);
+                }
 
-            return this.doBasicPost(req, res, id);
-        });
-        app.get(`/api/parties/:id`, (req, res) => {
-            return this.get(req, res);
-        });
+                return this.doBasicPost(req, res, id);
+            })
+            .get((req, res) => {
+                return this.get(req, res);
+            });
     }
 
     private async get(req: Request, res: Response) {
@@ -45,7 +47,7 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
         }
 
         let vo = await this.controller.getById(id);
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
     private async getByQuery(req: Request, res: Response) {
@@ -55,25 +57,25 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
             let character = await this.characterController.getById(characterId);
 
             if (character == null || character.party == null) {
-                return this.getOKResponse(res, null);
+                return this.sendOKResponse(res, null);
             }
 
-            return this.getOKResponseMulti(res, [character.party]);
+            return this.sendOKResponseMulti(res, [character.party]);
         }
 
         if (query.world_id != null) {
             let party = await this.controller.getByWorld(query.world_id);
-            return this.getOKResponseMulti(res, party);
+            return this.sendOKResponseMulti(res, party);
         }
 
         if (query.guild_id != null) {
             if (query.name != null) {
                 let parties = await this.controller.getByNameAndGuild(query.name, query.guild_id);
-                return this.getOKResponseMulti(res, parties);
+                return this.sendOKResponseMulti(res, parties);
             }
 
             let party = await this.controller.getByGuild(query.guild_id);
-            return this.getOKResponseMulti(res, party);
+            return this.sendOKResponseMulti(res, party);
         }
 
         return res.status(400).json({data: null});

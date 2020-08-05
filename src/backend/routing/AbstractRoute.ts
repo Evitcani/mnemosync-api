@@ -5,21 +5,63 @@ import {DataDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DataDTO";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 import {AbstractConverter} from "../../shared/models/converters/AbstractConverter";
 
+/**
+ * Underlies most routing to make things easier.
+ */
 @injectable()
 export abstract class AbstractRoute<T extends AbstractController<any>, U extends AbstractConverter<any, any>, J> {
+    protected static BASE_PREFIX = "/api";
+    protected baseUrl: string;
+    /** The main controller to the database service. */
     protected controller: T;
+    /** The converter used to move things to or from DTO and VO. */
     protected converter: U;
 
-    protected constructor(@unmanaged() controller: T,
+    /**
+     * Constructs a basic instance of this.
+     *
+     * @param baseUrl
+     * @param controller The main controller to the database service.
+     * @param converter The converter used to move things to or from DTO and VO.
+     */
+    protected constructor(@unmanaged() baseUrl: string,
+                          @unmanaged() controller: T,
                           @unmanaged() converter: U) {
+        this.baseUrl = baseUrl;
         this.controller = controller;
         this.converter = converter;
     }
 
+    /**
+     * Defines the routes in the application.
+     *
+     * @param app The app to define the routes on.
+     */
     public abstract defineRoutes(app: Application): void;
 
-    protected getOKResponse(res: Response, item: J)
-    protected getOKResponse(res: Response, item: J, useConverter: boolean = true) {
+    /**
+     * Method to use when creating or updating the object.
+     *
+     * @param item The item to create or update.
+     */
+    protected abstract async controllerCreate(item: J): Promise<J>;
+
+    /**
+     * Gets the appropriate base URL for this routing device.
+     */
+    protected getBaseUrl(): string {
+        return `${AbstractRoute.BASE_PREFIX}/${this.baseUrl}`;
+    }
+
+    /**
+     * Sends an OK response and transforms the item using the converter.
+     *
+     * @param res The response to use for sending back.
+     * @param item The item to convert.
+     * @param useConverter True to use the converter on this item, false otherwise.
+     */
+    protected sendOKResponse(res: Response, item: J, useConverter?: boolean): Response
+    protected sendOKResponse(res: Response, item: J, useConverter: boolean = true): Response {
         let ret = item;
         if (useConverter) {
             ret = this.converter.convertVoToDto(item)
@@ -27,8 +69,15 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         return res.status(200).json({data: ret});
     }
 
-    protected getOKResponseMulti(res: Response, items: J[])
-    protected getOKResponseMulti(res: Response, items: J[], useConverter: boolean = true) {
+    /**
+     * Sends an OK response with multiple entries in an array of data.
+     *
+     * @param res The response to use for sending back.
+     * @param items The items to send back.
+     * @param useConverter True to use the converter, false otherwise.
+     */
+    protected sendOKResponseMulti(res: Response, items: J[], useConverter?: boolean): Response
+    protected sendOKResponseMulti(res: Response, items: J[], useConverter: boolean = true): Response {
         let dtos;
         if (items == null || items.length < 1) {
             dtos = null
@@ -46,13 +95,24 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         return res.status(200).json({data: dtos});
     }
 
-    protected getBodyFromRequest(req: Request): J
-    protected getBodyFromRequest(req: Request, useConverter: boolean): J
+    /**
+     * Sends a 400 Bad Request response back.
+     * @param res
+     */
+    protected sendBadRequestResponse(res: Response): Response {
+        return res.status(400).json({data: null}).end();
+    }
+
+    /**
+     * Gets the body from the request.
+     *
+     * @param req The request to get the body from.
+     * @param useConverter True to use the converter, false otherwise.
+     */
+    protected getBodyFromRequest(req: Request, useConverter?: boolean): J
     protected getBodyFromRequest(req: Request, useConverter: boolean = true): J {
         let body: DataDTO = req.body == null ? null : req.body.data;
         if (body == null || body.data == null || body.data.length <= 0) {
-            console.log("No body in request.");
-            console.log(body.data);
             return null;
         }
 
@@ -66,7 +126,6 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             newObj = dto;
         }
         if (newObj == null) {
-            console.log("Object would not be converted.");
             return null;
         }
 
@@ -103,14 +162,13 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             return this.sendBadRequestResponse(res);
         }
 
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
-    protected abstract async controllerCreate(item: J): Promise<J>;
-
-    protected getStringIdFromPath(req: Request): string {
+    protected getStringIdFromPath(req: Request, path?: string): string
+    protected getStringIdFromPath(req: Request, path: string = "id"): string {
         let params = req.params;
-        let idStr: string = params.id;
+        let idStr: string = params[path];
         if (!idStr) {
             return null
         }
@@ -118,8 +176,8 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         return idStr;
     }
 
-    protected getNumberIdFromPath(req): number {
-        let idStr = this.getStringIdFromPath(req);
+    protected getNumberIdFromPath(req, path?: string): number {
+        let idStr = this.getStringIdFromPath(req, path);
         if (!idStr) {
             return null;
         }
@@ -130,9 +188,5 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         }
 
         return id;
-    }
-
-    protected sendBadRequestResponse(res: Response) {
-        return res.status(400).json({data: null});
     }
 }

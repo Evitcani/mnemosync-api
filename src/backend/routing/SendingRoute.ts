@@ -9,7 +9,7 @@ import {SendingConverter} from "../../shared/models/converters/SendingConverter"
 @injectable()
 export class SendingRoute extends AbstractRoute<SendingController, SendingConverter, Sending> {
     constructor(@inject(TYPES.SendingController) sendingController: SendingController) {
-        super(sendingController, new SendingConverter());
+        super(`sendings`, sendingController, new SendingConverter());
     }
 
     protected async controllerCreate(item: Sending): Promise<Sending> {

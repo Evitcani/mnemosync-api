@@ -9,7 +9,7 @@ import {CalendarConverter} from "../../shared/models/converters/calendars/Calend
 @injectable()
 export class CalendarRoute extends AbstractRoute<CalendarController, CalendarConverter, Calendar> {
     constructor(@inject(TYPES.CalendarController) controller: CalendarController) {
-        super(controller, new CalendarConverter());
+        super(`calendars`, controller, new CalendarConverter());
     }
 
     protected async controllerCreate(item: Calendar): Promise<Calendar> {

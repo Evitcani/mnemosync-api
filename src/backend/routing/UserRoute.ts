@@ -9,20 +9,21 @@ import {UserConverter} from "../../shared/models/converters/UserConverter";
 @injectable()
 export class UserRoute extends AbstractRoute<UserController, UserConverter, User> {
     constructor(@inject(TYPES.UserController) userController: UserController) {
-        super(userController, new UserConverter());
+        super(`users`, userController, new UserConverter());
     }
 
     defineRoutes(app: Application): void {
-        app.get("/api/users/:id", (req, res) => {
-            return this.getUser(req, res);
-        });
-        app.put(`/api/users/:id`, (req, res) => {
-            let discordId: string = this.getStringIdFromPath(req);
-            if (!discordId) {
-                return this.sendBadRequestResponse(res);
-            }
-            return this.doBasicPost(req, res, discordId);
-        });
+        app.route(`${this.getBaseUrl()}/:id`)
+            .get((req, res) => {
+                return this.getUser(req, res);
+            })
+            .put((req, res) => {
+                let discordId: string = this.getStringIdFromPath(req);
+                if (!discordId) {
+                    return this.sendBadRequestResponse(res);
+                }
+                return this.doBasicPost(req, res, discordId);
+            });
     }
 
     private async getUser(req: Request, res: Response) {
@@ -42,7 +43,7 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
             return this.sendBadRequestResponse(res);
         }
 
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
     protected async controllerCreate(item: User): Promise<User> {

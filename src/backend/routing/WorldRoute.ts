@@ -14,7 +14,7 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
 
     constructor(@inject(TYPES.WorldController) worldController: WorldController,
                 @inject(TYPES.CharacterController) characterController: CharacterController) {
-        super(worldController, new WorldConverter());
+        super(`worlds`, worldController, new WorldConverter());
         this.characterController = characterController;
     }
 
@@ -23,28 +23,29 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
     }
 
     defineRoutes(app: Application): void {
-        app.post(`/api/worlds`, (req, res) => {
-            return this.createNewWorld(req, res);
-        });
-        app.get(`/api/worlds`, (req, res) => {
-            return this.getByQuery(req, res);
-        });
+        app.route(`${this.getBaseUrl()}`)
+            .post((req, res) => {
+                return this.createNewWorld(req, res);
+            })
+            .get((req, res) => {
+                return this.getByQuery(req, res);
+            });
+        app.route(`${this.getBaseUrl()}/:id`)
+            .get((req, res) => {
+                return this.get(req, res);
+            })
 
-        app.get(`/api/worlds/:id`, (req, res) => {
-            return this.get(req, res);
-        });
+            .put((req, res) => {
+                let id = this.getStringIdFromPath(req);
+                if (!id) {
+                    return this.sendBadRequestResponse(res);
+                }
+                return this.doBasicPost(req, res, id);
+            })
 
-        app.put(`/api/worlds/:id`, (req, res) => {
-            let id = this.getStringIdFromPath(req);
-            if (!id) {
-                return this.sendBadRequestResponse(res);
-            }
-            return this.doBasicPost(req, res, id);
-        });
-
-        app.post(`/api/worlds/:id`, (req, res) => {
-            return this.addUserToWorld(req, res);
-        });
+            .post((req, res) => {
+                return this.addUserToWorld(req, res);
+            });
     }
 
     protected async createNewWorld(req: Request, res: Response) {
@@ -71,7 +72,7 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
             return this.sendBadRequestResponse(res);
         }
 
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
     protected async addUserToWorld(req: Request, res: Response) {
@@ -89,7 +90,7 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
             return this.sendBadRequestResponse(res);
         }
 
-        return this.getOKResponse(res, null);
+        return this.sendOKResponse(res, null);
     }
 
     protected async get(req: Request, res: Response) {
@@ -99,7 +100,7 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
         }
 
         let world = await this.controller.getById(id);
-        return this.getOKResponse(res, world);
+        return this.sendOKResponse(res, world);
     }
 
     protected async getByQuery(req: Request, res: Response) {
@@ -109,6 +110,6 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
         }
 
         let worlds = await this.controller.getAllByParams(query);
-        return this.getOKResponseMulti(res, worlds);
+        return this.sendOKResponseMulti(res, worlds);
     }
 }

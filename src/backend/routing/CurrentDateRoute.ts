@@ -9,7 +9,7 @@ import {CurrentDateConverter} from "../../shared/models/converters/CurrentDateCo
 @injectable()
 export class CurrentDateRoute extends AbstractRoute<CurrentDateController, CurrentDateConverter, CurrentDate> {
     constructor(@inject(TYPES.CurrentDateController) specialChannelController: CurrentDateController) {
-        super(specialChannelController, new CurrentDateConverter());
+        super(`currentDates`, specialChannelController, new CurrentDateConverter());
     }
 
     protected async controllerCreate(item: CurrentDate): Promise<CurrentDate> {

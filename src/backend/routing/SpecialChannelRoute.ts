@@ -10,7 +10,7 @@ import {SpecialChannelDesignation} from "../../shared/enums/SpecialChannelDesign
 @injectable()
 export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController, SpecialChannelConverter, SpecialChannel> {
     constructor(@inject(TYPES.SpecialChannelController) specialChannelController: SpecialChannelController) {
-        super(specialChannelController, new SpecialChannelConverter());
+        super(`specialChannels`, specialChannelController, new SpecialChannelConverter());
     }
 
     protected async controllerCreate(item: SpecialChannel): Promise<SpecialChannel> {
@@ -18,25 +18,26 @@ export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController,
     }
 
     public defineRoutes(app: Application): void {
-        app.get(`/api/specialChannels`, (req, res) => {
-            return this.getByParams(req, res);
-        });
+        app.route(`${this.getBaseUrl()}`)
+            .get((req, res) => {
+                return this.getByParams(req, res);
+            })
 
-        app.post(`/api/specialChannels`, (req, res) => {
-            return this.doBasicPost(req, res).catch((err) => {
-                console.log(err);
-                return null;
+            .post((req, res) => {
+                return this.doBasicPost(req, res).catch((err) => {
+                    console.log(err);
+                    return null;
+                });
             });
-        });
+        app.route(`${this.getBaseUrl()}/:id`)
+            .put((req, res) => {
+                let id = this.getStringIdFromPath(req);
+                if (!id) {
+                    return this.sendBadRequestResponse(res);
+                }
 
-        app.put(`/api/specialChannels/:id`, (req, res) => {
-            let id = this.getStringIdFromPath(req);
-            if (!id) {
-                return this.sendBadRequestResponse(res);
-            }
-
-            return this.doBasicPost(req, res, id);
-        });
+                return this.doBasicPost(req, res, id);
+            });
     }
 
     protected async getByParams(req: Request, res: Response) {
@@ -46,6 +47,6 @@ export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController,
         } = this.parseQuery(req, ['guild_id', 'designation']);
 
         let specialChannel = await this.controller.get(query.guild_id, query.designation);
-        return this.getOKResponse(res, specialChannel);
+        return this.sendOKResponse(res, specialChannel);
     }
 }

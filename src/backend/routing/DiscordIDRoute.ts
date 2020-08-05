@@ -12,11 +12,11 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
 
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController,
                 @inject(TYPES.WorldController) worldController: WorldController) {
-        super(characterController, null);
+        super(`discordIds`, characterController, null);
     }
 
     defineRoutes(app: Application): void {
-        app.get(`/api/discordIds`, (req, res) => {
+        app.get(`${this.getBaseUrl()}`, (req, res) => {
             return this.getByQuery(req, res);
         });
     }
@@ -35,10 +35,10 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
         }
 
         if (ids.size <= 0) {
-            return this.getOKResponse(res, null);
+            return this.sendOKResponse(res, null);
         }
 
-        return this.getOKResponseMulti(res, Array.from(ids.values()))
+        return this.sendOKResponseMulti(res, Array.from(ids.values()))
     }
 
 

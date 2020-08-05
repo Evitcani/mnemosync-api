@@ -13,33 +13,32 @@ import {CharacterConverter} from "../../shared/models/converters/CharacterConver
 export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character> {
 
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController) {
-        super(characterController, new CharacterConverter());
+        super(`characters`, characterController, new CharacterConverter());
     }
 
     defineRoutes(app: Application): void {
-        app.post(`/api/characters`, (req, res) => {
-            return this.doBasicPost(req, res);
-        });
-        app.get(`/api/characters`, (req, res) => {
-            return this.getByQuery(req, res);
-        });
+        app.route(`${this.getBaseUrl()}`)
+            .post((req, res) => {
+                return this.doBasicPost(req, res);
+            })
+            .get((req, res) => {
+                return this.getByQuery(req, res);
+            });
+        app.route(`${this.getBaseUrl()}/:id`)
+            .get((req, res) => {
+                return this.get(req, res);
+            })
+            .put((req, res) => {
+                let idStr: string = this.getStringIdFromPath(req);
+                if (!idStr) {
+                    return this.sendBadRequestResponse(res);
+                }
 
-        app.get(`/api/characters/:id`, (req, res) => {
-            return this.get(req, res);
-        });
-
-        app.put(`/api/characters/:id`, (req, res) => {
-            let idStr: string = this.getStringIdFromPath(req);
-            if (!idStr) {
-                return this.sendBadRequestResponse(res);
-            }
-
-            return this.doBasicPost(req, res, idStr);
-        });
-
-        app.post(`/api/characters/:id/nickname`, (req, res) => {
-            return this.postNickname(req, res);
-        });
+                return this.doBasicPost(req, res, idStr);
+            })
+            .post((req, res) => {
+                return this.postNickname(req, res);
+            });
     }
 
     protected async postNickname(req: Request, res: Response) {
@@ -61,7 +60,7 @@ export class CharacterRoute extends AbstractRoute<CharacterController, Character
         }
 
         // @ts-ignore
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
     protected async get(req: Request, res: Response) {
@@ -71,14 +70,14 @@ export class CharacterRoute extends AbstractRoute<CharacterController, Character
         }
 
         let vo = await this.controller.getById(id);
-        return this.getOKResponse(res, vo);
+        return this.sendOKResponse(res, vo);
     }
 
     private async getByQuery(req: Request, res: Response) {
         let query: CharacterQuery = this.parseQuery(req, ALL_CHARACTER_QUERY);
 
         let vo = await this.controller.getCharactersByParams(query);
-        return this.getOKResponseMulti(res, vo);
+        return this.sendOKResponseMulti(res, vo);
     }
 
     protected async controllerCreate(item: Character): Promise<Character> {

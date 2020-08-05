@@ -9,7 +9,7 @@ import {DateConverter} from "../../shared/models/converters/DateConverter";
 @injectable()
 export class DateRoute extends AbstractRoute<DateController, DateConverter, GameDate> {
     constructor(@inject(TYPES.DateController) specialChannelController: DateController) {
-        super(specialChannelController, new DateConverter());
+        super(`dates`, specialChannelController, new DateConverter());
     }
 
     protected async controllerCreate(item: GameDate): Promise<GameDate> {
