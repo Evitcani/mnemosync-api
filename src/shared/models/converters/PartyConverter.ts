@@ -10,6 +10,7 @@ export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
 
     constructor() {
         super();
+        this.partyFundConverter = new PartyFundConverter();
     }
 
     convertExistingDtoToVo(vo: Party, dto: PartyDTO): Party {
