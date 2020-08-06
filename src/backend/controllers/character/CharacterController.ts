@@ -15,25 +15,25 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         super(TableName.CHARACTER, TableName.USER_TO_CHARACTER);
     }
 
-    public async getWorldIdsByCharacterId(id: string): Promise<string[]> {
-        let ids = [];
+    public async getWorldIdsByCharacterId(id: string): Promise<Set<string>> {
+        let ids = new Set<string>();
         let users = await this.getSecondaryRepo().find({where: {characterId: id}});
         if (users && users.length > 0) {
             users.forEach((value) => {
-                ids.push(value.worldId);
+                ids.add(value.worldId);
             });
         }
 
         let character = await this.getById(id);
         if (character && character.party != null && character.party.worldId != null) {
-            ids.push(character.party.worldId);
+            ids.add(character.party.worldId);
         }
 
-        if (ids.length <= 0) {
+        if (ids.size <= 0) {
             return Promise.resolve(null);
         }
 
-        console.log("Number of IDs: " + ids.length);
+        console.log("Number of IDs: " + ids.size);
 
         return Promise.resolve(ids);
     }

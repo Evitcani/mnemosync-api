@@ -106,25 +106,27 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
     protected async getByQuery(req: Request, res: Response) {
         let query: WorldQuery = this.parseQuery(req, ALL_WORLD_QUERY);
         if (query.character_id != null) {
+            let ids = new Set<string>();
             if (query.ids != null) {
                 if (typeof query.ids == 'string') {
-                    console.log("ids is one string: " + query.ids);
                     let id = query.ids;
-                    query.ids = [];
                     if (!id) {
-                        query.ids.push(id);
+                        ids.add(id);
                     }
+                } else {
+                    query.ids.forEach((id) => {
+                        ids.add(id);
+                    });
                 }
-            } else {
-                query.ids = [];
             }
-            console.log("Getting worlds by Ids....");
-            let id = await this.characterController.getWorldIdsByCharacterId(query.character_id);
-            console.log("Finished getting worlds by Ids....");
-            console.log("IDs: " + query.ids.length);
-            if (id != null && id.length <= 0) {
-                query.ids.concat(id);
+            let cIds = await this.characterController.getWorldIdsByCharacterId(query.character_id);
+            if (cIds != null) {
+                ids = new Set<string>([...cIds, ...ids]);
             }
+
+            query.character_id = null;
+            query.ids = Array.from(ids);
+
             console.log("IDs: " + query.ids.length);
         }
 
