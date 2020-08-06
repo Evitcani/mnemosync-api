@@ -73,6 +73,6 @@ export class PartyFundRoute extends AbstractRoute<PartyFundController, PartyFund
         }
 
         let fund = await this.controller.getByPartyAndType(partyId, query.type);
-        return this.sendOKResponse(res, fund);
+        return this.sendOKResponseMulti(res, [fund]);
     }
 }
