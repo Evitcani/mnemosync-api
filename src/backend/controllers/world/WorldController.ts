@@ -140,7 +140,10 @@ export class WorldController extends AbstractController<World> {
 
             if (!Array.isArray(params.ids)) {
                 let id = params.ids;
-                params.ids = [id];
+                params.ids = [];
+                if (id != null) {
+                    params.ids.push(id);
+                }
             }
 
             if (params.id != null) {
