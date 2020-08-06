@@ -117,10 +117,15 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
             } else {
                 query.ids = [];
             }
+            console.log("Getting worlds by Ids....");
             let id = await this.characterController.getWorldIdsByCharacterId(query.character_id);
-            query.ids.concat(id);
+            console.log("Finished getting worlds by Ids....");
+            if (id != null && id.length <= 0) {
+                query.ids.concat(id);
+            }
         }
 
+        console.log("Getting worlds by params...");
         let worlds = await this.controller.getAllByParams(query);
         return this.sendOKResponseMulti(res, worlds);
     }
