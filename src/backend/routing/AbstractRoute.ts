@@ -100,7 +100,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
      * @param res
      */
     protected sendBadRequestResponse(res: Response): Response {
-        return res.status(400).json({data: null}).end();
+        return res.status(400).json({data: null});
     }
 
     /**
