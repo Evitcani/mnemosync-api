@@ -22,7 +22,7 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
                 if (!discordId) {
                     return this.sendBadRequestResponse(res);
                 }
-                return this.doBasicPost(req, res, discordId);
+                return this.doBasicPost(req, res);
             });
     }
 
