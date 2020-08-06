@@ -24,7 +24,7 @@ export class PartyFundController extends AbstractController<PartyFund> {
 
         // No party like this, so create.
         let fund = new PartyFund();
-        fund.type = type;
+        fund.type = type.toUpperCase();
         fund.partyId = partyId;
         fund.amount = 0;
 
@@ -45,7 +45,7 @@ export class PartyFundController extends AbstractController<PartyFund> {
     }
 
     public async getByPartyAndType(partyId: number, type: string): Promise<PartyFund> {
-        return this.getRepo().findOne({where: {partyId: partyId, type: type}})
+        return this.getRepo().findOne({where: {partyId: partyId, type: type.toUpperCase()}})
             .catch((err: Error) => {
                 console.error("ERR ::: Could not find party fund.");
                 console.error(err);

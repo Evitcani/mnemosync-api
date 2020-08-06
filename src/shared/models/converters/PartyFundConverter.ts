@@ -32,6 +32,11 @@ export class PartyFundConverter extends AbstractConverter<PartyFund, PartyFundDT
         vo.id = this.checkNumber(dto.id || null);
         vo.type = StringUtility.escapeSQLInput(dto.type || null);
 
+        // Make uppercase.
+        if (vo.type != null) {
+            vo.type = vo.type.toUpperCase();
+        }
+
         // Convert to base amount.
         vo.amount = this.checkNumber(MoneyUtility.pileIntoCopper(dto) || null);
 
