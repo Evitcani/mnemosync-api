@@ -105,32 +105,41 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
 
     protected async getByQuery(req: Request, res: Response) {
         let query: WorldQuery = this.parseQuery(req, ALL_WORLD_QUERY);
-        if (query.character_id != null) {
-            let ids = new Set<string>();
-            if (query.ids != null) {
-                if (typeof query.ids == 'string') {
-                    let id = query.ids;
-                    if (!id) {
-                        ids.add(id);
-                    }
-                } else {
-                    query.ids.forEach((id) => {
-                        ids.add(id);
-                    });
+
+        let ids = new Set<string>();
+        if (query.ids != null) {
+            if (typeof query.ids == 'string') {
+                let id = query.ids;
+                if (!id) {
+                    ids.add(id);
                 }
+            } else {
+                query.ids.forEach((id) => {
+                    ids.add(id);
+                });
             }
+        }
+
+        if (query.id != null) {
+            ids.add(query.id);
+            query.id = null;
+        }
+
+        if (query.character_id != null) {
             let cIds = await this.characterController.getWorldIdsByCharacterId(query.character_id);
             if (cIds != null) {
                 ids = new Set<string>([...cIds, ...ids]);
             }
 
             query.character_id = null;
-            query.ids = Array.from(ids);
-
-            console.log("IDs: " + query.ids.length);
         }
 
-        console.log("Getting worlds by params...");
+        // Replace the IDs.
+        if (ids.size > 0) {
+            query.ids = Array.from(ids);
+        }
+
+
         let worlds = await this.controller.getAllByParams(query);
         return this.sendOKResponseMulti(res, worlds);
     }

@@ -33,8 +33,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
-        console.log("Number of IDs: " + ids.size);
-
         return Promise.resolve(ids);
     }
 
@@ -157,7 +155,12 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
-        return this.getRepo().find({where: {id: Any(Array.from(ids.values()))}, relations: ["nicknames"]})
+        return this.getRepo().find({
+            where: {
+                id: Any(Array.from(ids.values()))
+            },
+            order: {name: "ASC"},
+            relations: ["nicknames"]})
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
