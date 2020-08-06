@@ -134,20 +134,24 @@ export class WorldController extends AbstractController<World> {
         }
 
         if (params.ids != null || params.id != null) {
-            if (params.ids == null) {
+            if (params.ids == null || params.ids.length <= 0) {
                 params.ids = [];
             }
 
             if (!Array.isArray(params.ids)) {
                 let id = params.ids;
                 params.ids = [];
-                if (id != null) {
+                if (id != null && id != '') {
                     params.ids.push(id);
                 }
             }
 
             if (params.id != null) {
                 params.ids.push(params.id);
+            }
+
+            if (params.ids[0] == null || params.ids[0] == '') {
+                params.ids.shift();
             }
 
             let str = `"${nameStr}"."${ColumnName.ID}" IN ('${params.ids.join("','")}')`;
