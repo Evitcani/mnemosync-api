@@ -23,6 +23,9 @@ export class PartyFund {
     @UpdateDateColumn()
     updatedDate: Date;
 
+    @Column({name: "partyId"})
+    partyId: number;
+
     @ManyToOne(type => Party, party => party.funds, {
         cascade: true
     })
