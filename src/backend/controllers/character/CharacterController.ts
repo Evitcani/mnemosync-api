@@ -33,6 +33,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
+        console.log("Number of IDs: " + ids.length);
+
         return Promise.resolve(ids);
     }
 

@@ -107,7 +107,8 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
         let query: WorldQuery = this.parseQuery(req, ALL_WORLD_QUERY);
         if (query.character_id != null) {
             if (query.ids != null) {
-                if (!Array.isArray(query.ids)) {
+                if (typeof query.ids == 'string') {
+                    console.log("ids is one string: " + query.ids);
                     let id = query.ids;
                     query.ids = [];
                     if (!id) {
