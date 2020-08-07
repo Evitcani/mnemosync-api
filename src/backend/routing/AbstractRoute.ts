@@ -116,27 +116,17 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             return null;
         }
 
-        console.debug(req.body);
-
-        console.debug("There was a body!");
         let dto: V = body.data[0];
-        console.debug("Have DTO for body.");
 
         let newObj;
         if (useConverter && this.converter != null) {
-            console.debug("Began converting...");
-            console.debug("DTO: " + dto);
             newObj = this.converter.convertDtoToVo(dto);
         } else {
-            console.debug("Did not convert!");
             newObj = dto;
-            return null;
         }
         if (newObj == null) {
             return null;
         }
-
-        console.debug("Processed body.");
 
         return newObj;
     }
@@ -159,7 +149,6 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
     protected async doBasicPost(req: Request, res: Response, id?: any, path: string = "id") {
 
         let vo = this.getBodyFromRequest(req);
-        console.debug("Got body from request.");
         if (!vo) {
             return this.sendBadRequestResponse(res);
         }

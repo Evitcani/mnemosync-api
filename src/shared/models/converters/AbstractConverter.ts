@@ -10,7 +10,6 @@ export abstract class AbstractConverter<T extends object, U extends object> {
     }
 
     public convertDtoToVo (dto: U): T | null {
-        console.debug("Converting new...");
         return this.convertExistingDtoToVo(this.getNewVO(), dto);
     }
 

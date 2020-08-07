@@ -33,7 +33,6 @@ export class CalendarRoute extends AbstractRoute<CalendarController, CalendarCon
     public defineRoutes(app: Application): void {
         app.route(`${this.getBaseUrl()}`)
             .post((req: Request, res: Response) => {
-                console.log("Begin processing calendar...");
                 return this.doBasicPost(req, res).catch((err: Error) => {
                     console.error("Something went wrong during POST of calendar.");
                     console.error(err.stack);

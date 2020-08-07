@@ -98,20 +98,14 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
     }
 
     public convertExistingDtoToVo(vo: Calendar, dto: CalendarDTO): Calendar {
-        console.debug("Start the conversion!!");
-
         if (!dto) {
             return null;
         }
-
-        console.debug("Processed CHECKPOINT 0");
 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
         vo.yearLength = this.checkNumber(dto.yearLength || null);
-
-        console.debug("Processed CHECKPOINT 0.5");
 
         // Convert date.
         if (dto.epoch != null) {
@@ -119,8 +113,6 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         } else {
             vo.epoch = null;
         }
-
-        console.debug("Processed CHECKPOINT 1");
 
         // Convert world.
         dto.worldId = StringUtility.escapeSQLInput(vo.worldId || null);
@@ -138,8 +130,6 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
             vo.week = null;
         }
 
-        console.debug("Processed CHECKPOINT 2");
-
         // Convert months.
         vo.months = [];
         if (dto.months != null && dto.months.length > 0) {
@@ -152,8 +142,6 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         } else {
             vo.months = null;
         }
-
-        console.debug("Processed CHECKPOINT 3");
 
         // Convert moons.
         vo.moons = [];
@@ -168,8 +156,6 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
             vo.moons = null;
         }
 
-        console.debug("Processed CHECKPOINT 4");
-
         // Convert eras.
         vo.eras = [];
         if (dto.eras != null && dto.eras.length > 0) {
@@ -182,8 +168,6 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         } else {
             vo.eras = null;
         }
-
-        console.debug("Processed CHECKPOINT 5");
 
         return vo;
     }
