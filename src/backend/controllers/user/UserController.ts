@@ -39,7 +39,7 @@ export class UserController extends AbstractController<User> {
      * @param discordId The discord ID of the user.
      * @param discordName The discord name of user.
      */
-    public async get(discordId: string, discordName: string): Promise<User> {
+    public async get(discordId: string, discordName?: string): Promise<User> {
         return this.getRepo().findOne({
                 where: {
                     discord_id: discordId
@@ -113,6 +113,11 @@ export class UserController extends AbstractController<User> {
      * @param user The user to save.
      */
     public async save(user: User): Promise<User> {
+        let tempUser = await this.get(user.discord_id);
+        if (tempUser != null) {
+            user.id = tempUser.id;
+        }
+
         return this.getRepo().save(user).catch((err: Error) => {
             console.error("ERR ::: Could not save the user.");
             console.error(err);
