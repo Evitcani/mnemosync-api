@@ -1,5 +1,5 @@
 import {CurrentDate} from "../../../backend/entity/CurrentDate";
-import {CalendarConverter} from "./calendars/CalendarConverter";
+import {CalendarConverter} from "./CalendarConverter";
 import {DateConverter} from "./DateConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";

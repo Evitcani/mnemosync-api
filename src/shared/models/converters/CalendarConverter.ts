@@ -1,10 +1,10 @@
-import {Calendar} from "../../../../backend/entity/calendar/Calendar";
-import {DateConverter} from "../DateConverter";
-import {CalendarMoon} from "../../../../backend/entity/calendar/CalendarMoon";
-import {CalendarMoonPhase} from "../../../../backend/entity/calendar/CalendarMoonPhase";
-import {CalendarMonth} from "../../../../backend/entity/calendar/CalendarMonth";
-import {CalendarEra} from "../../../../backend/entity/calendar/CalendarEra";
-import {CalendarWeekDay} from "../../../../backend/entity/calendar/CalendarWeekDay";
+import {Calendar} from "../../../backend/entity/calendar/Calendar";
+import {DateConverter} from "./DateConverter";
+import {CalendarMoon} from "../../../backend/entity/calendar/CalendarMoon";
+import {CalendarMoonPhase} from "../../../backend/entity/calendar/CalendarMoonPhase";
+import {CalendarMonth} from "../../../backend/entity/calendar/CalendarMonth";
+import {CalendarEra} from "../../../backend/entity/calendar/CalendarEra";
+import {CalendarWeekDay} from "../../../backend/entity/calendar/CalendarWeekDay";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
 import {CalendarMonthDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMonthDTO";
@@ -12,7 +12,7 @@ import {CalendarEraDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/
 import {CalendarWeekDayDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarWeekDayDTO";
 import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
 import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
-import {AbstractConverter} from "../AbstractConverter";
+import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
 
 export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> {

@@ -4,7 +4,7 @@ import {Calendar} from "../entity/calendar/Calendar";
 import {Application, Request, Response} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
-import {CalendarConverter} from "../../shared/models/converters/calendars/CalendarConverter";
+import {CalendarConverter} from "../../shared/models/converters/CalendarConverter";
 import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
 
 /**
