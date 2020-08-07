@@ -115,7 +115,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         }
 
         // Convert world.
-        dto.worldId = StringUtility.escapeSQLInput(vo.worldId || null);
+        vo.worldId = StringUtility.escapeSQLInput(dto.worldId || null);
 
         // Convert week days.
         vo.week = [];
