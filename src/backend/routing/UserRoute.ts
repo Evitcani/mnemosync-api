@@ -18,7 +18,7 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
                 return this.getUser(req, res);
             })
             .put((req, res) => {
-                let discordId: string = this.getStringIdFromPath(req);
+                let discordId: string = this.getStringIdFromPath(req, "discord_id");
                 if (!discordId) {
                     return this.sendBadRequestResponse(res);
                 }
