@@ -9,8 +9,9 @@ import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDa
 
 @injectable()
 export class CurrentDateRoute extends AbstractRoute<CurrentDateController, CurrentDateConverter, CurrentDate, CurrentDateDTO> {
-    constructor(@inject(TYPES.CurrentDateController) specialChannelController: CurrentDateController) {
-        super(`currentDates`, specialChannelController, new CurrentDateConverter());
+    constructor(@inject(TYPES.CurrentDateController) currentDateController: CurrentDateController,
+                @inject(TYPES.CurrentDateConverter) currentDateConverter: CurrentDateConverter) {
+        super(`currentDates`, currentDateController, currentDateConverter);
     }
 
     protected async controllerCreate(item: CurrentDate): Promise<CurrentDate> {

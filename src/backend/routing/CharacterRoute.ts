@@ -13,8 +13,9 @@ import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDT
 @injectable()
 export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character, CharacterDTO> {
 
-    constructor(@inject(TYPES.CharacterController) characterController: CharacterController) {
-        super(`characters`, characterController, new CharacterConverter());
+    constructor(@inject(TYPES.CharacterController) characterController: CharacterController,
+                @inject(TYPES.CharacterConverter) characterConverter: CharacterConverter) {
+        super(`characters`, characterController, characterConverter);
     }
 
     defineRoutes(app: Application): void {

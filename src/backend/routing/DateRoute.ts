@@ -9,8 +9,9 @@ import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
 
 @injectable()
 export class DateRoute extends AbstractRoute<DateController, DateConverter, GameDate, DateDTO> {
-    constructor(@inject(TYPES.DateController) specialChannelController: DateController) {
-        super(`dates`, specialChannelController, new DateConverter());
+    constructor(@inject(TYPES.DateController) dateController: DateController,
+                @inject(TYPES.DateConverter) dateConverter: DateConverter) {
+        super(`dates`, dateController, new DateConverter());
     }
 
     protected async controllerCreate(item: GameDate): Promise<GameDate> {

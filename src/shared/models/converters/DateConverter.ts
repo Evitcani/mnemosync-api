@@ -3,7 +3,9 @@ import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {injectable} from "inversify";
 
+@injectable()
 export class DateConverter extends AbstractConverter<GameDate, DateDTO> {
 
     public convertExistingVoToDto(vo: GameDate, dto: DateDTO): DateDTO {

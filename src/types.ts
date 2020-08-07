@@ -37,4 +37,10 @@ export const TYPES = {
     SpecialChannelRoute: Symbol("SpecialChannelRoute"),
     UserRoute: Symbol("UserRoute"),
     WorldRoute: Symbol("WorldRoute"),
+
+    CalendarConverter: Symbol("CalendarConverter"),
+    CharacterConverter: Symbol("CharacterConverter"),
+    CurrentDateConverter: Symbol("CurrentDateConverter"),
+    DateConverter: Symbol("DateConverter"),
+    NicknameConverter: Symbol("NicknameConverter"),
 };

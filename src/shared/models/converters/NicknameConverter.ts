@@ -3,7 +3,9 @@ import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO"
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {injectable} from "inversify";
 
+@injectable()
 export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> {
     public convertExistingVoToDto(vo: Nickname, dto: NicknameDTO): NicknameDTO {
         if (!vo) {

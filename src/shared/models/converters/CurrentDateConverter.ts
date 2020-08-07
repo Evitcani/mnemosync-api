@@ -5,19 +5,23 @@ import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../../../types";
 
 /**
  * Converts the current date object.
  */
+@injectable()
 export class CurrentDateConverter extends AbstractConverter<CurrentDate, CurrentDateDTO> {
     /** Used to convert a date. */
     private dateConverter: DateConverter;
     private calendarConverter: CalendarConverter;
 
-    constructor() {
+    constructor(@inject(TYPES.CalendarConverter) calendarConverter: CalendarConverter,
+                @inject(TYPES.DateConverter) dateConverter: DateConverter) {
         super();
-        this.dateConverter = new DateConverter();
-        this.calendarConverter = new CalendarConverter();
+        this.dateConverter = dateConverter;
+        this.calendarConverter = calendarConverter;
     }
 
     public convertExistingVoToDto(vo: CurrentDate, dto: CurrentDateDTO): CurrentDateDTO | null {

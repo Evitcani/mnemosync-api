@@ -12,8 +12,9 @@ import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/Cal
  */
 @injectable()
 export class CalendarRoute extends AbstractRoute<CalendarController, CalendarConverter, Calendar, CalendarDTO> {
-    constructor(@inject(TYPES.CalendarController) controller: CalendarController) {
-        super(`calendars`, controller, new CalendarConverter());
+    constructor(@inject(TYPES.CalendarController) controller: CalendarController,
+                @inject(TYPES.CalendarConverter) calendarConverter: CalendarConverter) {
+        super(`calendars`, controller, calendarConverter);
     }
 
     /**

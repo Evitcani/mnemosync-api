@@ -4,13 +4,16 @@ import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDT
 import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../../../types";
 
+@injectable()
 export class CharacterConverter extends AbstractConverter<Character, CharacterDTO> {
     private readonly nicknameConverter: NicknameConverter;
 
-    constructor() {
+    constructor(@inject(TYPES.NicknameConverter) nicknameConverter: NicknameConverter) {
         super();
-        this.nicknameConverter = new NicknameConverter();
+        this.nicknameConverter = nicknameConverter;
     }
 
     public getNicknameConverter(): NicknameConverter {

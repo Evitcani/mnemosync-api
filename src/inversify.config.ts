@@ -30,6 +30,11 @@ import {SpecialChannelController} from "./backend/controllers/user/SpecialChanne
 import {DateRoute} from "./backend/routing/DateRoute";
 import {CurrentDateRoute} from "./backend/routing/CurrentDateRoute";
 import {CalendarRoute} from "./backend/routing/CalendarRoute";
+import {CalendarConverter} from "./shared/models/converters/CalendarConverter";
+import {DateConverter} from "./shared/models/converters/DateConverter";
+import {CharacterConverter} from "./shared/models/converters/CharacterConverter";
+import {CurrentDateConverter} from "./shared/models/converters/CurrentDateConverter";
+import {NicknameConverter} from "./shared/models/converters/NicknameConverter";
 
 let container = new Container();
 
@@ -70,5 +75,11 @@ container.bind<SendingRoute>(TYPES.SendingRoute).to(SendingRoute).inSingletonSco
 container.bind<SpecialChannelRoute>(TYPES.SpecialChannelRoute).to(SpecialChannelRoute).inSingletonScope();
 container.bind<UserRoute>(TYPES.UserRoute).to(UserRoute).inSingletonScope();
 container.bind<WorldRoute>(TYPES.WorldRoute).to(WorldRoute).inSingletonScope();
+
+container.bind<CalendarConverter>(TYPES.CalendarConverter).to(CalendarConverter).inSingletonScope();
+container.bind<CharacterConverter>(TYPES.CharacterConverter).to(CharacterConverter).inSingletonScope();
+container.bind<CurrentDateConverter>(TYPES.CurrentDateConverter).to(CurrentDateConverter).inSingletonScope();
+container.bind<DateConverter>(TYPES.DateConverter).to(DateConverter).inSingletonScope();
+container.bind<NicknameConverter>(TYPES.NicknameConverter).to(NicknameConverter).inSingletonScope();
 
 export default container;

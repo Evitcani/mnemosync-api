@@ -14,13 +14,16 @@ import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar
 import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../../../types";
 
+@injectable()
 export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> {
     private dateConverter: DateConverter;
 
-    constructor() {
+    constructor(@inject(TYPES.DateConverter) dateConverter: DateConverter) {
         super();
-        this.dateConverter = new DateConverter();
+        this.dateConverter = dateConverter;
     }
 
     public convertExistingVoToDto(vo: Calendar, dto: CalendarDTO): CalendarDTO {
