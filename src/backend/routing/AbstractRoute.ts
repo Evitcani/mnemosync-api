@@ -128,6 +128,8 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             return null;
         }
 
+        console.debug("Processed body.");
+
         return newObj;
     }
 
@@ -147,7 +149,9 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
 
     protected async doBasicPost(req: Request, res: Response, id?: any, path?: string)
     protected async doBasicPost(req: Request, res: Response, id?: any, path: string = "id") {
+
         let vo = this.getBodyFromRequest(req);
+        console.debug("Got body from request.");
         if (!vo) {
             return this.sendBadRequestResponse(res);
         }
