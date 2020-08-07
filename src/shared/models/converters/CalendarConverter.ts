@@ -102,7 +102,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
             return null;
         }
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
         vo.yearLength = this.checkNumber(dto.yearLength || 0);
@@ -203,7 +203,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMonth();
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
         vo.length = this.checkNumber(dto.length || 0);
@@ -247,7 +247,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarEra();
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.order = this.checkNumber(dto.order || 0);
 
@@ -290,7 +290,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarWeekDay();
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
         vo.order = this.checkNumber(dto.order || 0);
@@ -334,7 +334,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMoon();
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.cycle = this.checkNumber(dto.cycle || 0);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
@@ -379,7 +379,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         let vo = new CalendarMoonPhase();
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.order = this.checkNumber(dto.order || 0);
         vo.viewingAngleEnd = this.checkNumber(dto.viewingAngleEnd || 0);
