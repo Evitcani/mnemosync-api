@@ -95,6 +95,8 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
     }
 
     public convertExistingDtoToVo(vo: Calendar, dto: CalendarDTO): Calendar {
+        console.debug("Start the conversion!!");
+
         if (!dto) {
             return null;
         }
