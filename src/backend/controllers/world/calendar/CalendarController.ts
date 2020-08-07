@@ -33,7 +33,10 @@ export class CalendarController extends AbstractController<Calendar> {
 
     public async save(calendar: Calendar): Promise<Calendar> {
         console.log("Processing calendar....");
-        calendar = await this.getRepo().save(calendar).catch((err) => {
+        calendar = await this.getRepo().save(calendar).then((calendar) => {
+            console.log("Got calendar!");
+            return calendar;
+        }).catch((err) => {
             console.log("ERR ::: Could not save new calendar.");
             console.log(err);
             return null;
