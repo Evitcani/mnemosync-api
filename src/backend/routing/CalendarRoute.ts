@@ -21,7 +21,11 @@ export class CalendarRoute extends AbstractRoute<CalendarController, CalendarCon
      * @param item The item to save.
      */
     protected async controllerCreate(item: Calendar): Promise<Calendar> {
-        return this.controller.save(item);
+        return this.controller.save(item).catch((err) => {
+            console.error("ERR ::: Something went wrong inside the calendar router.");
+            console.error(err);
+            return null;
+        });
     }
 
     public defineRoutes(app: Application): void {
