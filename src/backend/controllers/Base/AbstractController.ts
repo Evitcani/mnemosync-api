@@ -101,11 +101,16 @@ export abstract class AbstractController<T> {
             }
         });
 
-        return this
+        let query = this
             .getRepo()
-            .createQueryBuilder(`item`)
-            .where(`"item"."calendar_id" = '${id}'`)
-            .andWhere(`"item"."id" NOT IN ('${ids.join("','")}')`)
+            .createQueryBuilder()
+            .where(`"${this.tableName}"."calendar_id" = '${id}'`);
+
+        if (ids.length > 0) {
+            query.andWhere(`"${this.tableName}"."id" NOT IN ('${ids.join("','")}')`)
+        }
+
+        return query
             .delete().execute().then(() => {
                 return true;
             }).catch((err) => {
