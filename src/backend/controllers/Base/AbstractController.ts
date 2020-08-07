@@ -2,13 +2,17 @@ import {getManager, Repository, SelectQueryBuilder} from "typeorm";
 import {NameValuePair} from "./NameValuePair";
 import {injectable, unmanaged} from "inversify";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
-import {Calendar} from "../../entity/calendar/Calendar";
-import {CalendarWeekDay} from "../../entity/calendar/CalendarWeekDay";
 
 @injectable()
 export abstract class AbstractController<T> {
+    /** The name of the table to get from. */
     protected tableName: string;
 
+    /**
+     * Constructs this controller.
+     *
+     * @param tableName The name of the table this controls.
+     */
     protected constructor(@unmanaged() tableName: string) {
         this.tableName = tableName;
     }

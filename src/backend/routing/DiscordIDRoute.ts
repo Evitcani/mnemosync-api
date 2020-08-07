@@ -35,10 +35,10 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
         }
 
         if (ids.size <= 0) {
-            return this.sendOKResponse(res, null);
+            return this.sendOKResponse(res, null, false);
         }
 
-        return this.sendOKResponseMulti(res, Array.from(ids.values()))
+        return this.sendOKResponseMulti(res, Array.from(ids.values()), false)
     }
 
 
