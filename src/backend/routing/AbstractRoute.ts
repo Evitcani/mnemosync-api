@@ -123,12 +123,14 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         console.debug("Have DTO for body.");
 
         let newObj;
-        if (useConverter) {
+        if (useConverter && this.converter != null) {
             console.debug("Began converting...");
             console.debug("DTO: " + dto);
             newObj = this.converter.convertDtoToVo(dto);
         } else {
+            console.debug("Did not convert!");
             newObj = dto;
+            return null;
         }
         if (newObj == null) {
             return null;
