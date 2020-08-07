@@ -19,7 +19,7 @@ export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
         }
 
         // Convert simple items.
-        vo.id = this.checkNumber(dto.id || null);
+        vo.id = this.checkNumber(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.guildId = StringUtility.escapeSQLInput(dto.guildId || null);
         vo.creatorDiscordId =StringUtility.escapeSQLInput( dto.creatorDiscordId || null);

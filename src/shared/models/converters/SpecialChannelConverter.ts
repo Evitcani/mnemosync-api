@@ -11,7 +11,7 @@ export class SpecialChannelConverter extends AbstractConverter <SpecialChannel, 
             return null;
         }
 
-        vo.id = this.checkNumber(dto.id || null);
+        vo.id = this.checkNumber(dto.id) || undefined;
         vo.designation = this.checkNumber(dto.designation);
         vo.channel_id = StringUtility.escapeSQLInput(dto.channel_id || null);
         vo.guild_id = StringUtility.escapeSQLInput(dto.guild_id || null);

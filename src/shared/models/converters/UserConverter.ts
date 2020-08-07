@@ -34,7 +34,7 @@ export class UserConverter extends AbstractConverter<User, UserDTO> {
             return null;
         }
 
-        vo.id = this.checkNumber(dto.id || null);
+        vo.id = this.checkNumber(dto.id) || undefined;
         vo.discord_name = StringUtility.escapeSQLInput(dto.discord_name || null);
         vo.discord_id = StringUtility.escapeSQLInput(dto.discord_id || null);
 

@@ -29,7 +29,7 @@ export class PartyFundConverter extends AbstractConverter<PartyFund, PartyFundDT
         }
 
         // Convert simple items.
-        vo.id = this.checkNumber(dto.id || null);
+        vo.id = this.checkNumber(dto.id) || undefined;
         vo.type = StringUtility.escapeSQLInput(dto.type || null);
 
         // Make uppercase.

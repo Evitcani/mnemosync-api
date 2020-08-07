@@ -60,7 +60,7 @@ export class CurrentDateConverter extends AbstractConverter<CurrentDate, Current
         }
 
         // Convert simple items.
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
 
         // Convert date.
         vo.date = this.dateConverter.convertDtoToVo(dto.date) || null;

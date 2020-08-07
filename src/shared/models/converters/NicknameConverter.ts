@@ -29,7 +29,7 @@ export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> 
         }
 
         // Convert simple items.
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.characterId = StringUtility.escapeSQLInput(dto.characterId || null);
         vo.discordId = StringUtility.escapeSQLInput(dto.discordId || null);

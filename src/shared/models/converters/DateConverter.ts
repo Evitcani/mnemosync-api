@@ -34,15 +34,15 @@ export class DateConverter extends AbstractConverter<GameDate, DateDTO> {
         }
 
         // Convert simple items.
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.recurrence = StringUtility.escapeSQLInput(dto.recurrence || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
         vo.calendarId = StringUtility.escapeSQLInput(dto.calendarId || null);
         vo.eraId = StringUtility.escapeSQLInput(dto.eraId || null);
-        vo.day = this.checkNumber(dto.day || null);
-        vo.month = this.checkNumber(dto.month || null);
-        vo.year = this.checkNumber(dto.year || null);
+        vo.day = this.checkNumber(dto.day || 0);
+        vo.month = this.checkNumber(dto.month || 0);
+        vo.year = this.checkNumber(dto.year || 0);
         vo.significant = dto.significant || false;
 
         // Return

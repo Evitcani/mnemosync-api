@@ -28,7 +28,7 @@ export class WorldConverter extends AbstractConverter<World, WorldDTO> {
         }
 
         // Convert simple items.
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.guildId = StringUtility.escapeSQLInput(dto.guildId || null);
         vo.mapUrl = StringUtility.escapeSQLInput(dto.mapUrl || null);

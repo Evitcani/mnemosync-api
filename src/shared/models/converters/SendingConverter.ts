@@ -19,17 +19,17 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
             return null;
         }
 
-        vo.id = StringUtility.escapeSQLInput(dto.id || null);
+        vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
         vo.worldId = StringUtility.escapeSQLInput(dto.worldId || null);
 
         // First user.
         vo.sendingMessageFromUser = new User();
-        vo.sendingMessageFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName || null);
+        vo.sendingMessageFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName) || undefined;
         vo.sendingMessageFromUser.discord_id = StringUtility.escapeSQLInput(dto.sendingMessageFromDiscordId || null);
 
         // Second user.
         vo.sendingReplyFromUser = new User();
-        vo.sendingReplyFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName || null);
+        vo.sendingReplyFromUser.discord_name = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordName) || undefined;
         vo.sendingReplyFromUser.discord_id = StringUtility.escapeSQLInput(dto.sendingReplyFromDiscordId || null);
 
         // Messages
@@ -54,7 +54,7 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
             return null;
         }
 
-        dto.id = vo.id || null;
+        dto.id = vo.id || undefined;
         dto.worldId = vo.worldId || null;
 
         // First user.
