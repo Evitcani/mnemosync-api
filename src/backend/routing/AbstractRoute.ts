@@ -117,8 +117,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         }
 
         let dto = body.data[0];
-        console.log(body);
-        console.log(dto);
+
         let newObj;
         if (useConverter) {
             newObj = this.converter.convertDtoToVo(dto);
