@@ -38,7 +38,7 @@ export class PartyFundConverter extends AbstractConverter<PartyFund, PartyFundDT
         }
 
         // Convert to base amount.
-        vo.amount = this.checkNumber(MoneyUtility.pileIntoCopper(dto) || null);
+        vo.amount = this.checkNumber(MoneyUtility.pileIntoCopper(dto) || 0);
 
         // Return
         return vo;
