@@ -188,10 +188,10 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         return vo;
     }
     protected getNewDTO(): CalendarDTO {
-        throw {dtoType: DTOType.CALENDAR};
+        return {dtoType: DTOType.CALENDAR};
     }
     protected getNewVO(): Calendar {
-        throw new Calendar();
+        return new Calendar();
     }
 
     protected convertMonthVoToDto (vo: CalendarMonth): CalendarMonthDTO {
