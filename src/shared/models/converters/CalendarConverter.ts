@@ -206,8 +206,8 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
-        vo.length = this.checkNumber(dto.length);
-        vo.order = this.checkNumber(dto.order);
+        vo.length = this.checkNumber(dto.length || 0);
+        vo.order = this.checkNumber(dto.order || 0);
 
         return vo;
     }
@@ -249,7 +249,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
-        vo.order = this.checkNumber(dto.order || null);
+        vo.order = this.checkNumber(dto.order || 0);
 
         if (!dto.start) {
             vo.start = this.dateConverter.convertDtoToVo(dto.start);
@@ -293,7 +293,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
-        vo.order = this.checkNumber(dto.order || null);
+        vo.order = this.checkNumber(dto.order || 0);
 
         return vo;
     }
@@ -336,9 +336,9 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
-        vo.cycle = this.checkNumber(dto.cycle);
+        vo.cycle = this.checkNumber(dto.cycle || 0);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
-        vo.shift = this.checkNumber(dto.shift);
+        vo.shift = this.checkNumber(dto.shift || 0);
 
         // Convert phases.
         vo.phases = [];
@@ -381,9 +381,9 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
-        vo.order = this.checkNumber(dto.order || null);
-        vo.viewingAngleEnd = this.checkNumber(dto.viewingAngleEnd || null);
-        vo.viewingAngleStart = this.checkNumber(dto.viewingAngleEnd || null);
+        vo.order = this.checkNumber(dto.order || 0);
+        vo.viewingAngleEnd = this.checkNumber(dto.viewingAngleEnd || 0);
+        vo.viewingAngleStart = this.checkNumber(dto.viewingAngleEnd || 0);
 
         return vo;
     }
