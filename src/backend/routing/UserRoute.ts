@@ -5,9 +5,10 @@ import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
 import {User} from "../entity/User";
 import {UserConverter} from "../../shared/models/converters/UserConverter";
+import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
 
 @injectable()
-export class UserRoute extends AbstractRoute<UserController, UserConverter, User> {
+export class UserRoute extends AbstractRoute<UserController, UserConverter, User, UserDTO> {
     constructor(@inject(TYPES.UserController) userController: UserController) {
         super(`users`, userController, new UserConverter());
     }

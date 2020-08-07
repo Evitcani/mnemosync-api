@@ -7,7 +7,7 @@ import {WorldController} from "../controllers/world/WorldController";
 import {ALL_DISCORD_ID_QUERY, DiscordIDQuery} from "@evitcani/mnemoshared/dist/src/models/queries/DisIDQuery";
 
 @injectable()
-export class DiscordIDRoute extends AbstractRoute<CharacterController, null, string> {
+export class DiscordIDRoute extends AbstractRoute<CharacterController, null, string, string> {
     private worldController: WorldController;
 
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController,

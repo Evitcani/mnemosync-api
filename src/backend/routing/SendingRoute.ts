@@ -5,9 +5,10 @@ import {Sending} from "../entity/Sending";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {SendingConverter} from "../../shared/models/converters/SendingConverter";
+import {SendingDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SendingDTO";
 
 @injectable()
-export class SendingRoute extends AbstractRoute<SendingController, SendingConverter, Sending> {
+export class SendingRoute extends AbstractRoute<SendingController, SendingConverter, Sending, SendingDTO> {
     constructor(@inject(TYPES.SendingController) sendingController: SendingController) {
         super(`sendings`, sendingController, new SendingConverter());
     }

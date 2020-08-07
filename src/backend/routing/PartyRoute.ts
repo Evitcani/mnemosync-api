@@ -7,9 +7,10 @@ import {CharacterController} from "../controllers/character/CharacterController"
 import {Party} from "../entity/Party";
 import {ALL_PARTY_QUERY, PartyQuery} from "@evitcani/mnemoshared/dist/src/models/queries/PartyQuery";
 import {PartyConverter} from "../../shared/models/converters/PartyConverter";
+import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
 
 @injectable()
-export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, Party> {
+export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, Party, PartyDTO> {
     private characterController: CharacterController;
 
     constructor(@inject(TYPES.PartyController) controller: PartyController,

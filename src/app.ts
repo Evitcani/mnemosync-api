@@ -24,7 +24,7 @@ export class App {
     private readonly app: Application;
     private port = process.env.PORT;
 
-    private routes: AbstractRoute<any, any, any>[];
+    private routes: AbstractRoute<any, any, any, any>[];
 
     constructor (@inject(TYPES.CalendarRoute) calendarRoute: CalendarRoute,
                  @inject(TYPES.CharacterRoute) characterRoute: CharacterRoute,

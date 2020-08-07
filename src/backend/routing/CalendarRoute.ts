@@ -5,12 +5,13 @@ import {Application, Request, Response} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {CalendarConverter} from "../../shared/models/converters/calendars/CalendarConverter";
+import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
 
 /**
  * Controls the calendars.
  */
 @injectable()
-export class CalendarRoute extends AbstractRoute<CalendarController, CalendarConverter, Calendar> {
+export class CalendarRoute extends AbstractRoute<CalendarController, CalendarConverter, Calendar, CalendarDTO> {
     constructor(@inject(TYPES.CalendarController) controller: CalendarController) {
         super(`calendars`, controller, new CalendarConverter());
     }

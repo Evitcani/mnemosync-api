@@ -5,9 +5,10 @@ import {CurrentDateController} from "../controllers/world/calendar/CurrentDateCo
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {CurrentDateConverter} from "../../shared/models/converters/CurrentDateConverter";
+import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";
 
 @injectable()
-export class CurrentDateRoute extends AbstractRoute<CurrentDateController, CurrentDateConverter, CurrentDate> {
+export class CurrentDateRoute extends AbstractRoute<CurrentDateController, CurrentDateConverter, CurrentDate, CurrentDateDTO> {
     constructor(@inject(TYPES.CurrentDateController) specialChannelController: CurrentDateController) {
         super(`currentDates`, specialChannelController, new CurrentDateConverter());
     }

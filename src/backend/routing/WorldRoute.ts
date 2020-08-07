@@ -7,9 +7,10 @@ import {ALL_WORLD_QUERY, WorldQuery} from "@evitcani/mnemoshared/dist/src/models
 import {TYPES} from "../../types";
 import {CharacterController} from "../controllers/character/CharacterController";
 import {WorldConverter} from "../../shared/models/converters/WorldConverter";
+import {WorldDTO} from "@evitcani/mnemoshared/dist/src/dto/model/WorldDTO";
 
 @injectable()
-export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, World> {
+export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, World, WorldDTO> {
     private characterController: CharacterController;
 
     constructor(@inject(TYPES.WorldController) worldController: WorldController,

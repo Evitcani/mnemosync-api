@@ -9,7 +9,7 @@ import {AbstractConverter} from "../../shared/models/converters/AbstractConverte
  * Underlies most routing to make things easier.
  */
 @injectable()
-export abstract class AbstractRoute<T extends AbstractController<any>, U extends AbstractConverter<any, any>, J> {
+export abstract class AbstractRoute<T extends AbstractController<any>, U extends AbstractConverter<any, any>, J, V> {
     protected static BASE_PREFIX = "/api";
     protected baseUrl: string;
     /** The main controller to the database service. */
@@ -119,7 +119,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         console.debug(req.body);
 
         console.debug("There was a body!");
-        let dto = body.data[0];
+        let dto: V = body.data[0];
         console.debug("Have DTO for body.");
 
         let newObj;

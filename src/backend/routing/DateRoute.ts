@@ -5,9 +5,10 @@ import {DateController} from "../controllers/world/calendar/DateController";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {DateConverter} from "../../shared/models/converters/DateConverter";
+import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
 
 @injectable()
-export class DateRoute extends AbstractRoute<DateController, DateConverter, GameDate> {
+export class DateRoute extends AbstractRoute<DateController, DateConverter, GameDate, DateDTO> {
     constructor(@inject(TYPES.DateController) specialChannelController: DateController) {
         super(`dates`, specialChannelController, new DateConverter());
     }

@@ -6,9 +6,10 @@ import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {SpecialChannelConverter} from "../../shared/models/converters/SpecialChannelConverter";
 import {SpecialChannelDesignation} from "../../shared/enums/SpecialChannelDesignation";
+import {SpecialChannelDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SpecialChannelDTO";
 
 @injectable()
-export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController, SpecialChannelConverter, SpecialChannel> {
+export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController, SpecialChannelConverter, SpecialChannel, SpecialChannelDTO> {
     constructor(@inject(TYPES.SpecialChannelController) specialChannelController: SpecialChannelController) {
         super(`specialChannels`, specialChannelController, new SpecialChannelConverter());
     }

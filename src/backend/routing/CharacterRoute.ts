@@ -8,9 +8,10 @@ import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO"
 import {Nickname} from "../entity/Nickname";
 import {ALL_CHARACTER_QUERY, CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
 import {CharacterConverter} from "../../shared/models/converters/CharacterConverter";
+import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDTO";
 
 @injectable()
-export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character> {
+export class CharacterRoute extends AbstractRoute<CharacterController, CharacterConverter, Character, CharacterDTO> {
 
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController) {
         super(`characters`, characterController, new CharacterConverter());
