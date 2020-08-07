@@ -18,12 +18,11 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
                 return this.getUser(req, res);
             })
             .put((req, res) => {
-                let discordId: string = this.getStringIdFromPath(req);
-                if (!discordId) {
-                    console.log("No discord ID....");
+                let id: number = this.getNumberIdFromPath(req);
+                if (!id) {
                     return this.sendBadRequestResponse(res);
                 }
-                return this.doBasicPost(req, res);
+                return this.doBasicPost(req, res, id);
             });
     }
 
