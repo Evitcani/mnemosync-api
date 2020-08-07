@@ -116,6 +116,8 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             return null;
         }
 
+        console.debug(req.body);
+
         console.debug("There was a body!");
         let dto = body.data[0];
         console.debug("Have DTO for body.");
