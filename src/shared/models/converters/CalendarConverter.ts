@@ -105,7 +105,7 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
-        vo.yearLength = this.checkNumber(dto.yearLength || null);
+        vo.yearLength = this.checkNumber(dto.yearLength || 0);
 
         // Convert date.
         if (dto.epoch != null) {
