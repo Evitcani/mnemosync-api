@@ -145,7 +145,8 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         return params;
     }
 
-    protected async doBasicPost(req: Request, res: Response, id?: any) {
+    protected async doBasicPost(req: Request, res: Response, id?: any, path?: string)
+    protected async doBasicPost(req: Request, res: Response, id?: any, path: string = "id") {
         let vo = this.getBodyFromRequest(req);
         if (!vo) {
             return this.sendBadRequestResponse(res);
@@ -153,7 +154,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
 
         if (id) {
             // @ts-ignore
-            vo.id = id;
+            vo[path] = id;
         }
 
         vo = await this.controllerCreate(vo);
