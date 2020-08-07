@@ -99,6 +99,8 @@ export class CalendarConverter extends AbstractConverter<Calendar, CalendarDTO> 
             return null;
         }
 
+        console.debug("Processed CHECKPOINT 0");
+
         vo.id = StringUtility.escapeSQLInput(dto.id || null);
         vo.name = StringUtility.escapeSQLInput(dto.name || null);
         vo.description = StringUtility.escapeSQLInput(dto.description || null);
