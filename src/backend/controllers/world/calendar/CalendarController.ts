@@ -32,13 +32,27 @@ export class CalendarController extends AbstractController<Calendar> {
     }
 
     public async save(calendar: Calendar): Promise<Calendar> {
-        calendar = await this.getRepo().save(calendar);
+        console.log("Processing calendar....");
+        calendar = await this.getRepo().save(calendar).catch((err) => {
+            console.log("ERR ::: Could not save new calendar.");
+            console.log(err);
+            return null;
+        });
+        console.log("Saved calendar....");
+
+        if (calendar == null) {
+            return Promise.resolve(null);
+        }
 
         // Must save the days.
+        console.log("Processing week....");
         calendar.week = await this.days.save(calendar.week, calendar.id || null);
+        console.log("Saved week....");
 
         // Must save the months.
+        console.log("Processing months....");
         calendar.months = await this.months.save(calendar.months, calendar.id || null);
+        console.log("Saved months....");
 
         // Must save the moons.
         calendar.moons = await this.moons.save(calendar.moons, calendar.id || null);
