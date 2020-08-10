@@ -2,13 +2,12 @@ import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {World} from "../../entity/World";
-import {Character} from "../../entity/Character";
 import {Any, getConnection} from "typeorm";
 import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {SendingQuery} from "@evitcani/mnemoshared/dist/src/models/queries/SendingQuery";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {
@@ -36,6 +35,16 @@ export class SendingController extends AbstractController<Sending> {
             });
     }
 
+    public async getById(id: string): Promise<Sending> {
+        return this.getRepo().findOne({where: {id: id}, relations: ["toCharacter", "fromCharacter",
+                "sendingReplyFromUser", "sendingMessageFromUser"]})
+            .catch((err: Error) => {
+                console.error("ERR ::: Could not get sendings.");
+                console.error(err);
+                return null;
+            });
+    }
+
     public async getByIds(ids: string[]): Promise<Sending[]> {
         // Not a valid argument.
         if (ids == null || ids.length < 1) {
@@ -44,11 +53,6 @@ export class SendingController extends AbstractController<Sending> {
 
         return this.getRepo().find({where: {id: Any(ids)}, relations: ["toCharacter", "fromCharacter",
                 "sendingReplyFromUser", "sendingMessageFromUser"]})
-            .then((sending) => {
-                // Check the party is valid.
-
-                return sending;
-            })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get sendings.");
                 console.error(err);
@@ -56,35 +60,29 @@ export class SendingController extends AbstractController<Sending> {
             });
     }
 
-    public async getOne(page: number, world: World, toCharacter: Character): Promise<Sending> {
-        return this.getByParams(page, 1, world, toCharacter).then((messages) => {
-            if (messages == null || messages.length < 1) {
-                return null;
-            }
-
-            return messages[0];
-        });
-    }
-
-    public async get(page: number, world: World, toCharacter: Character): Promise<Sending[]> {
-        return this.getByParams(page * SendingController.SENDING_LIMIT, SendingController.SENDING_LIMIT,
-            world, toCharacter);
-    }
-
-    private async getByParams(skip: number, limit: number,
-                              world: World, toCharacter: Character): Promise<Sending[]> {
+    public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
         let alias = "msg";
         let query = getConnection().createQueryBuilder(Sending, alias);
 
-        if (world != null) {
-            query = query.where(WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, world.id));
+        if (params.world_id != null) {
+            query = query.where(WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, params.world_id));
             flag = true;
         }
 
-        if (toCharacter != null) {
-            sub = WhereQuery.EQUALS(alias, ColumnName.TO_CHARACTER_ID, toCharacter.id);
+        if (params.to_character_id != null) {
+            sub = WhereQuery.EQUALS(alias, ColumnName.TO_CHARACTER_ID, params.to_character_id);
+            if (flag) {
+                query = query.andWhere(sub);
+            } else {
+                query = query.where(sub);
+            }
+            flag = true;
+        }
+
+        if (params.from_character_id != null) {
+            sub = WhereQuery.EQUALS(alias, ColumnName.FROM_CHARACTER_ID, params.from_character_id);
             if (flag) {
                 query = query.andWhere(sub);
             } else {
@@ -99,13 +97,19 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
+        if (params.skip != null) {
+            query.skip(params.skip);
+        }
+
+        if (params.limit != null) {
+            query.take(params.limit);
+        }
+
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
             .addSelect([ColumnName.ID])
-            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC")
-            .limit(limit)
-            .skip(skip);
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         return query
             .getMany().then((messages) => {
