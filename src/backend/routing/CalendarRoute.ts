@@ -5,7 +5,7 @@ import {Application, Request, Response} from "express";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {CalendarConverter} from "../../shared/models/converters/CalendarConverter";
-import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
+import {CalendarDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
 
 /**
  * Controls the calendars.

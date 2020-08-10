@@ -4,10 +4,10 @@ import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
 import {Any, getManager} from "typeorm";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
-import {CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
+import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 
 @injectable()

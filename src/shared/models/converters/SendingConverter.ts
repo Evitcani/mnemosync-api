@@ -1,10 +1,10 @@
 import {AbstractConverter} from "./AbstractConverter";
 import {Sending} from "../../../backend/entity/Sending";
-import {SendingDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SendingDTO";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {SendingDTO} from "mnemoshared/dist/src/dto/model/SendingDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
 import {User} from "../../../backend/entity/User";
 import {DateConverter} from "./DateConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
     private dateConverter: DateConverter;

@@ -7,7 +7,7 @@ import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
-import {SendingQuery} from "@evitcani/mnemoshared/dist/src/models/queries/SendingQuery";
+import {SendingQuery} from "mnemoshared/dist/src/models/queries/SendingQuery";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {

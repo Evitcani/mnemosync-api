@@ -9,7 +9,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.SPECIAL_CHANNEL})
 export class SpecialChannel {

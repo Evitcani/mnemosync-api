@@ -9,7 +9,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Character} from "./Character";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 import {TableName} from "../../shared/documentation/databases/TableName";
 

@@ -5,8 +5,8 @@ import {PartyFund} from "../entity/PartyFund";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {PartyFundConverter} from "../../shared/models/converters/PartyFundConverter";
-import {ALL_PARTY_FUND_QUERY, PartyFundQuery} from "@evitcani/mnemoshared/dist/src/models/queries/PartyFundQuery";
-import {PartyFundDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyFundDTO";
+import {ALL_PARTY_FUND_QUERY, PartyFundQuery} from "mnemoshared/dist/src/models/queries/PartyFundQuery";
+import {PartyFundDTO} from "mnemoshared/dist/src/dto/model/PartyFundDTO";
 
 @injectable()
 export class PartyFundRoute extends AbstractRoute<PartyFundController, PartyFundConverter, PartyFund, PartyFundDTO> {

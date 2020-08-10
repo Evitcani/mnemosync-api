@@ -1,10 +1,10 @@
 import {CurrentDate} from "../../../backend/entity/CurrentDate";
 import {CalendarConverter} from "./CalendarConverter";
 import {DateConverter} from "./DateConverter";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {CurrentDateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CurrentDateDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {CurrentDateDTO} from "mnemoshared/dist/src/dto/model/CurrentDateDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../../types";
 

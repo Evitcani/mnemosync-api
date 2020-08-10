@@ -5,15 +5,15 @@ import {CalendarMoonPhase} from "../../../backend/entity/calendar/CalendarMoonPh
 import {CalendarMonth} from "../../../backend/entity/calendar/CalendarMonth";
 import {CalendarEra} from "../../../backend/entity/calendar/CalendarEra";
 import {CalendarWeekDay} from "../../../backend/entity/calendar/CalendarWeekDay";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {CalendarDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
-import {CalendarMonthDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMonthDTO";
-import {CalendarEraDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarEraDTO";
-import {CalendarWeekDayDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarWeekDayDTO";
-import {CalendarMoonDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
-import {CalendarMoonPhaseDTO} from "@evitcani/mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {CalendarDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarDTO";
+import {CalendarMonthDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarMonthDTO";
+import {CalendarEraDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarEraDTO";
+import {CalendarWeekDayDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarWeekDayDTO";
+import {CalendarMoonDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarMoonDTO";
+import {CalendarMoonPhaseDTO} from "mnemoshared/dist/src/dto/model/calendar/CalendarMoonPhaseDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../../types";
 

@@ -1,7 +1,7 @@
 import {getManager, Repository, SelectQueryBuilder} from "typeorm";
 import {NameValuePair} from "./NameValuePair";
 import {injectable, unmanaged} from "inversify";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export abstract class AbstractController<T> {

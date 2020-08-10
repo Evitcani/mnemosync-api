@@ -1,9 +1,9 @@
 import {Party} from "../../../backend/entity/Party";
 import {PartyFundConverter} from "./PartyFundConverter";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {PartyDTO} from "mnemoshared/dist/src/dto/model/PartyDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 export class PartyConverter extends AbstractConverter<Party, PartyDTO> {
     private partyFundConverter: PartyFundConverter;

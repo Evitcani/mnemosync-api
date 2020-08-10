@@ -1,8 +1,8 @@
 import {GameDate} from "../../../backend/entity/GameDate";
-import {DateDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DateDTO";
+import {DateDTO} from "mnemoshared/dist/src/dto/model/DateDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {injectable} from "inversify";
 
 @injectable()

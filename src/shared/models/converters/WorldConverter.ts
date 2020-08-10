@@ -1,8 +1,8 @@
 import {World} from "../../../backend/entity/World";
-import {WorldDTO} from "@evitcani/mnemoshared/dist/src/dto/model/WorldDTO";
+import {WorldDTO} from "mnemoshared/dist/src/dto/model/WorldDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 export class WorldConverter extends AbstractConverter<World, WorldDTO> {
     public convertExistingVoToDto(vo: World, dto: WorldDTO): WorldDTO {

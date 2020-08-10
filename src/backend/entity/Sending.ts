@@ -14,7 +14,7 @@ import {TableName} from "../../shared/documentation/databases/TableName";
 import {World} from "./World";
 import {GameDate} from "./GameDate";
 import {User} from "./User";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.SENDING})

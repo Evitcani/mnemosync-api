@@ -6,7 +6,7 @@ import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
 import {SpecialChannelConverter} from "../../shared/models/converters/SpecialChannelConverter";
 import {SpecialChannelDesignation} from "../../shared/enums/SpecialChannelDesignation";
-import {SpecialChannelDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SpecialChannelDTO";
+import {SpecialChannelDTO} from "mnemoshared/dist/src/dto/model/SpecialChannelDTO";
 
 @injectable()
 export class SpecialChannelRoute extends AbstractRoute<SpecialChannelController, SpecialChannelConverter, SpecialChannel, SpecialChannelDTO> {

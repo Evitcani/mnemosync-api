@@ -1,4 +1,4 @@
-import {MoneyArchetype} from "@evitcani/mnemoshared/dist/src/models/MoneyArchetype";
+import {MoneyArchetype} from "mnemoshared/dist/src/models/MoneyArchetype";
 
 export class MoneyType {
     static PLATINUM = new MoneyArchetype("platinum", "p", 1000);

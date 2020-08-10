@@ -13,7 +13,7 @@ import {PartyFund} from "./PartyFund";
 import {World} from "./World";
 import {CurrentDate} from "./CurrentDate";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.PARTY})
 export class Party {

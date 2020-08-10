@@ -1,9 +1,9 @@
 import {Character} from "../../../backend/entity/Character";
 import {NicknameConverter} from "./NicknameConverter";
-import {CharacterDTO} from "@evitcani/mnemoshared/dist/src/dto/model/CharacterDTO";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {CharacterDTO} from "mnemoshared/dist/src/dto/model/CharacterDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../../types";
 

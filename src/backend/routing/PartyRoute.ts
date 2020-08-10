@@ -5,9 +5,9 @@ import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
 import {CharacterController} from "../controllers/character/CharacterController";
 import {Party} from "../entity/Party";
-import {ALL_PARTY_QUERY, PartyQuery} from "@evitcani/mnemoshared/dist/src/models/queries/PartyQuery";
+import {ALL_PARTY_QUERY, PartyQuery} from "mnemoshared/dist/src/models/queries/PartyQuery";
 import {PartyConverter} from "../../shared/models/converters/PartyConverter";
-import {PartyDTO} from "@evitcani/mnemoshared/dist/src/dto/model/PartyDTO";
+import {PartyDTO} from "mnemoshared/dist/src/dto/model/PartyDTO";
 
 @injectable()
 export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, Party, PartyDTO> {

@@ -1,8 +1,8 @@
 import {Nickname} from "../../../backend/entity/Nickname";
-import {NicknameDTO} from "@evitcani/mnemoshared/dist/src/dto/model/NicknameDTO";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
+import {NicknameDTO} from "mnemoshared/dist/src/dto/model/NicknameDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
 import {AbstractConverter} from "./AbstractConverter";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {injectable} from "inversify";
 
 @injectable()

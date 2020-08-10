@@ -1,8 +1,8 @@
 import {AbstractConverter} from "./AbstractConverter";
 import {SpecialChannel} from "../../../backend/entity/SpecialChannel";
-import {SpecialChannelDTO} from "@evitcani/mnemoshared/dist/src/dto/model/SpecialChannelDTO";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {SpecialChannelDTO} from "mnemoshared/dist/src/dto/model/SpecialChannelDTO";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 export class SpecialChannelConverter extends AbstractConverter <SpecialChannel, SpecialChannelDTO> {
     convertExistingDtoToVo(vo: SpecialChannel, dto: SpecialChannelDTO): SpecialChannel {

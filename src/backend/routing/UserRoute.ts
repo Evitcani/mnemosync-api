@@ -5,7 +5,7 @@ import {TYPES} from "../../types";
 import {Application, Request, Response} from "express";
 import {User} from "../entity/User";
 import {UserConverter} from "../../shared/models/converters/UserConverter";
-import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
+import {UserDTO} from "mnemoshared/dist/src/dto/model/UserDTO";
 
 @injectable()
 export class UserRoute extends AbstractRoute<UserController, UserConverter, User, UserDTO> {

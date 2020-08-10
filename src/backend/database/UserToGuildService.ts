@@ -1,7 +1,7 @@
 import {DatabaseService} from "./base/DatabaseService";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../types";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export class UserToGuildService {

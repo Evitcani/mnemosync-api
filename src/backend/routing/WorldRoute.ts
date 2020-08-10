@@ -3,11 +3,11 @@ import {Application, Request, Response} from "express";
 import {WorldController} from "../controllers/world/WorldController";
 import {World} from "../entity/World";
 import {inject, injectable} from "inversify";
-import {ALL_WORLD_QUERY, WorldQuery} from "@evitcani/mnemoshared/dist/src/models/queries/WorldQuery";
+import {ALL_WORLD_QUERY, WorldQuery} from "mnemoshared/dist/src/models/queries/WorldQuery";
 import {TYPES} from "../../types";
 import {CharacterController} from "../controllers/character/CharacterController";
 import {WorldConverter} from "../../shared/models/converters/WorldConverter";
-import {WorldDTO} from "@evitcani/mnemoshared/dist/src/dto/model/WorldDTO";
+import {WorldDTO} from "mnemoshared/dist/src/dto/model/WorldDTO";
 
 @injectable()
 export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, World, WorldDTO> {

@@ -3,8 +3,8 @@ import {World} from "../../entity/World";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {injectable} from "inversify";
 import {getManager} from "typeorm";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
-import {WorldQuery} from "@evitcani/mnemoshared/dist/src/models/queries/WorldQuery";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {WorldQuery} from "mnemoshared/dist/src/models/queries/WorldQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 
 @injectable()

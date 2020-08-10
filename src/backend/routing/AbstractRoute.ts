@@ -1,8 +1,8 @@
 import {injectable, unmanaged} from "inversify";
 import {AbstractController} from "../controllers/Base/AbstractController";
 import {Application, Request, Response} from "express";
-import {DataDTO} from "@evitcani/mnemoshared/dist/src/dto/model/DataDTO";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {DataDTO} from "mnemoshared/dist/src/dto/model/DataDTO";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {AbstractConverter} from "../../shared/models/converters/AbstractConverter";
 
 /**

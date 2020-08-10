@@ -1,8 +1,8 @@
 import {User} from "../../../backend/entity/User";
-import {UserDTO} from "@evitcani/mnemoshared/dist/src/dto/model/UserDTO";
+import {UserDTO} from "mnemoshared/dist/src/dto/model/UserDTO";
 import {AbstractConverter} from "./AbstractConverter";
-import {DTOType} from "@evitcani/mnemoshared/dist/src/dto/DTOType";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 export class UserConverter extends AbstractConverter<User, UserDTO> {
     public convertExistingVoToDto(vo: User, dto: UserDTO): UserDTO {

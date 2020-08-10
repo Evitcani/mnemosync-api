@@ -11,7 +11,7 @@ import {
 import {Party} from "./Party";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.WORLD})
 export class World {

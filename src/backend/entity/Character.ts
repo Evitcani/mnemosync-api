@@ -13,7 +13,7 @@ import {
 import {Party} from "./Party";
 import {Nickname} from "./Nickname";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.CHARACTER})

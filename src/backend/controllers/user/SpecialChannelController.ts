@@ -2,7 +2,7 @@ import {AbstractController} from "../Base/AbstractController";
 import {SpecialChannel} from "../../entity/SpecialChannel";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {SpecialChannelDesignation} from "../../../shared/enums/SpecialChannelDesignation";
-import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {injectable} from "inversify";
 
 @injectable()
