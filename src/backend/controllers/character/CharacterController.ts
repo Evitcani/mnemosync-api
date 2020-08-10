@@ -8,6 +8,7 @@ import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtil
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "@evitcani/mnemoshared/dist/src/models/queries/CharacterQuery";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, UserToCharacter> {
@@ -199,16 +200,17 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     private async getNicknameByNickname(params: CharacterQuery): Promise<Nickname[]> {
+        let firstName = "user";
+        let secondName = "nickname";
         let query = this
             .getSecondaryRepo()
-            .createQueryBuilder("user")
-            .leftJoinAndSelect(TableName.NICKNAME, "nickname",
-                `"user"."${ColumnName.CHARACTER_ID}" = "nickname"."${ColumnName.CHARACTER_ID}"`);
+            .createQueryBuilder(firstName)
+            .leftJoinAndSelect(TableName.NICKNAME, secondName,
+                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
-            let sanitizedName = StringUtility.escapeSQLInput(params.name);
-            let str = `LOWER("nickname"."${ColumnName.NAME}") LIKE LOWER('%${sanitizedName}%')`;
+            let str = WhereQuery.LIKE(secondName, ColumnName.NAME, params.name);
 
             if (flag) {
                 query.andWhere(str);
@@ -220,8 +222,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.discord_id != null) {
-            let sanitizedName = StringUtility.escapeSQLInput(params.discord_id);
-            let str = `"user"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
+            let str = WhereQuery.EQUALS(firstName, ColumnName.DISCORD_ID, params.discord_id);
 
             if (flag) {
                 query.andWhere(str);
@@ -234,7 +235,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         if (params.world_id != null) {
             let sanitizedName = StringUtility.escapeSQLInput(params.world_id);
-            let str = `"user"."${ColumnName.WORLD_ID}" = '${sanitizedName}'`;
+            let str = WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id);
 
             if (flag) {
                 query.andWhere(str);
@@ -246,11 +247,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.is_npc != null) {
-            let str = `"user"."${ColumnName.DISCORD_ID}" IS `;
-            if (!params.is_npc) {
-                str += `NOT `;
-            }
-            str += `NULL`;
+            let str = WhereQuery.IS_NULL(firstName, ColumnName.DISCORD_ID, !params.is_npc);
 
             if (flag) {
                 query.andWhere(str);

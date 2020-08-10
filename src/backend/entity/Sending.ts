@@ -15,26 +15,27 @@ import {World} from "./World";
 import {GameDate} from "./GameDate";
 import {User} from "./User";
 import {StringUtility} from "@evitcani/mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.SENDING})
 export class Sending {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @CreateDateColumn({name: "created_date"})
+    @CreateDateColumn({name: ColumnName.CREATED_DATE})
     createdDate: Date;
 
-    @UpdateDateColumn({name: "updated_date"})
+    @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
 
-    @Column({name: "world_id", nullable: true})
+    @Column({name: ColumnName.WORLD_ID, nullable: true})
     worldId?: string;
 
     @ManyToOne(type => World, {
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn({name: "world_id"})
+    @JoinColumn({name: ColumnName.WORLD_ID})
     world?: World;
 
     @ManyToOne(type => GameDate, {
@@ -42,7 +43,7 @@ export class Sending {
         eager: true,
         nullable: true
     })
-    @JoinColumn({name: "date_id"})
+    @JoinColumn({name: ColumnName.DATE_ID})
     date: GameDate;
 
     @Column("text")
@@ -57,10 +58,10 @@ export class Sending {
     @Column({nullable: true, name: "no_connection"})
     noConnection?: boolean;
 
-    @Column({nullable: true, name: "is_replied"})
+    @Column({nullable: true, name: ColumnName.IS_REPLIED})
     isReplied?: boolean;
 
-    @Column({name: "to_character_id", nullable: true})
+    @Column({name: ColumnName.TO_CHARACTER_ID, nullable: true})
     toCharacterId?: string;
 
     @ManyToOne(type => Character, {
@@ -68,10 +69,10 @@ export class Sending {
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "to_character_id"})
+    @JoinColumn({name: ColumnName.TO_CHARACTER_ID})
     toCharacter?: Character;
 
-    @Column({name: "from_character_id", nullable: true})
+    @Column({name: ColumnName.FROM_CHARACTER_ID, nullable: true})
     fromCharacterId?: string;
 
     @ManyToOne(type => Character, {
@@ -79,10 +80,10 @@ export class Sending {
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "from_character_id"})
+    @JoinColumn({name: ColumnName.FROM_CHARACTER_ID})
     fromCharacter?: Character;
 
-    @Column({name: "sending_message_from_user_id", nullable: true})
+    @Column({name: ColumnName.SENDING_MESSAGE_FROM_USER_ID, nullable: true})
     sendingMessageFromUserId?: string;
 
     @ManyToOne(type => User, {
@@ -90,10 +91,10 @@ export class Sending {
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "sending_message_from_user_id"})
+    @JoinColumn({name: ColumnName.SENDING_MESSAGE_FROM_USER_ID})
     sendingMessageFromUser: User;
 
-    @Column({name: "sending_reply_from_user_id", nullable: true})
+    @Column({name: ColumnName.SENDING_REPLY_FROM_USER_ID, nullable: true})
     sendingReplyFromUserId?: string;
 
     @ManyToOne(type => User, {
@@ -101,7 +102,7 @@ export class Sending {
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "sending_reply_from_user_id"})
+    @JoinColumn({name: ColumnName.SENDING_REPLY_FROM_USER_ID})
     sendingReplyFromUser: User;
 
     @BeforeInsert()

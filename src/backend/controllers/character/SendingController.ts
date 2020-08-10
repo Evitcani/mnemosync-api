@@ -7,6 +7,8 @@ import {Character} from "../../entity/Character";
 import {Any, getConnection} from "typeorm";
 import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {
@@ -73,15 +75,16 @@ export class SendingController extends AbstractController<Sending> {
                               world: World, toCharacter: Character): Promise<Sending[]> {
         let flag = false, sub;
 
-        let query = getConnection().createQueryBuilder(Sending, "msg");
+        let alias = "msg";
+        let query = getConnection().createQueryBuilder(Sending, alias);
 
         if (world != null) {
-            query = query.where(`"msg"."world_id" = '${world.id}'`);
+            query = query.where(WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, world.id));
             flag = true;
         }
 
         if (toCharacter != null) {
-            sub = `"msg"."to_character_id" = ${toCharacter.id}`;
+            sub = WhereQuery.EQUALS(alias, ColumnName.TO_CHARACTER_ID, toCharacter.id);
             if (flag) {
                 query = query.andWhere(sub);
             } else {
@@ -98,9 +101,9 @@ export class SendingController extends AbstractController<Sending> {
 
         // Add final touches.
         query = query
-            .andWhere(`("msg"."is_replied" IS NULL OR "msg"."is_replied" IS FALSE)`)
-            .addSelect(["id"])
-            .addOrderBy("\"msg\".\"created_date\"", "ASC")
+            .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
+            .addSelect([ColumnName.ID])
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC")
             .limit(limit)
             .skip(skip);
 
