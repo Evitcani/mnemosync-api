@@ -1,4 +1,5 @@
 export class ColumnName {
+    public static CALENDAR_ID = "calendar_id";
     public static CHARACTER_ID = "character_id";
     public static COPPER = "copper";
     public static CREATED_DATE = "created_date";

@@ -1,29 +1,16 @@
 import {injectable} from "inversify";
-import {AbstractController} from "../../Base/AbstractController";
 import {TableName} from "../../../../shared/documentation/databases/TableName";
 import {CalendarMoonPhase} from "../../../entity/calendar/CalendarMoonPhase";
-import {CalendarMoon} from "../../../entity/calendar/CalendarMoon";
 import {getManager} from "typeorm";
+import {AbstractCalendarController} from "./AbstractCalendarController";
 
 @injectable()
-export class CalendarMoonPhaseController extends AbstractController<CalendarMoonPhase> {
+export class CalendarMoonPhaseController extends AbstractCalendarController<CalendarMoonPhase> {
     constructor() {
         super(TableName.MOON_PHASE);
     }
 
-    public async save(phase: CalendarMoonPhase[], moonId: string): Promise<CalendarMoonPhase[]> {
-        if (!phase || phase.length < 1) {
-            return Promise.resolve(null);
-        }
-
-        // Give them all the calendar.
-        phase.forEach((item) => {
-            item.moonId = moonId;
-        });
-        return getManager().getRepository(this.tableName).save(phase);
-    }
-
-    public async delete(moon: CalendarMoon, phasesToKeep: CalendarMoonPhase[]): Promise<boolean> {
-        return this.deleteBulk(moon.id, phasesToKeep);
+    public async save(items: CalendarMoonPhase[], moonId: string): Promise<CalendarMoonPhase[]> {
+        return this.saveBulk(items, moonId, 'moonId');
     }
 }

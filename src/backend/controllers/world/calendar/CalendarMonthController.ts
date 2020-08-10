@@ -1,32 +1,15 @@
 import {injectable} from "inversify";
-import {AbstractController} from "../../Base/AbstractController";
 import {TableName} from "../../../../shared/documentation/databases/TableName";
 import {CalendarMonth} from "../../../entity/calendar/CalendarMonth";
+import {AbstractCalendarController} from "./AbstractCalendarController";
 
 @injectable()
-export class CalendarMonthController extends AbstractController<CalendarMonth> {
+export class CalendarMonthController extends AbstractCalendarController<CalendarMonth> {
     constructor() {
         super(TableName.MONTH);
     }
 
-    public async save(month: CalendarMonth[], calendarId: string): Promise<CalendarMonth[]> {
-        if (calendarId != null) {
-            this.delete(calendarId, month);
-        }
-
-        if (!month || month.length < 1) {
-            return Promise.resolve(null);
-        }
-
-        // Give them all the calendar.
-        month.forEach((item) => {
-            item.calendarId = calendarId;
-        });
-
-        return this.getRepo().save(month);
-    }
-
-    public async delete(calendarId: string, items: CalendarMonth[]): Promise<boolean> {
-        return this.deleteBulk(calendarId, items);
+    public async save(items: CalendarMonth[], calendarId: string): Promise<CalendarMonth[]> {
+        return this.saveBulk(items, calendarId, 'calendarId');
     }
 }

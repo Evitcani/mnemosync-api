@@ -89,26 +89,24 @@ export abstract class AbstractController<T> {
         return query;
     }
 
-    public async deleteBulk(id: string, items: any[]): Promise<boolean> {
-        let ids: string[] = [];
-        if (!items) {
-            items = [];
-        }
+    /**
+     * Indicates how to select which items to delete. By default, selects nothing.
+     *
+     * Should be overridden by other classes.
+     *
+     * @param query The query to modify.
+     * @param params Extra parameters for this deletion.
+     */
+    protected modifyDeleteQuery(query: SelectQueryBuilder<T>, params: any): SelectQueryBuilder<T> {
+        return query;
+    }
 
-        items.forEach((value) => {
-            if (value.id != null) {
-                ids.push(value.id);
-            }
-        });
-
+    protected async doDelete(params: any): Promise<boolean> {
         let query = this
             .getRepo()
-            .createQueryBuilder()
-            .where(`"${this.tableName}"."calendar_id" = '${id}'`);
+            .createQueryBuilder();
 
-        if (ids.length > 0) {
-            query.andWhere(`"${this.tableName}"."id" NOT IN ('${ids.join("','")}')`)
-        }
+        this.modifyDeleteQuery(query, params);
 
         return query
             .delete().execute().then(() => {
