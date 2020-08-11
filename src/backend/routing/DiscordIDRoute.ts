@@ -45,8 +45,14 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
 
         if (query.world_id != null) {
             let worlds = await this.worldController.getDiscordId(query.world_id);
-            ids = new Set<string>([...ids, ...worlds]);
+            if (worlds != null && worlds.size > 0) {
+                worlds.forEach((id) => {
+                    ids.add(id);
+                });
+            }
         }
+
+        console.log("IDS: " + ids);
 
         if (ids.size <= 0) {
             return this.sendOKResponse(res, null, false);

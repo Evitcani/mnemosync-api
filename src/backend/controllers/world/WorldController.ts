@@ -55,7 +55,7 @@ export class WorldController extends AbstractController<World> {
      *
      * @param id The name of the world to get.
      */
-    public getDiscordId(id: string): Promise<string[]> {
+    public getDiscordId(id: string): Promise<Set<string>> {
         return this.getAllByParamsExtra({id: id}).then((worlds) => {
             if (!worlds || worlds.length <= 0) {
                 return null;
@@ -66,7 +66,7 @@ export class WorldController extends AbstractController<World> {
                 ids.add(world.discord_id)
             });
 
-            return Array.from(ids);
+            return ids;
         });
     }
 
