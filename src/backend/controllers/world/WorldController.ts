@@ -62,10 +62,16 @@ export class WorldController extends AbstractController<World> {
                 return null;
             }
 
+            console.log("Length here: " + worlds.length);
+
             let ids = new Set<string>();
             worlds.forEach((world) => {
-                ids.add(world.discord_id)
+                if (world.discord_id != null && world.discord_id != '') {
+                    ids.add(world.discord_id)
+                }
             });
+
+            console.log("Set length here: " + ids.size);
 
             return ids;
         });
