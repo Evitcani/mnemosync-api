@@ -47,7 +47,9 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
             let worlds = await this.worldController.getDiscordId(query.world_id);
             if (worlds != null && worlds.size > 0) {
                 worlds.forEach((id) => {
-                    ids.add(id);
+                    if (id != null && id != '') {
+                        ids.add(id);
+                    }
                 });
             }
         }
