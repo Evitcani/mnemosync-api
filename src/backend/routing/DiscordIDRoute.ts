@@ -26,8 +26,21 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
         let query: DiscordIDQuery = this.parseQuery(req, ALL_DISCORD_ID_QUERY);
 
         let ids: Set<string> = new Set<string>();
+        let characterIds = new Set<string>();
+        if (query.character_ids != null) {
+            if (Array.isArray(query.character_ids)) {
+                characterIds = new Set<string>(query.character_ids);
+            } else {
+                characterIds.add(query.character_ids);
+            }
+        }
+
         if (query.character_id != null) {
-            ids = await this.controller.getDiscordId(query.character_id);
+            characterIds.add(query.character_id);
+        }
+
+        if (characterIds.size > 0) {
+            ids = await this.controller.getDiscordId(Array.from(characterIds));
         }
 
         if (query.world_id != null) {
