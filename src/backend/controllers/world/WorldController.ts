@@ -133,7 +133,7 @@ export class WorldController extends AbstractController<World> {
         }
 
         if (params.ids != null || params.id != null) {
-            let ids = new Set<string>();;
+            let ids = new Set<string>();
             if (params.ids != null) {
                 if (Array.isArray(params.ids)) {
                     ids = new Set<string>(params.ids);
@@ -146,7 +146,7 @@ export class WorldController extends AbstractController<World> {
                 ids.add(params.id);
             }
 
-            let str = WhereQuery.IN_LIST(nameStr, ColumnName.ID, Array.from(ids));
+            let str = WhereQuery.IN_LIST(nameStr, ColumnName.ID, Array.from(ids.values()));
 
             if (flag) {
                 query.andWhere(str);
