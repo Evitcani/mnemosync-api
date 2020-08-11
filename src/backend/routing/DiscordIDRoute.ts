@@ -13,6 +13,7 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
     constructor(@inject(TYPES.CharacterController) characterController: CharacterController,
                 @inject(TYPES.WorldController) worldController: WorldController) {
         super(`discordIds`, characterController, null);
+        this.worldController = worldController;
     }
 
     defineRoutes(app: Application): void {
