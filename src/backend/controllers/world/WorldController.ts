@@ -57,7 +57,7 @@ export class WorldController extends AbstractController<World> {
      * @param id The name of the world to get.
      */
     public getDiscordId(id: string): Promise<Set<string>> {
-        return this.getAllByParamsExtra({id: id}).then((worlds) => {
+        return this.getAllByParamsExtra({id: id}, false).then((worlds) => {
             if (!worlds || worlds.length <= 0) {
                 return null;
             }
@@ -92,7 +92,7 @@ export class WorldController extends AbstractController<World> {
         });
     }
     public async getAllByParams(params: WorldQuery): Promise<World[]> {
-        return this.getAllByParamsExtra(params).then((res) => {
+        return this.getAllByParamsExtra(params, true).then((res) => {
             if (!res || res.length <= 0) {
                 return null;
             }
@@ -106,14 +106,16 @@ export class WorldController extends AbstractController<World> {
         });
     }
 
-    protected async getAllByParamsExtra(params: WorldQuery): Promise<any[]> {
+    protected async getAllByParamsExtra(params: WorldQuery, worldFirst: boolean): Promise<any[]> {
         let nameStr = "world";
         let secondStr = "owners";
 
         let join = `"${nameStr}"."${ColumnName.ID}" = "${secondStr}"."${ColumnName.WORLD_ID}"`;
-        let query = getManager().getRepository(this.tableName)
-            .createQueryBuilder(nameStr)
-            .leftJoinAndSelect(TableName.WORLD_OWNERS, secondStr, join);
+        let query = getManager()
+            .getRepository(worldFirst ? this.tableName : TableName.WORLD_OWNERS)
+            .createQueryBuilder(worldFirst ? nameStr : secondStr)
+            .leftJoinAndSelect(worldFirst ? TableName.WORLD_OWNERS : this.tableName,
+                worldFirst ? secondStr : nameStr, join);
 
         let flag = false;
         if (params.name != null) {
