@@ -46,8 +46,10 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
         vo.isReplied = vo.noReply || vo.noConnection || vo.reply != null;
 
         // Character
-        vo.fromCharacterId = StringUtility.escapeSQLInput(dto.fromCharacterId || null);
-        vo.toCharacterId = StringUtility.escapeSQLInput(dto.toCharacterId || null);
+        vo.fromCharacterId = StringUtility.escapeSQLInput(dto.fromCharacterId ||
+            (dto.fromCharacter != null ? dto.fromCharacter.id : null) || null);
+        vo.toCharacterId = StringUtility.escapeSQLInput(dto.toCharacterId ||
+            (dto.toCharacter != null ? dto.toCharacter.id : null) || null);
         vo.date = this.dateConverter.convertDtoToVo(dto.inGameDate);
 
         return vo;
