@@ -3,15 +3,37 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {NameValuePair} from "../Base/NameValuePair";
-import {Party} from "../../entity/Party";
-import {getConnection} from "typeorm";
-import {StringUtility} from "../../utilities/StringUtility";
+import {Any, getManager} from "typeorm";
+import {UserToCharacter} from "../../entity/UserToCharacter";
+import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 
 @injectable()
-export class CharacterController extends AbstractSecondaryController<Character, Nickname> {
+export class CharacterController extends AbstractSecondaryController<Character, UserToCharacter> {
     constructor() {
         super(TableName.CHARACTER, TableName.USER_TO_CHARACTER);
+    }
+
+    public async getWorldIdsByCharacterId(id: string): Promise<Set<string>> {
+        let ids = new Set<string>();
+        let users = await this.getSecondaryRepo().find({where: {characterId: id}});
+        if (users && users.length > 0) {
+            users.forEach((value) => {
+                ids.add(value.worldId);
+            });
+        }
+
+        let character = await this.getById(id);
+        if (character && character.party != null && character.party.worldId != null) {
+            ids.add(character.party.worldId);
+        }
+
+        if (ids.size <= 0) {
+            return Promise.resolve(null);
+        }
+
+        return Promise.resolve(ids);
     }
 
     /**
@@ -19,13 +41,13 @@ export class CharacterController extends AbstractSecondaryController<Character, 
      *
      * @param id The ID of the character to get.
      */
-    public async getById(id: number): Promise<Character> {
+    public async getById(id: string): Promise<Character> {
         // Not a valid argument.
-        if (id == null || id < 1) {
+        if (id == null) {
             return null;
         }
 
-        return this.getRepo().findOne({where: {id: id}, relations: ["party", "travel_config"]})
+        return this.getRepo().findOne({where: {id: id}, relations: ["party", "nicknames"]})
             .then((character) => {
                 // Check the party is valid.
 
@@ -38,10 +60,24 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    public async create(character: Character, discordId: string): Promise<Character> {
+    public async save(character: Character, discordId: string): Promise<Character> {
+        if (!character) {
+            return Promise.resolve(null);
+        }
+
+        if (!character.id) {
+            return this.create(character, discordId);
+        }
+
+        return this.getRepo().save(character).catch((err) => {
+            console.error(err);
+            return null;
+        })
+    }
+
+    protected async create(character: Character, discordId: string): Promise<Character> {
         // Create nickname for the mapping.
         const nickname = new Nickname();
-        nickname.discord_id = discordId;
         nickname.character = character;
         nickname.name = character.name;
 
@@ -49,57 +85,84 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         character.nicknames = [];
         character.nicknames.push(nickname);
 
-        return this.getRepo().save(character).then((char) => {
-            if (!char) {
-                return null;
-            }
-            return this.createNickname(nickname.name, char, discordId).then((nick) => {
-                if (nick == null) {
-                    return this.getRepo().delete(char).then(() => {
-                        return null;
-                    }).catch((err: Error) => {
-                        console.error("ERR ::: Could not delete character after failed nickname mapping.");
-                        console.log(err.stack);
-                        return null;
-                    });
-                }
+        // Save the character.
 
-                return char;
-            });
-        }).catch((err: Error) => {
+        let char = await this.getRepo().save(character).catch((err: Error) => {
             console.error("ERR ::: Could not create the new character.");
+            console.log(err.stack);
+            return null;
+        });
+
+        if (!char) {
+            return Promise.resolve(null);
+        }
+
+        nickname.character = char;
+        let nick = await this.createNickname(nickname);
+
+        if (nick == null) {
+            return this.getRepo().delete(char).then(() => {
+                return null;
+            }).catch((err: Error) => {
+                console.error("ERR ::: Could not delete character after failed nickname mapping.");
+                console.log(err.stack);
+                return null;
+            });
+        }
+
+        let mapping = await this.addUserToCharacter(discordId, character.id);
+        if (mapping == null) {
+            console.error("FAILED TO ADD USER TO CHARACTER.");
+        }
+
+        return char;
+    }
+
+    public async addUserToCharacter(discordId: string, characterId: string): Promise<UserToCharacter> {
+        let mapping = new UserToCharacter();
+        mapping.discordId = characterId;
+        mapping.characterId = characterId;
+        return this.getSecondaryRepo().save(mapping).catch((err: Error) => {
+            console.error("ERR ::: Could not add user to character.");
             console.log(err.stack);
             return null;
         });
     }
 
-    public async createNickname (nickname: string, character: Character, discordId: string): Promise<Nickname> {
-        const nn = new Nickname();
-        nn.discord_id = discordId;
-        nn.name = nickname;
-        nn.character = character;
-
-        return this.getSecondaryRepo().save(nn).catch((err: Error) => {
+    public async createNickname (nickname: Nickname): Promise<Nickname> {
+        return getManager().getRepository(TableName.NICKNAME).save(nickname).catch((err: Error) => {
             console.error("ERR ::: Could not create new nickname.");
             console.error(err);
             return null;
         });
     }
 
-    public async getCharacterByNameInParties (name: string, parties: Party[]): Promise<Character[]> {
-        let sanitizedName = StringUtility.escapeSQLInput(name);
-        let partyIds: number[] = [], i;
-        for (i = 0; i < parties.length; i++) {
-            partyIds.push(parties[i].id);
+    public async getCharactersByParams(params: CharacterQuery): Promise<Character[]> {
+        let ids = await this.getNicknameByNickname(params).then((nicknames) => {
+            if (nicknames == null || nicknames.length < 1) {
+                return null;
+            }
+
+            let ids = new Set<string>();
+            nicknames.forEach((nickname) => {
+                ids.add(nickname.characterId);
+            });
+
+            return ids;
+        });
+
+        if (!ids) {
+            return Promise.resolve(null);
         }
 
-        return getConnection()
-            .createQueryBuilder(Character, "character")
-            .leftJoinAndSelect(Nickname, "nick", `character.id = "nick"."characterId"`)
-            .where(`LOWER("nick"."name") LIKE LOWER('%${sanitizedName}%')`)
-            .andWhere(`"character"."partyId" = ANY(ARRAY[${partyIds.join(",")}])`)
-            .getMany()
+        return this.getRepo().find({
+            where: {
+                id: Any(Array.from(ids.values()))
+            },
+            order: {name: "ASC"},
+            relations: ["nicknames"]})
             .then((characters) => {
+                // Check the party is valid.
                 if (!characters || characters.length < 1) {
                     return null;
                 }
@@ -113,48 +176,102 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             });
     }
 
-    public async getCharacterByName(name: string, discordId: string): Promise<Character> {
-        return this.getNicknameByNickname(name, discordId).then((nickname) => {
-            if (nickname == null || nickname.length < 1) {
-                return null;
-            }
-
-            if (nickname[0].character == null) {
-                return this.getById(nickname[0].characterId);
-            }
-
-            return nickname[0].character;
-        })
-    }
-
     /**
      * Gets all the discord IDs related to this character.
-     * @param characterId
+     * @param characterIds
      */
-    public async getDiscordId(characterId: number): Promise<Map<string, string>> {
-        return this.getSecondaryRepo().find({where: {characterId: characterId}}).then((nicknames) => {
+    public async getDiscordId(characterIds: string[]): Promise<Set<string>> {
+        return this.getSecondaryRepo().find({where: {characterId: Any(characterIds)}}).then((nicknames) => {
             if (!nicknames || nicknames.length < 1) {
                 return null;
             }
 
-            let input = new Map<string, string>();
-            let nickname: Nickname, discordId: string, i;
+            let input = new Set<string>();
+            let nickname: UserToCharacter, discordId: string, i;
             for (i = 0; i < nicknames.length; i++) {
                 nickname = nicknames[i];
-                discordId = nickname.discord_id;
-                input.set(discordId, discordId);
+                discordId = nickname.discordId;
+                input.add(discordId);
             }
 
             return input;
         });
     }
 
-    private async getNicknameByNickname(nickname: string, discordId: string): Promise<Nickname[]> {
-        return this.getSecondaryLikeArgs(
-            [new NameValuePair("discord_id", discordId)],
-            [new NameValuePair("name", nickname)])
+    private async getNicknameByNickname(params: CharacterQuery): Promise<Nickname[]> {
+        let firstName = "user";
+        let secondName = "nickname";
+        let thirdName = "character";
+        let fourthName = "party";
+        let query = this
+            .getSecondaryRepo()
+            .createQueryBuilder(firstName)
+            .leftJoinAndSelect(TableName.NICKNAME, secondName,
+                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .leftJoinAndSelect(TableName.CHARACTER, thirdName,
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.ID}"`)
+            .leftJoinAndSelect(TableName.PARTY, fourthName,
+                `"${thirdName}"."${ColumnName.PARTY_ID}" = "${fourthName}"."${ColumnName.ID}"`);
+
+        let flag = false;
+        if (params.name != null) {
+            let str = WhereQuery.LIKE(secondName, ColumnName.NAME, params.name);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (params.discord_id != null) {
+            let str = WhereQuery.EQUALS(firstName, ColumnName.DISCORD_ID, params.discord_id);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (params.world_id != null) {
+            let str = `(${WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id)} OR ` +
+            `${WhereQuery.EQUALS(fourthName, ColumnName.WORLD_ID, params.world_id)})`;
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (params.is_npc != null) {
+            let str = WhereQuery.IS_TRUE_FALSE(thirdName, ColumnName.IS_NPC, true);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        if (!flag) {
+            return Promise.resolve(null);
+        }
+
+
+        return query
+            .getMany()
             .catch((err: Error) => {
-                console.error("ERR ::: Could not get nickname.");
+                console.error("ERR ::: Could not get worlds.");
                 console.error(err);
                 return null;
             });

@@ -39,7 +39,7 @@ export class UserController extends AbstractController<User> {
      * @param discordId The discord ID of the user.
      * @param discordName The discord name of user.
      */
-    public async get(discordId: string, discordName: string): Promise<User> {
+    public async get(discordId: string, discordName?: string): Promise<User> {
         return this.getRepo().findOne({
                 where: {
                     discord_id: discordId

@@ -1,12 +1,18 @@
-import {getManager, QueryBuilder, Repository, SelectQueryBuilder} from "typeorm";
+import {getManager, Repository, SelectQueryBuilder} from "typeorm";
 import {NameValuePair} from "./NameValuePair";
-import {StringUtility} from "../../utilities/StringUtility";
 import {injectable, unmanaged} from "inversify";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @injectable()
 export abstract class AbstractController<T> {
+    /** The name of the table to get from. */
     protected tableName: string;
 
+    /**
+     * Constructs this controller.
+     *
+     * @param tableName The name of the table this controls.
+     */
     protected constructor(@unmanaged() tableName: string) {
         this.tableName = tableName;
     }
@@ -81,5 +87,33 @@ export abstract class AbstractController<T> {
         }
 
         return query;
+    }
+
+    /**
+     * Indicates how to select which items to delete. By default, selects nothing.
+     *
+     * Should be overridden by other classes.
+     *
+     * @param query The query to modify.
+     * @param params Extra parameters for this deletion.
+     */
+    protected modifyDeleteQuery(query: SelectQueryBuilder<T>, params: any): SelectQueryBuilder<T> {
+        return query;
+    }
+
+    protected async doDelete(params: any): Promise<boolean> {
+        let query = this
+            .getRepo()
+            .createQueryBuilder();
+
+        this.modifyDeleteQuery(query, params);
+
+        return query
+            .delete().execute().then(() => {
+                return true;
+            }).catch((err) => {
+                console.error(err);
+                return false;
+            });
     }
 }

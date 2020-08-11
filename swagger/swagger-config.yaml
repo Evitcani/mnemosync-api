@@ -1,0 +1,1837 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: MnemoSync API
+  description: API for for the MnemoSync Bot and webservices.
+servers:
+  - url: 'https://party-management-api.herokuapp.com/api/v1/'
+    description: "Version 1 of the API."
+tags:
+  - name: User Requests
+    description: "Requests related to users."
+  - name: Discord Requests
+    description: "Requests related to stored discord information."
+  - name: Character Requests
+    description: "Requests related to characters."
+  - name: Party Requests
+    description: "Requests related to parties."
+  - name: World Requests
+    description: "Requests related to worlds."
+  - name: Party Fund Requests
+    description: "Requests related to party funds."
+  - name: Sending Requests
+    description: "Requests related to sendings."
+  - name: Current Date Requests
+    description: "Requests related to the current date."
+  - name: Calendar Requests
+    description: "Requests related to calendars."
+  - name: Special Channel Requests
+    description: "Requests related to special channels."
+paths:
+  "/users/{discord_id}":
+    get:
+      summary: 'Get Endpoint: Gets a user.'
+      operationId: createUser
+      parameters:
+        - name: discord_id
+          in: path
+          description: "ID of the user's Discord account."
+          required: true
+          schema:
+            type: string
+        - name: discord_name
+          in: query
+          description: "Name of the user's Discord account."
+          required: true
+          schema:
+            type: string
+      tags:
+        - User Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The User as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserDTO'
+    put:
+      summary: 'Put Endpoint: Updates a user.'
+      operationId: updateUser
+      parameters:
+        - name: discord_id
+          in: path
+          description: "ID of the user's Discord account."
+          required: true
+          schema:
+            type: string
+      tags:
+        - User Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The user information to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/UserDTO'
+      responses:
+        200:
+          description: 'The User as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserDTO'
+  "/discordIds":
+    get:
+      summary: 'Get Endpoint: Gets a list of Discord IDs based on parameters.'
+      operationId: getDiscordIds
+      parameters:
+        - name: world_id
+          in: query
+          description: "ID of a world to search for the owners of."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: character_id
+          in: query
+          description: "ID of a character to search for the owners of."
+          required: false
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Discord Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The Discord IDs fitting the given criteria.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+  "/currentDates":
+    post:
+      summary: 'Post Endpoint: Create a new current date.'
+      operationId: createCurrentDate
+      parameters:
+        - name: party_id
+          in: query
+          description: "ID of the party this date will belong to."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Current Date Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The current date to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CurrentDateDTO'
+      responses:
+        200:
+          description: 'The CurrentDate after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CurrentDateDTO'
+  "/currentDates/{id}":
+    put:
+      summary: 'Put Endpoint: Updates current date.'
+      operationId: updateCurrentDate
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the current date to update."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Current Date Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The current date to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CurrentDateDTO'
+      responses:
+        200:
+          description: 'The CurrentDate after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CurrentDateDTO'
+    get:
+      summary: 'Get Endpoint: Gets the current date.'
+      operationId: getCurrentDate
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the current date to get."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Current Date Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The CurrentDate as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CurrentDateDTO'
+  "/worlds":
+    post:
+      summary: "Post Endpoint: Creates a new world."
+      operationId: createWorld
+      tags:
+        - World Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The world to create."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/WorldDTO'
+      responses:
+        200:
+          description: 'The World freshly created as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorldDTO'
+    get:
+      summary: "Get Endpoint: Gets worlds based on parameters."
+      operationId: getWorldByUser
+      tags:
+        - World Requests
+      parameters:
+        - name: discord_id
+          in: query
+          description: "ID of the user's Discord account."
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: "Name of the world to find."
+          required: false
+          schema:
+            type: string
+        - name: character_id
+          in: query
+          description: "ID of the character to find the worlds for."
+          required: false
+          schema:
+            type: string
+            format: uuid
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'Worlds meeting the given criteria.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorldDTO'
+  "/worlds/{id}":
+    get:
+      summary: "Get Endpoint: Gets a world by ID."
+      operationId: getWorld
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the world to get."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - World Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The World freshly created as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorldDTO'
+    put:
+      summary: "Put Endpoint: Updates the world."
+      operationId: putWorld
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the world to update."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - World Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The world with all of its updates."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorldDTO'
+      responses:
+        200:
+          description: 'The WorldDTO with all updates.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorldDTO'
+    post:
+      summary: "Post Endpoint: Adds a new world to a user's campaigns."
+      operationId: addWorldToUser
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the would to add the user to."
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: discord_id
+          in: query
+          description: "ID of the user's Discord account."
+          required: true
+          schema:
+            type: string
+      tags:
+        - World Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The world to add."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorldDTO'
+      responses:
+        200:
+          description: 'The World freshly created as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorldDTO'
+  "/calendars":
+    post:
+      summary: 'Post Endpoint: Create a new calendar.'
+      operationId: createCalendar
+      parameters:
+        - name: world_id
+          in: query
+          description: "ID of the world this calendar will belong to."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Calendar Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The calendar to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CalendarDTO'
+      responses:
+        200:
+          description: 'The Calendar after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CalendarDTO'
+    get:
+      summary: 'Get Endpoint: Gets the calendars based on parameters.'
+      operationId: getCalendars
+      parameters:
+        - name: name
+          in: query
+          description: "Name of the calendars to get."
+          required: false
+          schema:
+            type: string
+        - name: world_id
+          in: query
+          description: "World ID of the calendars to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Calendar Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The Calendar as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CalendarDTO'
+  "/calendars/{id}":
+    put:
+      summary: 'Put Endpoint: Updates calendar.'
+      operationId: updateCalendar
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the calendar to update."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Calendar Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The current date to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CalendarDTO'
+      responses:
+        200:
+          description: 'The CurrentDate after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CalendarDTO'
+    get:
+      summary: 'Get Endpoint: Gets the calendar.'
+      operationId: getCalendar
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the calendar to get."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Calendar Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The Calendar as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CalendarDTO'
+  "/parties":
+    post:
+      summary: 'Post Endpoint: Create a new party.'
+      operationId: createParty
+      tags:
+        - Party Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The party to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/PartyDTO'
+      responses:
+        200:
+          description: 'The Party after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyDTO'
+    get:
+      summary: 'Get Endpoint: Gets the parties based on parameters.'
+      operationId: getParties
+      parameters:
+        - name: name
+          in: query
+          description: "Name of the parties to get."
+          required: false
+          schema:
+            type: string
+        - name: guild_id
+          in: query
+          description: "Guild ID of the parties to get."
+          required: false
+          schema:
+            type: string
+        - name: world_id
+          in: query
+          description: "World ID of the parties to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: character_id
+          in: query
+          description: "Character ID of the parties to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Party Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The party as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PartyDTO'
+  "/parties/{id}":
+    put:
+      summary: 'Put Endpoint: Updates party.'
+      operationId: updateParty
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the party to update."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Party Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The party to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/PartyDTO'
+      responses:
+        200:
+          description: 'The party after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyDTO'
+    get:
+      summary: 'Get Endpoint: Gets the party.'
+      operationId: getParty
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the party to get."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Party Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The Party as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyDTO'
+  "/parties/{party_id}/funds":
+    post:
+      summary: 'Post Endpoint: Create a new party fund.'
+      operationId: createPartyFund
+      parameters:
+        - name: party_id
+          in: path
+          description: "ID of the party the funds exist in."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Party Fund Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The party fund to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/PartyFundDTO'
+      responses:
+        200:
+          description: 'The PartyFund after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyFundDTO'
+    get:
+      summary: 'Get Endpoint: Gets the party funds based on parameters.'
+      operationId: getPartyFunds
+      parameters:
+        - name: party_id
+          in: path
+          description: "ID of the party the funds exist in."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: type
+          in: query
+          description: "Type of the fund to get."
+          required: false
+          schema:
+            type: string
+            enum:
+              - fund
+              - bank
+      tags:
+        - Party Fund Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The party funds as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PartyFundDTO'
+  "/parties/{party_id}/funds/{id}":
+    put:
+      summary: 'Put Endpoint: Updates party.'
+      operationId: updatePartyFund
+      parameters:
+        - name: party_id
+          in: path
+          description: "ID of the party to update."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: id
+          in: path
+          description: "ID of the fund to update."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Party Fund Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The funds to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/PartyFundDTO'
+      responses:
+        200:
+          description: 'The party after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyFundDTO'
+    get:
+      summary: 'Get Endpoint: Gets the party fund.'
+      operationId: getPartyFund
+      parameters:
+        - name: party_id
+          in: path
+          description: "ID of the party to get."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: id
+          in: path
+          description: "ID of the fund to update."
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      tags:
+        - Party Fund Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The PartyFund as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartyFundDTO'
+  "/sendings":
+    post:
+      summary: 'Post Endpoint: Create a new sending.'
+      operationId: createSending
+      tags:
+        - Sending Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The sending to create."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/SendingDTO'
+      responses:
+        200:
+          description: 'The sending after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SendingDTO'
+    get:
+      summary: 'Get Endpoint: Gets sendings based on parameters.'
+      operationId: getSendings
+      parameters:
+        - name: ids*
+          in: query
+          description: "IDs of the sendings to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: skip
+          in: query
+          description: "The number of items to skip."
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: limit
+          in: query
+          description: "The number of items to get."
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: world_id
+          in: query
+          description: "The world to get the sendings from."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: to_character_id
+          in: query
+          description: "The character to get the sendings to."
+          required: false
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Sending Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The sendings as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SendingDTO'
+  "/sendings/{id}":
+    put:
+      summary: 'Put Endpoint: Updates sending.'
+      operationId: updateSending
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the sending to update."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Sending Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The sending to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/SendingDTO'
+      responses:
+        200:
+          description: 'The sending after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SendingDTO'
+    get:
+      summary: 'Get Endpoint: Gets the sending.'
+      operationId: getSending
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the sending to get."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Sending Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The sending as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SendingDTO'
+  "/characters":
+    post:
+      summary: 'Post Endpoint: Create a new character.'
+      operationId: createCharacter
+      tags:
+        - Character Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The character to create."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CharacterDTO'
+      responses:
+        200:
+          description: 'The character after creation.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CharacterDTO'
+    get:
+      summary: 'Get Endpoint: Gets characters based on parameters.'
+      operationId: getCharacters
+      parameters:
+        - name: name
+          in: query
+          description: "Name of the characters to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: discord_id
+          in: query
+          description: "Discord ID of the characters' owner to get."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: world_id
+          in: query
+          description: "World ID of the world this character exists in."
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: is_npc
+          in: query
+          description: "True if the character is an NPC, false otherwise. If left null, will ignore."
+          required: false
+          schema:
+            type: boolean
+      tags:
+        - Character Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The characters as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CharacterDTO'
+  "/characters/{id}":
+    put:
+      summary: 'Put Endpoint: Updates character.'
+      operationId: updateCharacter
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the character to update."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Character Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The character to update."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/CharacterDTO'
+      responses:
+        200:
+          description: 'The character after updating.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CharacterDTO'
+    get:
+      summary: 'Get Endpoint: Gets the character.'
+      operationId: getCharacter
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the character to get."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Character Requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: 'The character as requested.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CharacterDTO'
+  "/characters/{id}/nickname":
+    post:
+      summary: 'Put Endpoint: Updates character.'
+      operationId: createCharacterNickname
+      parameters:
+        - name: id
+          in: path
+          description: "ID of the character to add the nickname to."
+          required: true
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Character Requests
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: "The nickname to add."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/NicknameDTO'
+      responses:
+        200:
+          description: 'The nickname after adding.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/NicknameDTO'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    CalendarDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - calendar
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the calendar."
+          nullable: false
+          type: string
+          example: "Gregorian Calendar"
+        description:
+          description: "Description of the calendar."
+          nullable: true
+          type: string
+          example: "The Gregorian calendar is the calendar used in most of the world. It is named after Pope Gregory XIII, who introduced it in October 1582."
+        yearLength:
+          description: "The length of the year."
+          type: integer
+          format: int64
+          minimum: 0
+          example: 365
+        epoch:
+          $ref: '#/components/schemas/DateDTO'
+        worldId:
+          description: "ID of the world of this calendar exists in."
+          type: string
+          format: uuid
+        moons:
+          description: "Moons that circle this planet."
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarMoonDTO'
+        months:
+          description: "Months in the year."
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarMonthDTO'
+        week:
+          description: "Days of the week."
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarWeekDayDTO'
+    CalendarMonthDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - calendar_month
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the month."
+          nullable: false
+          type: string
+          example: "March"
+        order:
+          description: "Order in the year this month occupies."
+          nullable: true
+          type: integer
+          format: int64
+          minimum: 0
+          example: 2
+        description:
+          description: "Description of the month."
+          nullable: true
+          type: string
+          example: "The Moon is an astronomical body orbiting Earth and is the planet's only natural satellite. It is the fifth-largest satellite in the Solar System, and by far the largest among planetary satellites relative to the size of the planet that it orbits."
+        length:
+          description: "Length in days of this month."
+          nullable: true
+          type: integer
+          format: int64
+          minimum: 1
+          example: 31
+    CalendarMoonDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - calendar_moon
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the moon."
+          nullable: false
+          type: string
+          example: "Luna"
+        description:
+          description: "Description of the calendar."
+          nullable: true
+          type: string
+          example: "The Moon is an astronomical body orbiting Earth and is the planet's only natural satellite. It is the fifth-largest satellite in the Solar System, and by far the largest among planetary satellites relative to the size of the planet that it orbits."
+        cycle:
+          description: "Number of days this object takes to circle the planet."
+          nullable: true
+          type: integer
+          format: int64
+          minimum: 0
+          example: 28
+        shift:
+          description: "Shift of the moon in relation to the start of epoch."
+          nullable: true
+          type: integer
+          format: int64
+          minimum: 0
+          example: 0
+        phases:
+          description: "The names of the phases of this moon."
+          nullable: true
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarMoonPhaseDTO'
+          example:
+            Full Moon:
+              value:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                name: "Full Moon"
+                order: 0
+                viewingAngleStart: 337
+                viewingAngleEnd: 22
+            Waxing Gibbous:
+              value:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                name: "Waxing Gibbous"
+                order: 1
+                viewingAngleStart: 22
+                viewingAngleEnd: 67
+    CalendarMoonPhaseDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - calendar_moon_phase
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the phase."
+          nullable: false
+          type: string
+          example: "Full Moon"
+        order:
+          description: "Where this phase comes in order."
+          type: integer
+          format: int64
+          minimum: 0
+          example: 0
+        viewingAngleStart:
+          description: "The lowest point of the viewing angle"
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 360
+          example: 337
+        viewingAngleEnd:
+          description: "The highest point of the viewing angle"
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 360
+          example: 22
+    CalendarWeekDayDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - calendar_week_day
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the week day."
+          nullable: false
+          type: string
+          example: "Monday"
+        order:
+          description: "Order in the week this day occupies."
+          nullable: true
+          type: integer
+          format: int64
+          minimum: 0
+          example: 1
+        description:
+          description: "Description of the week day."
+          nullable: true
+          type: string
+          example: "The start of the working week."
+    CharacterDTO:
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 321
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - character
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          example: "John Smith"
+        isNpc:
+          type: boolean
+          example: false
+        img_url:
+          type: string
+          format: url
+          nullable: true
+          example: "/character/321/avatar.png"
+        nicknames:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/NicknameDTO'
+        partyId:
+          description: "ID of the party this character belongs to."
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+          example: 4384
+        worldId:
+          description: "ID of the world this character belongs to."
+          type: string
+          format: uuid
+          nullable: true
+    CurrentDateDTO:
+      description: 'Current date for the party.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - current_date
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        partyId:
+          description: "ID of the party this date belongs to."
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+          example: 3242
+        date:
+          $ref: '#/components/schemas/DateDTO'
+        calendar:
+          $ref: '#/components/schemas/CalendarDTO'
+    DateDTO:
+      description: 'The date object serving many different object.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - date
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of this date (used for events)."
+          type: string
+          example: "New Year's Eve"
+        description:
+          description: "Description of this date or its significance."
+          type: string
+          example: "A celebration of the new year."
+        recurrence:
+          description: "Describes how this events recurs."
+          type: string
+          example: "yearly-on-date"
+        year:
+          description: "The year of the event."
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: null
+        month:
+          description: "The month of the event."
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+          example: 1
+        day:
+          description: "The day of the event."
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+          example: 1
+        calendarId:
+          description: "The calendar this date uses."
+          type: string
+          format: uuid
+        eraId:
+          description: "The era this date belongs to."
+          nullable: true
+          type: string
+          format: uuid
+    NicknameDTO:
+      description: 'Nickname of the character, as well as owners.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 7687
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - nickname
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Nickname of the character."
+          type: string
+          example: "Fire Dude"
+        discordId:
+          description: "Discord ID of the user who created this nickname."
+          type: string
+          nullable: true
+          example: "6845786"
+    PartyDTO:
+      description: 'Describes an error encountered while executing the request.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 53453
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - party
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "The name of the party."
+          type: string
+          example: "Team Too Cool!"
+        guildId:
+          description: "The ID of the server this party was created in."
+          type: string
+          example: "57834578"
+        creatorDiscordId:
+          description: "The Discord ID of the User who created this party."
+          type: string
+          example: "674867458"
+        currentDateId:
+          description: "ID of the default world of this user."
+          type: string
+          example: "75485-545fsdf43543-54fds53453"
+        worldId:
+          description: "ID of the world of this party exists in."
+          type: string
+          example: "75485-545fsdf43543-54fds53453"
+        funds:
+          description: "The party funds for this party."
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyFundDTO'
+    PartyFundDTO:
+      description: 'Funds related to the party.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 7687
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - party_fund
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        type:
+          description: "The type of this fund."
+          type: string
+          enum:
+            - fund
+            - bank
+          example: bank
+        partyId:
+          description: "ID of the party this fund belongs to."
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+          example: 887
+        amount:
+          description: "The amount in the fund in base units."
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: 645645
+    SendingDTO:
+      description: 'Describes a magical message visible to only the sender, recipient, and GM.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 178
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - sending
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+    SpecialChannelDTO:
+      description: 'Describes a special channel registered for special usage.'
+      type: object
+      required:
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 178
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - special_channel
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        guildId:
+          type: string
+          example: '546764564'
+    UserDTO:
+      description: 'Describes a simple user.'
+      type: object
+      required:
+        - discord_id
+        - discord_name
+        - dtoType
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          example: 178
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - user
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        discord_id:
+          description: "The Discord ID of the user."
+          type: string
+          example: "5487534850"
+        discord_name:
+          description: "The Discord name of the user."
+          type: string
+          example: "CoolGuy"
+        defaultCharacterId:
+          description: "ID of the default character of this user."
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+          example: 954
+        defaultPartyId:
+          description: "ID of the default party of this user."
+          type: integer
+          format: int64
+          minimum: 1
+          nullable: true
+          example: 3242
+        defaultWorldId:
+          description: "ID of the default world of this user."
+          type: string
+          format: uuid
+    WorldDTO:
+      description: 'Nickname of the character, as well as owners.'
+      type: object
+      required:
+        - dtoType
+        - name
+      properties:
+        id:
+          description: 'The ID of the object. Stored within the database.'
+          type: string
+          format: uuid
+        dtoType:
+          description: "The type of this object."
+          type: string
+          enum:
+            - world
+        createdDate:
+          description: 'The time this object was created. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        updatedDate:
+          description: 'The time this object was last updated. The time should be in ISO 8601 UTC format.'
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          description: "Name of the World."
+          type: string
+          example: "Earth"
+        guildId:
+          description: "The ID of the server this world was created in."
+          type: string
+          example: "57834578"
+        mapUrl:
+          description: "The ID of the server this world was created in."
+          type: string
+          format: url
+          example: "/world/3fa85f64-5717-4562-b3fc-2c963f66afa6/map/55738475843.png"

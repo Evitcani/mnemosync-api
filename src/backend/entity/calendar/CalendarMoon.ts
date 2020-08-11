@@ -10,9 +10,8 @@ import {
 } from "typeorm";
 import {Calendar} from "./Calendar";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {StringUtility} from "../../utilities/StringUtility";
-import {CalendarMonth} from "./CalendarMonth";
 import {CalendarMoonPhase} from "./CalendarMoonPhase";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.MOON})
 export class CalendarMoon {
@@ -43,6 +42,9 @@ export class CalendarMoon {
         eager: true
     })
     phases?: CalendarMoonPhase[];
+
+    @Column({name: "calendar_id"})
+    calendarId: string;
 
     @ManyToOne(type => Calendar, calendar => calendar.moons,{
         cascade: true

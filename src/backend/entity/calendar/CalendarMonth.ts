@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import {Calendar} from "./Calendar";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {StringUtility} from "../../utilities/StringUtility";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.MONTH})
 export class CalendarMonth {
@@ -34,6 +34,9 @@ export class CalendarMonth {
 
     @Column({name: "order"})
     order: number;
+
+    @Column({name: "calendar_id"})
+    calendarId: string;
 
     @ManyToOne(type => Calendar, calendar => calendar.months,{
         cascade: true

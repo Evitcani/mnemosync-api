@@ -15,8 +15,8 @@ import {CalendarMoon} from "./CalendarMoon";
 import {CalendarEra} from "./CalendarEra";
 import {GameDate} from "../GameDate";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {StringUtility} from "../../utilities/StringUtility";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.CALENDAR})
 export class Calendar {
@@ -38,7 +38,12 @@ export class Calendar {
     @Column({nullable: true})
     description: string;
 
-    @Column(type => GameDate)
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: "epoch_id"})
     epoch: GameDate;
 
     @Column({name: "world_id"})

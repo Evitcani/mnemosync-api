@@ -1,54 +1,49 @@
-import {TravelConfig} from "./TravelConfig";
 import {
-    BeforeInsert, BeforeUpdate,
-    Column, CreateDateColumn,
-    Entity, JoinColumn,
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
     ManyToOne,
-    OneToMany, OneToOne,
-    PrimaryGeneratedColumn, UpdateDateColumn
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
 } from "typeorm";
 import {Party} from "./Party";
 import {Nickname} from "./Nickname";
-import {StringUtility} from "../utilities/StringUtility";
-import {User} from "./User";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.CHARACTER})
 export class Character {
-    type = "Character";
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    @PrimaryGeneratedColumn('increment')
-    id: number;
-
-    @CreateDateColumn()
+    @CreateDateColumn({name: ColumnName.CREATED_DATE})
     createdDate: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
 
-    @Column("text",{ nullable: true })
-    img_url?: string;
+    @Column("text",{ nullable: true, name: ColumnName.IMG_URL })
+    imgUrl?: string;
 
-    @Column("text")
+    @Column("text", {name: ColumnName.NAME})
     name: string;
 
-    @OneToOne(type => TravelConfig, travelConfig => travelConfig.character, {
-        eager: true,
-        nullable: true,
-        onDelete: "SET NULL"
-    })
-    @JoinColumn()
-    travel_config?: TravelConfig;
+    @Column({nullable: true, name: ColumnName.IS_NPC})
+    isNPC?: boolean;
 
-    @Column({nullable: true})
+    @Column({nullable: true, name: ColumnName.PARTY_ID})
     partyId?: number;
 
     @ManyToOne(type => Party, party => party.members, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn()
+    @JoinColumn({name: ColumnName.PARTY_ID})
     party?: Party;
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
@@ -56,15 +51,10 @@ export class Character {
     })
     nicknames: Nickname[];
 
-    @OneToMany(type => User, user => user.defaultCharacter, {
-        onDelete: "SET NULL"
-    })
-    defaultUsers: User[];
-
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
         this.name = StringUtility.escapeSQLInput(this.name);
-        this.img_url = StringUtility.escapeSQLInput(this.img_url);
+        this.imgUrl = StringUtility.escapeSQLInput(this.imgUrl);
     }
 }

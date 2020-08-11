@@ -5,13 +5,15 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinColumn, JoinTable, ManyToMany, ManyToOne,
-    PrimaryGeneratedColumn, UpdateDateColumn
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
 } from "typeorm";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {Party} from "./Party";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.USER})
 export class User {
@@ -31,10 +33,9 @@ export class User {
     discord_id: string;
 
     @Column("int", {name: "default_character_id", nullable: true})
-    defaultCharacterId?: number;
+    defaultCharacterId?: string;
 
-    @ManyToOne(type => Character, character => character.defaultUsers, {
-        eager: true,
+    @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL"
     })
@@ -44,8 +45,7 @@ export class User {
     @Column({name: "default_world_id", nullable: true})
     defaultWorldId?: string;
 
-    @ManyToOne(type => World, world => world.defaultOfUsers, {
-        eager: true,
+    @ManyToOne(type => World, {
         nullable: true,
         onDelete: "SET NULL"
     })
@@ -53,19 +53,14 @@ export class User {
     defaultWorld?: World;
 
     @Column({name: "default_party_id", nullable: true})
-    defaultPartyId?: string;
+    defaultPartyId?: number;
 
     @ManyToOne(type => Party, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
     @JoinColumn({name: "default_party_id"})
     defaultParty?: Party;
-
-    @ManyToMany(type => World, {nullable: true})
-    @JoinTable({name: TableName.WORLD_OWNERS})
-    campaignsDMing?: World[];
 
     @BeforeInsert()
     @BeforeUpdate()

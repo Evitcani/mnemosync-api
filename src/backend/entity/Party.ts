@@ -10,10 +10,10 @@ import {
 } from "typeorm";
 import {Character} from "./Character";
 import {PartyFund} from "./PartyFund";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {CurrentDate} from "./CurrentDate";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.PARTY})
 export class Party {
@@ -47,13 +47,18 @@ export class Party {
     })
     funds: PartyFund[];
 
+    @Column({name: "world_id", nullable: true})
+    worldId?: string;
+
     @ManyToOne(type => World, campaign => campaign.parties, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
     @JoinColumn({name: "world_id"})
     world?: World;
+
+    @Column({name: "current_date_id", nullable: true})
+    currentDateId?: string;
 
     @OneToOne(type => CurrentDate, date => date.party, {
         onDelete: "SET NULL",

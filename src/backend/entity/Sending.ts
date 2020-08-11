@@ -1,5 +1,6 @@
 import {
-    BeforeInsert, BeforeUpdate,
+    BeforeInsert,
+    BeforeUpdate,
     Column,
     CreateDateColumn,
     Entity,
@@ -8,37 +9,42 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {NonPlayableCharacter} from "./NonPlayableCharacter";
 import {Character} from "./Character";
 import {TableName} from "../../shared/documentation/databases/TableName";
-import {StringUtility} from "../utilities/StringUtility";
 import {World} from "./World";
 import {GameDate} from "./GameDate";
 import {User} from "./User";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.SENDING})
 export class Sending {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @CreateDateColumn({name: "created_date"})
+    @CreateDateColumn({name: ColumnName.CREATED_DATE})
     createdDate: Date;
 
-    @UpdateDateColumn({name: "updated_date"})
+    @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
 
-    @Column({name: "world_id", nullable: true})
+    @Column({name: ColumnName.WORLD_ID, nullable: true})
     worldId?: string;
 
     @ManyToOne(type => World, {
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn({name: "world_id"})
+    @JoinColumn({name: ColumnName.WORLD_ID})
     world?: World;
 
-    @Column( type => GameDate)
-    inGameDate: GameDate;
+    @ManyToOne(type => GameDate, {
+        onDelete: "SET NULL",
+        eager: true,
+        nullable: true
+    })
+    @JoinColumn({name: ColumnName.DATE_ID})
+    date: GameDate;
 
     @Column("text")
     content: string;
@@ -52,67 +58,51 @@ export class Sending {
     @Column({nullable: true, name: "no_connection"})
     noConnection?: boolean;
 
-    @Column({nullable: true, name: "is_replied"})
+    @Column({nullable: true, name: ColumnName.IS_REPLIED})
     isReplied?: boolean;
 
-    @Column({name: "to_npc_id", nullable: true})
-    toNpcId?: string;
-
-    @ManyToOne(type => NonPlayableCharacter, {
-        nullable: true,
-        onDelete: "SET NULL",
-        eager: true
-    })
-    @JoinColumn({name: "to_npc_id"})
-    toNpc?: NonPlayableCharacter;
-
-    @Column({name: "from_npc_id", nullable: true})
-    fromNpcId?: string;
-
-    @ManyToOne(type => NonPlayableCharacter, {
-        nullable: true,
-        onDelete: "SET NULL",
-        eager: true
-    })
-    @JoinColumn({name: "from_npc_id"})
-    fromNpc?: NonPlayableCharacter;
-
-    @Column({name: "to_player_character_id", nullable: true})
-    toPlayerCharacterId?: number;
+    @Column({name: ColumnName.TO_CHARACTER_ID, nullable: true})
+    toCharacterId?: string;
 
     @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "to_player_character_id"})
-    toPlayerCharacter?: Character;
+    @JoinColumn({name: ColumnName.TO_CHARACTER_ID})
+    toCharacter?: Character;
 
-    @Column({name: "from_player_character_id", nullable: true})
-    fromPlayerCharacterId?: number;
+    @Column({name: ColumnName.FROM_CHARACTER_ID, nullable: true})
+    fromCharacterId?: string;
 
     @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "from_player_character_id"})
-    fromPlayerCharacter?: Character;
+    @JoinColumn({name: ColumnName.FROM_CHARACTER_ID})
+    fromCharacter?: Character;
+
+    @Column({name: ColumnName.SENDING_MESSAGE_FROM_USER_ID, nullable: true})
+    sendingMessageFromUserId?: string;
 
     @ManyToOne(type => User, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "sending_message_from_user_id"})
+    @JoinColumn({name: ColumnName.SENDING_MESSAGE_FROM_USER_ID})
     sendingMessageFromUser: User;
 
+    @Column({name: ColumnName.SENDING_REPLY_FROM_USER_ID, nullable: true})
+    sendingReplyFromUserId?: string;
+
     @ManyToOne(type => User, {
         nullable: true,
         onDelete: "SET NULL",
         eager: true
     })
-    @JoinColumn({name: "sending_reply_from_user_id"})
+    @JoinColumn({name: ColumnName.SENDING_REPLY_FROM_USER_ID})
     sendingReplyFromUser: User;
 
     @BeforeInsert()

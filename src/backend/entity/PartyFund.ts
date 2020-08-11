@@ -9,8 +9,8 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Party} from "./Party";
-import {StringUtility} from "../utilities/StringUtility";
 import {TableName} from "../../shared/documentation/databases/TableName";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.PARTY_FUND})
 export class PartyFund {
@@ -23,6 +23,9 @@ export class PartyFund {
     @UpdateDateColumn()
     updatedDate: Date;
 
+    @Column({name: "partyId"})
+    partyId: number;
+
     @ManyToOne(type => Party, party => party.funds, {
         cascade: true
     })
@@ -32,16 +35,7 @@ export class PartyFund {
     type: string;
 
     @Column({ nullable: true })
-    platinum?: number;
-
-    @Column({ nullable: true })
-    gold?: number;
-
-    @Column({ nullable: true })
-    silver?: number;
-
-    @Column({ nullable: true })
-    copper?: number;
+    amount?: number;
 
     @BeforeInsert()
     @BeforeUpdate()

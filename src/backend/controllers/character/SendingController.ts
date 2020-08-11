@@ -1,18 +1,25 @@
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {World} from "../../entity/World";
-import {NonPlayableCharacter} from "../../entity/NonPlayableCharacter";
-import {Character} from "../../entity/Character";
 import {Any, getConnection} from "typeorm";
+import {TYPES} from "../../../types";
+import {DateController} from "../world/calendar/DateController";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {SendingQuery} from "mnemoshared/dist/src/models/queries/SendingQuery";
+import {UserController} from "../user/UserController";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {
-    public static SENDING_LIMIT = 10;
+    private dateController: DateController;
+    private userController: UserController;
 
-    constructor() {
+    constructor(@inject(TYPES.DateController) dateController: DateController,
+                @inject(TYPES.UserController) userController: UserController) {
         super(TableName.SENDING);
+        this.dateController = dateController;
+        this.userController = userController;
     }
 
     /**
@@ -20,10 +27,32 @@ export class SendingController extends AbstractController<Sending> {
      *
      * @param sending
      */
-    public async create(sending: Sending): Promise<Sending> {
+    public async save(sending: Sending): Promise<Sending> {
+        // Now, save the date.
+        sending.date = await this.dateController.save(sending.date);
+
+        // Now, save the sending.
         return this.getRepo().save(sending)
+            .then((res) => {
+                if (res == null) {
+                    return null;
+                }
+
+                // Get by ID now.
+                return this.getById(res.id);
+            })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not create new sending.");
+                console.error(err);
+                return null;
+            });
+    }
+
+    public async getById(id: string): Promise<Sending> {
+        return this.getRepo().findOne({where: {id: id}, relations: ["toCharacter", "fromCharacter",
+                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
+            .catch((err: Error) => {
+                console.error("ERR ::: Could not get sendings.");
                 console.error(err);
                 return null;
             });
@@ -35,13 +64,8 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
-        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toNpc", "fromNpc", "toPlayerCharacter",
-                "fromPlayerCharacter", "sendingReplyFromUser", "sendingMessageFromUser"]})
-            .then((sending) => {
-                // Check the party is valid.
-
-                return sending;
-            })
+        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toCharacter", "fromCharacter",
+                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get sendings.");
                 console.error(err);
@@ -49,34 +73,19 @@ export class SendingController extends AbstractController<Sending> {
             });
     }
 
-    public async getOne(page: number, world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending> {
-        return this.getByParams(page, 1, world, toNpc, toPlayer).then((messages) => {
-            if (messages == null || messages.length < 1) {
-                return null;
-            }
-
-            return messages[0];
-        });
-    }
-
-    public async get(page: number, world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending[]> {
-        return this.getByParams(page * SendingController.SENDING_LIMIT, SendingController.SENDING_LIMIT,
-            world, toNpc, toPlayer);
-    }
-
-    private async getByParams(skip: number, limit: number,
-                              world: World, toNpc: NonPlayableCharacter, toPlayer: Character): Promise<Sending[]> {
+    public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let query = getConnection().createQueryBuilder(Sending, "msg");
+        let alias = "msg";
+        let query = getConnection().createQueryBuilder(Sending, alias);
 
-        if (world != null) {
-            query = query.where(`"msg"."world_id" = '${world.id}'`);
+        if (params.world_id != null) {
+            query = query.where(WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, params.world_id));
             flag = true;
         }
 
-        if (toNpc != null) {
-            sub = `"msg"."to_npc_id" = '${toNpc.id}'`;
+        if (params.to_character_id != null) {
+            sub = WhereQuery.EQUALS(alias, ColumnName.TO_CHARACTER_ID, params.to_character_id);
             if (flag) {
                 query = query.andWhere(sub);
             } else {
@@ -85,8 +94,8 @@ export class SendingController extends AbstractController<Sending> {
             flag = true;
         }
 
-        if (toPlayer != null) {
-            sub = `"msg"."to_player_character_id" = ${toPlayer.id}`;
+        if (params.from_character_id != null) {
+            sub = WhereQuery.EQUALS(alias, ColumnName.FROM_CHARACTER_ID, params.from_character_id);
             if (flag) {
                 query = query.andWhere(sub);
             } else {
@@ -101,13 +110,19 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
+        if (params.skip != null) {
+            query.skip(params.skip);
+        }
+
+        if (params.limit != null) {
+            query.take(params.limit);
+        }
+
         // Add final touches.
         query = query
-            .andWhere(`("msg"."is_replied" IS NULL OR "msg"."is_replied" IS FALSE)`)
-            .addSelect(["id"])
-            .addOrderBy("\"msg\".\"created_date\"", "ASC")
-            .limit(limit)
-            .skip(skip);
+            .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
+            .addSelect([ColumnName.ID])
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         return query
             .getMany().then((messages) => {

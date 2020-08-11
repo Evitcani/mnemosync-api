@@ -8,8 +8,8 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {CalendarMoon} from "./CalendarMoon";
-import {StringUtility} from "../../utilities/StringUtility";
 import {TableName} from "../../../shared/documentation/databases/TableName";
+import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 
 @Entity({name: TableName.MOON_PHASE})
 export class CalendarMoonPhase {
@@ -26,13 +26,19 @@ export class CalendarMoonPhase {
     name: string;
 
     @Column()
+    description: string;
+
+    @Column()
     order: number;
 
-    @Column({name: "viewing_angle_start"})
+    @Column("decimal", {name: "viewing_angle_start", precision: 7, scale: 4})
     viewingAngleStart: number;
 
-    @Column({name: "viewing_angle_end"})
+    @Column("decimal", {name: "viewing_angle_end", precision: 7, scale: 4})
     viewingAngleEnd: number;
+
+    @Column({name: "calendar_moon_id"})
+    moonId: string;
 
     @ManyToOne(type => CalendarMoon, moon => moon.phases,{
         cascade: true

@@ -1,31 +1,38 @@
-import {injectable} from "inversify";
-import {AbstractController} from "../../Base/AbstractController";
+import {inject, injectable} from "inversify";
 import {TableName} from "../../../../shared/documentation/databases/TableName";
 import {CalendarMoon} from "../../../entity/calendar/CalendarMoon";
-import {Calendar} from "../../../entity/calendar/Calendar";
+import {CalendarMoonPhaseController} from "./CalendarMoonPhaseController";
+import {TYPES} from "../../../../types";
+import {AbstractCalendarController} from "./AbstractCalendarController";
 
 @injectable()
-export class CalendarMoonController extends AbstractController<CalendarMoon> {
-    constructor() {
+export class CalendarMoonController extends AbstractCalendarController<CalendarMoon> {
+    private phases: CalendarMoonPhaseController;
+
+    constructor(@inject(TYPES.CalendarMoonPhaseController) phases: CalendarMoonPhaseController) {
         super(TableName.MOON);
+        this.phases = phases;
     }
 
-    public async save(moon: CalendarMoon): Promise<CalendarMoon> {
-        return this.getRepo().save(moon);
-    }
+    public async save(moons: CalendarMoon[], calendarId: string): Promise<CalendarMoon[]> {
+        if (calendarId != null) {
+            this.deleteBulk(calendarId, moons);
+        }
 
-    public async delete(calendar: Calendar): Promise<boolean> {
+        if (!moons || moons.length < 1) {
+            return Promise.resolve(null);
+        }
 
+        let moonRet: CalendarMoon[] = [];
+        for (const moon of moons) {
+            moon.calendarId = calendarId;
 
-        return this.getRepo().delete({calendar: calendar})
-            .then((res) => {
-                console.log(`Deleted ${res.affected} moon rows.`);
-                return true;
-            })
-            .catch((err: Error) => {
-                console.log(`Could not delete moons.`);
-                console.error(err);
-                return false;
-            });
+            let savedMoon = await this.getRepo().save(moon);
+            savedMoon.phases = await this.phases.save(moon.phases, savedMoon.id);
+
+            moonRet.push(savedMoon);
+        }
+
+        return Promise.resolve(moonRet);
     }
 }

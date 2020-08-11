@@ -1,20 +1,29 @@
 export class ColumnName {
+    public static CALENDAR_ID = "calendar_id";
     public static CHARACTER_ID = "character_id";
     public static COPPER = "copper";
     public static CREATED_DATE = "created_date";
+    public static DATE_ID = "date_id";
     public static DEFAULT_CHARACTER_ID = "default_character_id";
     public static DISCORD_ID = "discord_id";
     public static DISCORD_NAME = "discord_name";
+    public static FROM_CHARACTER_ID = "from_character_id";
     public static GOLD = "gold";
     public static GUILD_ID = "guild_id";
     public static ID = "id";
     public static IMG_URL = "img_url";
+    public static IS_NPC = "is_npc";
+    public static IS_REPLIED = "is_replied";
     public static MAP_URL = "map_url";
     public static NAME = "name";
     public static PARTY_ID = "party_id";
     public static PLATINUM = "platinum";
+    public static SENDING_MESSAGE_FROM_USER_ID = "sending_message_from_user_id";
+    public static SENDING_REPLY_FROM_USER_ID = "sending_reply_from_user_id";
     public static SILVER = "silver";
+    public static TO_CHARACTER_ID = "to_character_id";
     public static TRAVEL_CONFIG = "travel_config";
     public static TYPE = "type";
     public static UPDATED_DATE = "updated_date";
+    public static WORLD_ID = "world_id";
 }

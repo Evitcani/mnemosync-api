@@ -74,8 +74,8 @@ export class PartyController extends AbstractController<Party> {
         });
     }
 
-    public getByWorld (world: World): Promise<Party[]> {
-        return this.getRepo().find({where: {world: world}}).then((parties) => {
+    public getByWorld (worldId: string): Promise<Party[]> {
+        return this.getRepo().find({where: {worldId: worldId}}).then((parties) => {
             if (parties == undefined || parties.length < 1) {
                 return null;
             }
