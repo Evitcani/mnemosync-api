@@ -8,15 +8,18 @@ import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {SendingQuery} from "mnemoshared/dist/src/models/queries/SendingQuery";
+import {UserController} from "../user/UserController";
 
 @injectable()
 export class SendingController extends AbstractController<Sending> {
-    public static SENDING_LIMIT = 10;
     private dateController: DateController;
+    private userController: UserController;
 
-    constructor(@inject(TYPES.DateController) dateController: DateController) {
+    constructor(@inject(TYPES.DateController) dateController: DateController,
+                @inject(TYPES.UserController) userController: UserController) {
         super(TableName.SENDING);
         this.dateController = dateController;
+        this.userController = userController;
     }
 
     /**
@@ -25,9 +28,27 @@ export class SendingController extends AbstractController<Sending> {
      * @param sending
      */
     public async save(sending: Sending): Promise<Sending> {
+        // First, we need to get the user(s).
+        if (sending.sendingReplyFromUser != null && sending.sendingReplyFromUser.id == null) {
+            sending.sendingReplyFromUser = await this.userController.get(sending.sendingReplyFromUser.discord_id);
+        }
+        if (sending.sendingMessageFromUser != null && sending.sendingMessageFromUser.id == null) {
+            sending.sendingMessageFromUser = await this.userController.get(sending.sendingMessageFromUser.discord_id);
+        }
+
+        // Now, save the date.
         sending.date = await this.dateController.save(sending.date);
 
+        // Now, save the sending.
         return this.getRepo().save(sending)
+            .then((res) => {
+                if (res == null) {
+                    return null;
+                }
+
+                // Get by ID now.
+                return this.getById(res.id);
+            })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not create new sending.");
                 console.error(err);
