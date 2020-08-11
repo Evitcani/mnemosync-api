@@ -43,4 +43,6 @@ export const TYPES = {
     CurrentDateConverter: Symbol("CurrentDateConverter"),
     DateConverter: Symbol("DateConverter"),
     NicknameConverter: Symbol("NicknameConverter"),
+    SendingConverter: Symbol("SendingConverter"),
+    UserConverter: Symbol("UserConverter"),
 };

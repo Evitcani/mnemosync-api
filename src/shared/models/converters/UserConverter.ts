@@ -3,7 +3,9 @@ import {UserDTO} from "mnemoshared/dist/src/dto/model/UserDTO";
 import {AbstractConverter} from "./AbstractConverter";
 import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {injectable} from "inversify";
 
+@injectable()
 export class UserConverter extends AbstractConverter<User, UserDTO> {
     public convertExistingVoToDto(vo: User, dto: UserDTO): UserDTO {
         if (!vo) {

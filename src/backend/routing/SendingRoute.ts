@@ -10,8 +10,9 @@ import {ALL_SENDING_QUERY, SendingQuery} from "mnemoshared/dist/src/models/queri
 
 @injectable()
 export class SendingRoute extends AbstractRoute<SendingController, SendingConverter, Sending, SendingDTO> {
-    constructor(@inject(TYPES.SendingController) sendingController: SendingController) {
-        super(`sendings`, sendingController, new SendingConverter());
+    constructor(@inject(TYPES.SendingController) sendingController: SendingController,
+                @inject(TYPES.SendingConverter) sendingConverter: SendingConverter) {
+        super(`sendings`, sendingController, sendingConverter);
     }
 
     protected async controllerCreate(item: Sending): Promise<Sending> {

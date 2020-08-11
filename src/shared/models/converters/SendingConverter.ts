@@ -5,15 +5,23 @@ import {DTOType} from "mnemoshared/dist/src/dto/DTOType";
 import {DateConverter} from "./DateConverter";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {UserConverter} from "./UserConverter";
+import {inject, injectable} from "inversify";
+import {CharacterConverter} from "./CharacterConverter";
+import {TYPES} from "../../../types";
 
+@injectable()
 export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
     private dateConverter: DateConverter;
     private userConverter: UserConverter;
+    private characterConverter: CharacterConverter;
 
-    constructor() {
+    constructor(@inject(TYPES.CharacterConverter) characterConverter: CharacterConverter,
+                @inject(TYPES.DateConverter) dateConverter: DateConverter,
+                @inject(TYPES.UserConverter) userConverter: UserConverter) {
         super();
-        this.dateConverter = new DateConverter();
-        this.userConverter = new UserConverter();
+        this.characterConverter = characterConverter;
+        this.dateConverter = dateConverter;
+        this.userConverter = userConverter;
     }
 
     convertExistingDtoToVo(vo: Sending, dto: SendingDTO): Sending {
@@ -67,8 +75,8 @@ export class SendingConverter extends AbstractConverter<Sending, SendingDTO> {
         dto.isReplied = vo.noReply || vo.noConnection || vo.reply != null;
 
         // Character
-        dto.fromCharacterId = vo.fromCharacterId || null;
-        dto.toCharacterId = vo.toCharacterId || null;
+        dto.fromCharacter = this.characterConverter.convertVoToDto(vo.fromCharacter || null);
+        dto.toCharacter = this.characterConverter.convertVoToDto(vo.toCharacter || null);
         dto.inGameDate = this.dateConverter.convertVoToDto(vo.date);
 
         return dto;
