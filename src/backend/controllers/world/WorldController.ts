@@ -6,6 +6,7 @@ import {getManager} from "typeorm";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {WorldQuery} from "mnemoshared/dist/src/models/queries/WorldQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 
 @injectable()
 export class WorldController extends AbstractController<World> {
@@ -108,8 +109,7 @@ export class WorldController extends AbstractController<World> {
 
         let flag = false;
         if (params.name != null) {
-            let sanitizedName = StringUtility.escapeSQLInput(params.name);
-            let str = `LOWER("${nameStr}"."${ColumnName.NAME}") LIKE LOWER('%${sanitizedName}%')`;
+            let str = WhereQuery.LIKE(nameStr, ColumnName.NAME, params.name);
 
             if (flag) {
                 query.andWhere(str);
@@ -121,8 +121,7 @@ export class WorldController extends AbstractController<World> {
         }
 
         if (params.discord_id != null) {
-            let sanitizedName = StringUtility.escapeSQLInput(params.discord_id);
-            let str = `"${secondStr}"."${ColumnName.DISCORD_ID}" = '${sanitizedName}'`;
+            let str = WhereQuery.EQUALS(secondStr, ColumnName.DISCORD_ID, params.discord_id);
 
             if (flag) {
                 query.andWhere(str);
@@ -134,27 +133,20 @@ export class WorldController extends AbstractController<World> {
         }
 
         if (params.ids != null || params.id != null) {
-            if (params.ids == null || params.ids.length <= 0) {
-                params.ids = [];
-            }
-
-            if (!Array.isArray(params.ids)) {
-                let id = params.ids;
-                params.ids = [];
-                if (id != null && id != '') {
-                    params.ids.push(id);
+            let ids = new Set<string>();;
+            if (params.ids != null) {
+                if (Array.isArray(params.ids)) {
+                    ids = new Set<string>(params.ids);
+                } else {
+                    ids.add(params.ids);
                 }
             }
 
             if (params.id != null) {
-                params.ids.push(params.id);
+                ids.add(params.id);
             }
 
-            if (params.ids[0] == null || params.ids[0] == '') {
-                params.ids.shift();
-            }
-
-            let str = `"${nameStr}"."${ColumnName.ID}" IN ('${params.ids.join("','")}')`;
+            let str = WhereQuery.IN_LIST(nameStr, ColumnName.ID, Array.from(ids));
 
             if (flag) {
                 query.andWhere(str);
