@@ -239,7 +239,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.world_id != null) {
-
             let str = `(${WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id)} OR ` +
             `${WhereQuery.EQUALS(fourthName, ColumnName.WORLD_ID, params.world_id)})`;
 
