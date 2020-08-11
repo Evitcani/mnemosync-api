@@ -46,7 +46,10 @@ export class WhereQuery {
     protected static IN_LIST_BASE (tableName: string, columnName: string, items: string[] | number[], not: boolean): string {
         let sanitizedItems: string[] = [];
         items.forEach((content) => {
-            sanitizedItems.push(this.SANITIZE_INPUT(content, false));
+            let sanitized = this.SANITIZE_INPUT(content, false);
+            if (sanitized != null && sanitized != '') {
+                sanitizedItems.push(sanitized);
+            }
         });
 
         return `"${tableName}"."${columnName}" ${not ? "NOT " : ""}IN ('${sanitizedItems.join("','")}')`;
