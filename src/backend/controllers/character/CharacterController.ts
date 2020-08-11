@@ -4,7 +4,6 @@ import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
 import {Any, getManager} from "typeorm";
-import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
@@ -202,11 +201,17 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     private async getNicknameByNickname(params: CharacterQuery): Promise<Nickname[]> {
         let firstName = "user";
         let secondName = "nickname";
+        let thirdName = "character";
+        let fourthName = "party";
         let query = this
             .getSecondaryRepo()
             .createQueryBuilder(firstName)
             .leftJoinAndSelect(TableName.NICKNAME, secondName,
-                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`);
+                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .leftJoinAndSelect(TableName.CHARACTER, thirdName,
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.ID}"`)
+            .leftJoinAndSelect(TableName.PARTY, fourthName,
+                `"${thirdName}"."${ColumnName.PARTY_ID}" = "${fourthName}"."${ColumnName.ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -234,8 +239,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.world_id != null) {
-            let sanitizedName = StringUtility.escapeSQLInput(params.world_id);
-            let str = WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id);
+
+            let str = `(${WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id)} OR ` +
+            `${WhereQuery.EQUALS(fourthName, ColumnName.WORLD_ID, params.world_id)})`;
 
             if (flag) {
                 query.andWhere(str);
@@ -247,7 +253,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.is_npc != null) {
-            let str = WhereQuery.IS_NULL(firstName, ColumnName.DISCORD_ID, !params.is_npc);
+            let str = WhereQuery.IS_TRUE_FALSE(thirdName, ColumnName.IS_NPC, true);
 
             if (flag) {
                 query.andWhere(str);
