@@ -28,14 +28,6 @@ export class SendingController extends AbstractController<Sending> {
      * @param sending
      */
     public async save(sending: Sending): Promise<Sending> {
-        // First, we need to get the user(s).
-        if (sending.sendingReplyFromUser != null && sending.sendingReplyFromUser.id == null) {
-            sending.sendingReplyFromUser = await this.userController.get(sending.sendingReplyFromUser.discord_id);
-        }
-        if (sending.sendingMessageFromUser != null && sending.sendingMessageFromUser.id == null) {
-            sending.sendingMessageFromUser = await this.userController.get(sending.sendingMessageFromUser.discord_id);
-        }
-
         // Now, save the date.
         sending.date = await this.dateController.save(sending.date);
 
@@ -58,7 +50,7 @@ export class SendingController extends AbstractController<Sending> {
 
     public async getById(id: string): Promise<Sending> {
         return this.getRepo().findOne({where: {id: id}, relations: ["toCharacter", "fromCharacter",
-                "sendingReplyFromUser", "sendingMessageFromUser"]})
+                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get sendings.");
                 console.error(err);
