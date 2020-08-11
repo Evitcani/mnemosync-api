@@ -32,7 +32,7 @@ export class SendingRoute extends AbstractRoute<SendingController, SendingConver
             });
         app.route(`${this.getBaseUrl()}/:id`)
             .put((req: Request, res: Response) => {
-                let id = this.getNumberIdFromPath(req);
+                let id = this.getStringIdFromPath(req);
                 if (!id) {
                     return this.sendBadRequestResponse(res);
                 }
