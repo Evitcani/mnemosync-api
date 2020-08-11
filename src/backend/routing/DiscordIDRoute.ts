@@ -52,7 +52,7 @@ export class DiscordIDRoute extends AbstractRoute<CharacterController, null, str
             }
         }
 
-        console.log("IDS: " + ids);
+        console.log("IDS: " + Array.from(ids.values()).join(", "));
 
         if (ids.size <= 0) {
             return this.sendOKResponse(res, null, false);
