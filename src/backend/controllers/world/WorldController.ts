@@ -58,7 +58,7 @@ export class WorldController extends AbstractController<World> {
      * @param id The name of the world to get.
      */
     public getDiscordId(id: string): Promise<Set<string>> {
-        return this.getAllByParamsExtra({id: id}, false).then((worlds) => {
+        return this.getAllByParamsExtra({id: id}, true).then((worlds) => {
             if (!worlds || worlds.length <= 0) {
                 return null;
             }
