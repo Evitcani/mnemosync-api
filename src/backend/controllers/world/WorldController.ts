@@ -66,6 +66,7 @@ export class WorldController extends AbstractController<World> {
 
             let ids = new Set<string>();
             worlds.forEach((world) => {
+                console.log("WORLD: " + world.discord_id);
                 if (world.discord_id != null && world.discord_id != '') {
                     ids.add(world.discord_id)
                 }
