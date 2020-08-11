@@ -7,6 +7,7 @@ import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {WorldQuery} from "mnemoshared/dist/src/models/queries/WorldQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {keys} from "ts-transformer-keys";
 
 @injectable()
 export class WorldController extends AbstractController<World> {
@@ -66,7 +67,7 @@ export class WorldController extends AbstractController<World> {
 
             let ids = new Set<string>();
             worlds.forEach((world) => {
-                console.log("WORLD ALL: " + world);
+                console.log("WORLD ALL: " + Object.keys(world));
                 console.log("WORLD: " + world.discord_id);
                 if (world.discord_id != null && world.discord_id != '') {
                     ids.add(world.discord_id)
