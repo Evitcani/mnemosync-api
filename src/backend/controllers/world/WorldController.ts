@@ -178,6 +178,8 @@ export class WorldController extends AbstractController<World> {
             query.skip(params.skip);
         }
 
+        console.log(query.getQuery());
+
         return query
             .getMany().catch((err: Error) => {
                 console.error("ERR ::: Could not get worlds.");
