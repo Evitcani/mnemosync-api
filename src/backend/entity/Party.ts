@@ -51,7 +51,6 @@ export class Party {
     worldId?: string;
 
     @ManyToOne(type => World, campaign => campaign.parties, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })

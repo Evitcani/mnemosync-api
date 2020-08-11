@@ -36,7 +36,6 @@ export class User {
     defaultCharacterId?: string;
 
     @ManyToOne(type => Character, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
@@ -47,7 +46,6 @@ export class User {
     defaultWorldId?: string;
 
     @ManyToOne(type => World, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
@@ -58,7 +56,6 @@ export class User {
     defaultPartyId?: number;
 
     @ManyToOne(type => Party, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })

@@ -40,7 +40,6 @@ export class Character {
     partyId?: number;
 
     @ManyToOne(type => Party, party => party.members, {
-        eager: true,
         nullable: true,
         onDelete: "SET NULL"
     })
