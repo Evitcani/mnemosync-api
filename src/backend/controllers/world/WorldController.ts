@@ -136,7 +136,9 @@ export class WorldController extends AbstractController<World> {
             let ids = new Set<string>();
             if (params.ids != null) {
                 if (Array.isArray(params.ids)) {
-                    ids = new Set<string>(params.ids);
+                    if (params.ids.length > 0) {
+                        ids = new Set<string>(params.ids);
+                    }
                 } else {
                     ids.add(params.ids);
                 }
