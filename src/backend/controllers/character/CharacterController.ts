@@ -190,7 +190,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 id: Any(Array.from(ids.values()))
             },
             order: {name: "ASC"},
-            relations: ["nicknames"]})
+            relations: ["nicknames", "worldToCharacter"]})
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
