@@ -45,8 +45,7 @@ export class Character {
     worldToCharacter?: WorldToCharacter;
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
-        onDelete: "SET NULL",
-        eager: true
+        onDelete: "SET NULL"
     })
     nicknames: Nickname[];
 
