@@ -40,8 +40,7 @@ export class WorldToCharacter {
     partyId: number;
 
     @ManyToOne(type => Party, {
-        onDelete: "CASCADE",
-        eager: true
+        onDelete: "CASCADE"
     })
     @JoinColumn({name: ColumnName.PARTY_ID})
     party: Party;

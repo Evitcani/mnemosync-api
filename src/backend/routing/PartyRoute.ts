@@ -55,15 +55,13 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
         let query: PartyQuery = this.parseQuery(req, ALL_PARTY_QUERY);
         let characterId: string = query.character_id;
         if (characterId != null) {
-            let character = await this.characterController.getById(characterId);
+            let parties = await this.characterController.getPartyByCharacterId(characterId);
 
-            if (character == null || character.worldToCharacter == null || character.worldToCharacter.party == null) {
+            if (parties == null || parties.length <= 0) {
                 return this.sendOKResponse(res, null);
             }
 
-
-
-            return this.sendOKResponseMulti(res, [character.worldToCharacter.party]);
+            return this.sendOKResponseMulti(res, parties);
         }
 
         if (query.world_id != null) {

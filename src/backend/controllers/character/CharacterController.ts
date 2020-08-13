@@ -9,6 +9,7 @@ import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {UserToCharacter} from "../../entity/UserToCharacter";
+import {Party} from "../../entity/Party";
 
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, WorldToCharacter> {
@@ -30,6 +31,25 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         return Promise.resolve(ids);
+    }
+
+    public async getPartyByCharacterId(id: string): Promise<Party[]> {
+        return getManager().getRepository(WorldToCharacter).find({where: {characterId: id}, relations: ["party"]})
+            .then((items) => {
+                if (items == null || items.length <= 0) {
+                    return null;
+                }
+
+                let parties = new Map<number, Party>();
+                items.forEach((value) => {
+                    parties.set(value.partyId, value.party);
+                });
+
+                return Array.from(parties.values());
+            }).catch((err) => {
+                console.log(err);
+                return null;
+            })
     }
 
     /**
