@@ -40,6 +40,7 @@ export class Sending {
 
     @ManyToOne(type => GameDate, {
         onDelete: "SET NULL",
+        cascade: ["insert", "update"],
         eager: true,
         nullable: true
     })

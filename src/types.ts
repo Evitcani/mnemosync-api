@@ -45,4 +45,5 @@ export const TYPES = {
     NicknameConverter: Symbol("NicknameConverter"),
     SendingConverter: Symbol("SendingConverter"),
     UserConverter: Symbol("UserConverter"),
+    WorldToCharacterConverter: Symbol("WorldToCharacterConverter"),
 };

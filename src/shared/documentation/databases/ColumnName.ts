@@ -26,4 +26,5 @@ export class ColumnName {
     public static TYPE = "type";
     public static UPDATED_DATE = "updated_date";
     public static WORLD_ID = "world_id";
+    public static WORLD_TO_CHARACTER_ID = "world_to_character_id";
 }

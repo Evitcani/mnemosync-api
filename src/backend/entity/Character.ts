@@ -15,6 +15,7 @@ import {Nickname} from "./Nickname";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {ColumnName} from "../../shared/documentation/databases/ColumnName";
+import {WorldToCharacter} from "./WorldToCharacter";
 
 @Entity({name: TableName.CHARACTER})
 export class Character {
@@ -33,18 +34,15 @@ export class Character {
     @Column("text", {name: ColumnName.NAME})
     name: string;
 
-    @Column({nullable: true, name: ColumnName.IS_NPC})
-    isNPC?: boolean;
+    @Column({nullable: true, name: ColumnName.WORLD_TO_CHARACTER_ID})
+    worldToCharacterId?: string;
 
-    @Column({nullable: true, name: ColumnName.PARTY_ID})
-    partyId?: number;
-
-    @ManyToOne(type => Party, party => party.members, {
+    @ManyToOne(type => WorldToCharacter, {
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn({name: ColumnName.PARTY_ID})
-    party?: Party;
+    @JoinColumn({name: ColumnName.WORLD_TO_CHARACTER_ID})
+    worldToCharacter?: WorldToCharacter;
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
         onDelete: "SET NULL"

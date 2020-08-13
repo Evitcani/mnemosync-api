@@ -2,7 +2,7 @@ import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {Any, getConnection} from "typeorm";
+import {Any, getManager} from "typeorm";
 import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
@@ -64,8 +64,18 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
-        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toCharacter", "fromCharacter",
-                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
+        return this.getRepo().find({where: {id: Any(ids)},
+            relations: ["sendingReplyFromUser", "sendingMessageFromUser", "date"],
+            join: {
+                alias: "msg",
+                leftJoinAndSelect: {
+                    "to_character": "msg.toCharacter",
+                    "to_nicknames": "to_character.nicknames",
+                    "from_character": "msg.fromCharacter",
+                    "from_nicknames": "from_character.nicknames",
+                }
+            }
+        })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get sendings.");
                 console.error(err);
@@ -77,10 +87,21 @@ export class SendingController extends AbstractController<Sending> {
         let flag = false, sub;
 
         let alias = "msg";
-        let query = getConnection().createQueryBuilder(Sending, alias);
+        let secondAlias = "to_character";
+        let query = getManager()
+            .getRepository(Sending)
+            .createQueryBuilder(alias);
 
         if (params.world_id != null) {
-            query = query.where(WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, params.world_id));
+            // Now with a world query included, we have to check if it's going to/from an NPC.
+            query.leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
+                `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
+            query.where(WhereQuery.EQUALS(secondAlias, ColumnName.WORLD_ID, params.world_id));
+            let str = WhereQuery.IS_TRUE_FALSE(secondAlias, ColumnName.IS_NPC, true);
+            query.andWhere(str);
+
+            console.log(query.getQuery());
+
             flag = true;
         }
 
@@ -115,13 +136,12 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.limit != null) {
-            query.take(params.limit);
+            query.limit(params.limit);
         }
 
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
-            .addSelect([ColumnName.ID])
             .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         return query

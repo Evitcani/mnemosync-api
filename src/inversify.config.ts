@@ -37,6 +37,7 @@ import {CurrentDateConverter} from "./shared/models/converters/CurrentDateConver
 import {NicknameConverter} from "./shared/models/converters/NicknameConverter";
 import {UserConverter} from "./shared/models/converters/UserConverter";
 import {SendingConverter} from "./shared/models/converters/SendingConverter";
+import {WorldToCharacterConverter} from "./shared/models/converters/WorldToCharacterConverter";
 
 let container = new Container();
 
@@ -85,5 +86,6 @@ container.bind<DateConverter>(TYPES.DateConverter).to(DateConverter).inSingleton
 container.bind<NicknameConverter>(TYPES.NicknameConverter).to(NicknameConverter).inSingletonScope();
 container.bind<SendingConverter>(TYPES.SendingConverter).to(SendingConverter).inSingletonScope();
 container.bind<UserConverter>(TYPES.UserConverter).to(UserConverter).inSingletonScope();
+container.bind<WorldToCharacterConverter>(TYPES.WorldToCharacterConverter).to(WorldToCharacterConverter).inSingletonScope();
 
 export default container;

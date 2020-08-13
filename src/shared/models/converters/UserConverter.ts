@@ -13,7 +13,6 @@ export class UserConverter extends AbstractConverter<User, UserDTO> {
         }
 
         // Convert simple items.
-        dto.id = vo.id;
         dto.discord_name = vo.discord_name;
         dto.discord_id = vo.discord_id;
         dto.createdDate = vo.createdDate;
@@ -36,7 +35,6 @@ export class UserConverter extends AbstractConverter<User, UserDTO> {
             return null;
         }
 
-        vo.id = this.checkNumber(dto.id) || undefined;
         vo.discord_name = StringUtility.escapeSQLInput(dto.discord_name || undefined);
         vo.discord_id = StringUtility.escapeSQLInput(dto.discord_id || null);
 
