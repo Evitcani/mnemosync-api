@@ -55,8 +55,7 @@ export class Party {
 
     @OneToOne(type => CurrentDate, date => date.party, {
         onDelete: "SET NULL",
-        nullable: true,
-        eager: true
+        nullable: true
     })
     @JoinColumn({name: "current_date_id"})
     currentDate: CurrentDate;

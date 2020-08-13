@@ -39,8 +39,7 @@ export class Character {
 
     @ManyToOne(type => WorldToCharacter, {
         nullable: true,
-        onDelete: "SET NULL",
-        eager: true
+        onDelete: "SET NULL"
     })
     @JoinColumn({name: ColumnName.WORLD_TO_CHARACTER_ID})
     worldToCharacter?: WorldToCharacter;
