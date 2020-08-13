@@ -48,14 +48,19 @@ export class SendingController extends AbstractController<Sending> {
             });
     }
 
+    /**
+     * Gets a sending by ID.
+     *
+     * @param id The ID of the sending to get.
+     */
     public async getById(id: string): Promise<Sending> {
-        return this.getRepo().findOne({where: {id: id}, relations: ["toCharacter", "fromCharacter",
-                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
-            .catch((err: Error) => {
-                console.error("ERR ::: Could not get sendings.");
-                console.error(err);
+        return this.getByIds([id]).then((ids) => {
+            if (ids == null || ids.length <= 0) {
                 return null;
-            });
+            }
+
+            return ids[0];
+        })
     }
 
     public async getByIds(ids: string[]): Promise<Sending[]> {
