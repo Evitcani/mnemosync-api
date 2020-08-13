@@ -2,7 +2,7 @@ import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {Any, getConnection, getManager} from "typeorm";
+import {Any, getManager} from "typeorm";
 import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
@@ -76,7 +76,7 @@ export class SendingController extends AbstractController<Sending> {
     public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let alias = "msg";
+        let alias = "sendings";
         let secondAlias = "to_character";
         let thirdAlias = "from_character";
         let query = getManager()
