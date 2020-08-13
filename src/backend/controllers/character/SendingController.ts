@@ -76,9 +76,8 @@ export class SendingController extends AbstractController<Sending> {
     public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let alias = "sendings";
+        let alias = "Sending";
         let secondAlias = "to_character";
-        let thirdAlias = "from_character";
         let query = getManager()
             .getRepository(Sending)
             .createQueryBuilder();
