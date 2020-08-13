@@ -82,9 +82,9 @@ export class SendingController extends AbstractController<Sending> {
         let query = getManager()
             .getRepository(Sending)
             .createQueryBuilder(alias)
-            .leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
+            .innerJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
                 `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`)
-            .leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, thirdAlias,
+            .innerJoinAndSelect(TableName.WORLD_TO_CHARACTER, thirdAlias,
                 `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${thirdAlias}"."${ColumnName.CHARACTER_ID}"`);
 
         if (params.world_id != null) {
