@@ -238,7 +238,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .leftJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.ID}"`);
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
