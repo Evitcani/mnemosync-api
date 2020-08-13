@@ -2,7 +2,7 @@ import {inject, injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
 import {Sending} from "../../entity/Sending";
 import {TableName} from "../../../shared/documentation/databases/TableName";
-import {Any, getConnection} from "typeorm";
+import {Any, getConnection, getManager} from "typeorm";
 import {TYPES} from "../../../types";
 import {DateController} from "../world/calendar/DateController";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
@@ -79,8 +79,9 @@ export class SendingController extends AbstractController<Sending> {
         let alias = "msg";
         let secondAlias = "to_character";
         let thirdAlias = "from_character";
-        let query = getConnection()
-            .createQueryBuilder(Sending, alias)
+        let query = getManager()
+            .getRepository(Sending)
+            .createQueryBuilder(alias)
             .leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
                 `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`)
             .leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, thirdAlias,
