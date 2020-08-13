@@ -5,7 +5,7 @@ import {Character} from "./Character";
 
 @Entity({name: TableName.USER_TO_CHARACTER})
 export class UserToCharacter {
-    @PrimaryColumn("text", {nullable: true, name: ColumnName.DISCORD_ID})
+    @PrimaryColumn("text", {name: ColumnName.DISCORD_ID})
     discordId: string;
 
     @CreateDateColumn({name: ColumnName.CREATED_DATE})
@@ -14,7 +14,7 @@ export class UserToCharacter {
     @UpdateDateColumn({name: ColumnName.UPDATED_DATE})
     updatedDate: Date;
 
-    @PrimaryColumn({nullable: true, name: ColumnName.CHARACTER_ID})
+    @PrimaryColumn({name: ColumnName.CHARACTER_ID})
     characterId: string;
 
     @ManyToOne(type => Character, {

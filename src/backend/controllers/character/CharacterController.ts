@@ -9,7 +9,6 @@ import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {UserToCharacter} from "../../entity/UserToCharacter";
-import {User} from "../../entity/User";
 
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, WorldToCharacter> {
