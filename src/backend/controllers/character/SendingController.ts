@@ -76,11 +76,11 @@ export class SendingController extends AbstractController<Sending> {
     public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let alias = "Sending";
+        let alias = "msg";
         let secondAlias = "to_character";
         let query = getManager()
             .getRepository(Sending)
-            .createQueryBuilder();
+            .createQueryBuilder(alias);
 
         if (params.world_id != null) {
             // Now with a world query included, we have to check if it's going to/from an NPC.
@@ -126,13 +126,12 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.limit != null) {
-            query.take(params.limit);
+            query.limit(params.limit);
         }
 
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
-            .addSelect([ColumnName.ID])
             .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         return query
