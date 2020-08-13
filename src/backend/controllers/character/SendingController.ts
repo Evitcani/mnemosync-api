@@ -64,8 +64,18 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
-        return this.getRepo().find({where: {id: Any(ids)}, relations: ["toCharacter", "fromCharacter",
-                "sendingReplyFromUser", "sendingMessageFromUser", "date"]})
+        return this.getRepo().find({where: {id: Any(ids)},
+            relations: ["sendingReplyFromUser", "sendingMessageFromUser", "date"],
+            join: {
+                alias: "msg",
+                leftJoinAndSelect: {
+                    "to_character": "msg.toCharacter",
+                    "to_nicknames": "to_character.nicknames",
+                    "from_character": "msg.fromCharacter",
+                    "from_nicknames": "from_character.nicknames",
+                }
+            }
+        })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get sendings.");
                 console.error(err);
