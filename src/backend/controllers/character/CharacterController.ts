@@ -43,7 +43,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return null;
         }
 
-        return this.getRepo().findOne({where: {id: id}, relations: ["worldToCharacter", "nicknames"]})
+        return this.getRepo().findOne({where: {id: id}, relations: ["worldToCharacter", "nicknames",
+                "worldToCharacter.party"]})
             .then((character) => {
                 // Check the party is valid.
 

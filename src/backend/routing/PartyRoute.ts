@@ -61,6 +61,8 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
                 return this.sendOKResponse(res, null);
             }
 
+
+
             return this.sendOKResponseMulti(res, [character.worldToCharacter.party]);
         }
 
