@@ -16,9 +16,9 @@ export class TableName {
     public static SPECIAL_CHANNEL = "special_channels";
     public static USER = "users";
     public static USER_TO_CHARACTER = "user_to_character";
-    public static USER_DEFAULT_PARTY = "user_default_parties";
     public static USER_TO_GUILD = "user_to_guild";
     public static WEEK_DAY = "calendar_week_days";
     public static WORLD = "worlds";
     public static WORLD_OWNERS = "world_owners_to_users";
+    public static WORLD_TO_CHARACTER = "world_to_character";
 }

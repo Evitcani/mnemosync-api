@@ -7,39 +7,37 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
-    PrimaryGeneratedColumn,
+    PrimaryColumn,
     UpdateDateColumn
 } from "typeorm";
 import {World} from "./World";
 import {TableName} from "../../shared/documentation/databases/TableName";
 import {Party} from "./Party";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {ColumnName} from "../../shared/documentation/databases/ColumnName";
 
 @Entity({name: TableName.USER})
 export class User {
-    @PrimaryGeneratedColumn('increment')
-    id: number;
-
-    @CreateDateColumn()
-    createdDate: Date;
-
-    @UpdateDateColumn()
-    updatedDate: Date;
-
-    @Column("text")
-    discord_name: string;
-
-    @Column("text")
+    @PrimaryColumn("text", {name: ColumnName.DISCORD_ID})
     discord_id: string;
 
-    @Column("int", {name: "default_character_id", nullable: true})
+    @CreateDateColumn({name: ColumnName.UPDATED_DATE})
+    createdDate: Date;
+
+    @UpdateDateColumn({name: ColumnName.CREATED_DATE})
+    updatedDate: Date;
+
+    @Column("text", {name: ColumnName.DISCORD_NAME})
+    discord_name: string;
+
+    @Column({name: ColumnName.DEFAULT_CHARACTER_ID, nullable: true})
     defaultCharacterId?: string;
 
     @ManyToOne(type => Character, {
         nullable: true,
         onDelete: "SET NULL"
     })
-    @JoinColumn({name: "default_character_id"})
+    @JoinColumn({name: ColumnName.DEFAULT_CHARACTER_ID})
     defaultCharacter?: Character;
 
     @Column({name: "default_world_id", nullable: true})

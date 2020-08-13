@@ -48,10 +48,10 @@ export class UserRoute extends AbstractRoute<UserController, UserConverter, User
     }
 
     protected async controllerCreate(item: User): Promise<User> {
-        if (item.id == null) {
+        if (item.discord_id == null) {
             let temp = await this.controller.get(item.discord_id, item.discord_name);
             if (temp != null) {
-                item.id = temp.id;
+                item.discord_id = temp.discord_id;
             }
         }
 

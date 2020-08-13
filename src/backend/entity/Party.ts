@@ -8,7 +8,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {Character} from "./Character";
 import {PartyFund} from "./PartyFund";
 import {World} from "./World";
 import {CurrentDate} from "./CurrentDate";
@@ -34,12 +33,6 @@ export class Party {
 
     @Column("text", {name: "creator_discord_id"})
     creatorDiscordId: string;
-
-    @OneToMany(type => Character, member => member.party, {
-        nullable: true,
-        onDelete: "SET NULL"
-    })
-    members?: Character[];
 
     @OneToMany(type => PartyFund, fund => fund.party, {
         onDelete: "SET NULL",

@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mnemoshared": "^0.1.10",
+    "mnemoshared": "^0.1.11",
     "@okta/jwt-verifier": "0.0.12",
     "@okta/okta-sdk-nodejs": "^4.0.0",
     "@types/express": "^4.17.6",

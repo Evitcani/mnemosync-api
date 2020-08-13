@@ -6,14 +6,18 @@ import {AbstractConverter} from "./AbstractConverter";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../../../types";
+import {WorldToCharacterConverter} from "./WorldToCharacterConverter";
 
 @injectable()
 export class CharacterConverter extends AbstractConverter<Character, CharacterDTO> {
     private readonly nicknameConverter: NicknameConverter;
+    private readonly worldToCharacterConverter: WorldToCharacterConverter;
 
-    constructor(@inject(TYPES.NicknameConverter) nicknameConverter: NicknameConverter) {
+    constructor(@inject(TYPES.NicknameConverter) nicknameConverter: NicknameConverter,
+                @inject(TYPES.WorldToCharacterConverter) worldToCharacterConverter: WorldToCharacterConverter) {
         super();
         this.nicknameConverter = nicknameConverter;
+        this.worldToCharacterConverter = worldToCharacterConverter;
     }
 
     public getNicknameConverter(): NicknameConverter {
@@ -27,7 +31,6 @@ export class CharacterConverter extends AbstractConverter<Character, CharacterDT
 
         // Convert simple items.
         dto.id = vo.id;
-        dto.name = vo.name;
         dto.createdDate = vo.createdDate;
         dto.updatedDate = vo.updatedDate;
         dto.img_url = vo.imgUrl;
@@ -43,8 +46,7 @@ export class CharacterConverter extends AbstractConverter<Character, CharacterDT
             });
         }
 
-        // Convert party.
-        dto.partyId = vo.partyId;
+        dto.worldToCharacter = this.worldToCharacterConverter.convertVoToDto(vo.worldToCharacter);
 
         // Return
         return dto;
@@ -56,9 +58,7 @@ export class CharacterConverter extends AbstractConverter<Character, CharacterDT
         }
 
         vo.id = StringUtility.escapeSQLInput(dto.id);
-        vo.name = StringUtility.escapeSQLInput(dto.name);
         vo.imgUrl = StringUtility.escapeSQLInput(dto.img_url);
-        vo.partyId = this.checkNumber(dto.partyId);
 
         vo.nicknames = [];
         if (dto.nicknames != null && dto.nicknames.length > 0) {
@@ -69,6 +69,8 @@ export class CharacterConverter extends AbstractConverter<Character, CharacterDT
                 }
             });
         }
+
+        vo.worldToCharacter = this.worldToCharacterConverter.convertDtoToVo(dto.worldToCharacter);
 
         return vo;
     }

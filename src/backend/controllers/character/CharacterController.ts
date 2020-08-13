@@ -4,15 +4,17 @@ import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
 import {Any, getManager} from "typeorm";
-import {UserToCharacter} from "../../entity/UserToCharacter";
+import {WorldToCharacter} from "../../entity/WorldToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {UserToCharacter} from "../../entity/UserToCharacter";
+import {User} from "../../entity/User";
 
 @injectable()
-export class CharacterController extends AbstractSecondaryController<Character, UserToCharacter> {
+export class CharacterController extends AbstractSecondaryController<Character, WorldToCharacter> {
     constructor() {
-        super(TableName.CHARACTER, TableName.USER_TO_CHARACTER);
+        super(TableName.CHARACTER, TableName.WORLD_TO_CHARACTER);
     }
 
     public async getWorldIdsByCharacterId(id: string): Promise<Set<string>> {
@@ -22,11 +24,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             users.forEach((value) => {
                 ids.add(value.worldId);
             });
-        }
-
-        let character = await this.getById(id);
-        if (character && character.party != null && character.party.worldId != null) {
-            ids.add(character.party.worldId);
         }
 
         if (ids.size <= 0) {
@@ -115,7 +112,20 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             console.error("FAILED TO ADD USER TO CHARACTER.");
         }
 
+        // Add world to character mapping.
+        let worldMapping = await this.addWorldToCharacter(char.worldToCharacter);
+        if (worldMapping == null) {
+            console.error("FAILED TO MAP WORLD TO CHARACTER.");
+        }
+
         return char;
+    }
+
+    private async addWorldToCharacter(mapping: WorldToCharacter): Promise<WorldToCharacter> {
+        return getManager().getRepository(WorldToCharacter).save(mapping).catch((err) => {
+            console.log(err);
+            return null;
+        });
     }
 
     public async addUserToCharacter(discordId: string, characterId: string): Promise<UserToCharacter> {
@@ -181,7 +191,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
      * @param characterIds
      */
     public async getDiscordId(characterIds: string[]): Promise<Set<string>> {
-        return this.getSecondaryRepo().find({where: {characterId: Any(characterIds)}}).then((nicknames) => {
+        return getManager().getRepository(UserToCharacter).find({where: {characterId: Any(characterIds)}}).then((nicknames) => {
             if (!nicknames || nicknames.length < 1) {
                 return null;
             }
@@ -198,20 +208,17 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    private async getNicknameByNickname(params: CharacterQuery): Promise<Nickname[]> {
-        let firstName = "user";
+    private async getNicknameByNickname(params: CharacterQuery): Promise<UserToCharacter[]> {
+        let firstName = "world";
         let secondName = "nickname";
-        let thirdName = "character";
-        let fourthName = "party";
+        let thirdName = "user";
         let query = this
             .getSecondaryRepo()
             .createQueryBuilder(firstName)
             .leftJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
-            .leftJoinAndSelect(TableName.CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.ID}"`)
-            .leftJoinAndSelect(TableName.PARTY, fourthName,
-                `"${thirdName}"."${ColumnName.PARTY_ID}" = "${fourthName}"."${ColumnName.ID}"`);
+            .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -227,7 +234,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.discord_id != null) {
-            let str = WhereQuery.EQUALS(firstName, ColumnName.DISCORD_ID, params.discord_id);
+            let str = WhereQuery.EQUALS(thirdName, ColumnName.DISCORD_ID, params.discord_id);
 
             if (flag) {
                 query.andWhere(str);
@@ -239,8 +246,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.world_id != null) {
-            let str = `(${WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id)} OR ` +
-            `${WhereQuery.EQUALS(fourthName, ColumnName.WORLD_ID, params.world_id)})`;
+            let str = `${WhereQuery.EQUALS(firstName, ColumnName.WORLD_ID, params.world_id)}`;
 
             if (flag) {
                 query.andWhere(str);
@@ -252,7 +258,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         if (params.is_npc != null) {
-            let str = WhereQuery.IS_TRUE_FALSE(thirdName, ColumnName.IS_NPC, true);
+            let str = WhereQuery.IS_TRUE_FALSE(firstName, ColumnName.IS_NPC, true);
 
             if (flag) {
                 query.andWhere(str);
