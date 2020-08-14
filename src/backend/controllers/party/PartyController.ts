@@ -2,8 +2,10 @@ import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Party} from "../../entity/Party";
 import {injectable} from "inversify";
 import {AbstractController} from "../Base/AbstractController";
-import {NameValuePair} from "../Base/NameValuePair";
-import {World} from "../../entity/World";
+import {PartyQuery} from "mnemoshared/dist/src/models/queries/PartyQuery";
+import {Any, getManager} from "typeorm";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 
 @injectable()
 export class PartyController extends AbstractController<Party> {
@@ -49,11 +51,21 @@ export class PartyController extends AbstractController<Party> {
      * @param id The ID of the party.
      */
     public getById (id: number): Promise<Party> {
-        return this.getRepo().findOne({where: {id: id}}).then((party) => {
-            if (party == undefined) {
+        return this.getByIds([id]).then((parties) => {
+            if (parties == null || parties.length <= 0) {
                 return null;
             }
-            return party;
+
+            return parties[0];
+        });
+    }
+
+    public getByIds(ids: number[]): Promise<Party[]> {
+        return this.getRepo().find({where: {id: Any(ids)}, relations: ["funds"]}).then((parties) => {
+            if (parties == null || parties.length <= 0) {
+                return null;
+            }
+            return parties;
         }).catch((err: Error) => {
             console.error("ERR ::: Could not get party.");
             console.error(err);
@@ -61,47 +73,87 @@ export class PartyController extends AbstractController<Party> {
         });
     }
 
-    public getByGuild (guildId: string): Promise<Party[]> {
-        return this.getRepo().find({where: {guildId: guildId}}).then((parties) => {
-            if (parties == undefined) {
-                return null;
+    public async getByParameters(params: PartyQuery): Promise<Party[]> {
+        const alias = "party";
+        let query = getManager()
+            .getRepository(Party)
+            .createQueryBuilder(alias);
+
+        let flag = false;
+        if (params.guild_id != null) {
+            let str = WhereQuery.EQUALS(alias, ColumnName.GUILD_ID, params.guild_id);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
             }
-            return parties;
-        }).catch((err: Error) => {
-            console.error("ERR ::: Could not get parties in guild.");
-            console.error(err);
-            return null;
-        });
-    }
 
-    public getByWorld (worldId: string): Promise<Party[]> {
-        return this.getRepo().find({where: {worldId: worldId}}).then((parties) => {
-            if (parties == undefined || parties.length < 1) {
-                return null;
+            flag = true;
+        }
+
+        if (params.world_id != null) {
+            let str = WhereQuery.EQUALS(alias, ColumnName.WORLD_ID, params.world_id);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
             }
-            return parties;
-        }).catch((err: Error) => {
-            console.error("ERR ::: Could not get parties in world.");
-            console.error(err);
-            return null;
-        });
-    }
 
-    public updatePartyWorld (party: Party, world: World): Promise<Party> {
-        party.world = world;
-        return this.getRepo().save(party);
-    }
+            flag = true;
+        }
 
-    /**
-     * Gets all parties in the given guild with a name similar.
-     *
-     * @param partyName The name of the party to get.
-     * @param guildId The ID of the guild the party lives in.
-     */
-    public getByNameAndGuild(partyName: string, guildId: string): Promise<Party[]> {
-        return this.getLikeArgs(
-            [new NameValuePair("guild_id", guildId)],
-            [new NameValuePair("name", partyName)])
+        if (params.name != null) {
+            let str = WhereQuery.LIKE(alias, ColumnName.NAME, params.name);
+
+            if (flag) {
+                query.andWhere(str);
+            } else {
+                query.where(str);
+            }
+
+            flag = true;
+        }
+
+        let idQuery = this.getIdsQuery(params, alias, ColumnName.ID);
+        if (idQuery != null) {
+            if (flag) {
+                query.andWhere(idQuery);
+            } else {
+                query.where(idQuery);
+            }
+
+            flag = true;
+        }
+
+        // No arguments to search on.
+        if (!flag) {
+            return Promise.resolve(null);
+        }
+
+        if (params.skip != null) {
+            query.skip(params.skip);
+        }
+
+        if (params.limit != null) {
+            query.limit(params.limit);
+        }
+
+        return query
+            .getMany()
+            .then((parties) => {
+                if (parties == null || parties.length <= 0) {
+                    return null;
+                }
+
+                let set = new Set<number>();
+                parties.forEach((pt) => {
+                    set.add(pt.id);
+                });
+
+                return this.getByIds(Array.from(set.values()));
+            })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get parties.");
                 console.error(err);

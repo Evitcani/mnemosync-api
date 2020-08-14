@@ -53,33 +53,26 @@ export class PartyRoute extends AbstractRoute<PartyController, PartyConverter, P
 
     private async getByQuery(req: Request, res: Response) {
         let query: PartyQuery = this.parseQuery(req, ALL_PARTY_QUERY);
-        let characterId: string = query.character_id;
-        if (characterId != null) {
-            let parties = await this.characterController.getPartyByCharacterId(characterId);
 
-            if (parties == null || parties.length <= 0) {
-                return this.sendOKResponse(res, null);
+        let parties = new Map<number, Party>();
+        if (query.character_id != null) {
+            let pts = await this.characterController.getPartyByCharacterId(query.character_id);
+
+            if (pts != null && pts.length > 0) {
+                pts.forEach((pt) => {
+                    parties.set(pt.id, pt);
+                });
             }
-
-            return this.sendOKResponseMulti(res, parties);
         }
 
-        if (query.world_id != null) {
-            let party = await this.controller.getByWorld(query.world_id);
-            return this.sendOKResponseMulti(res, party);
+        let pts = await this.controller.getByParameters(query);
+        if (pts != null && pts.length > 0) {
+            pts.forEach((pt) => {
+                parties.set(pt.id, pt);
+            });
         }
 
-        if (query.guild_id != null) {
-            if (query.name != null) {
-                let parties = await this.controller.getByNameAndGuild(query.name, query.guild_id);
-                return this.sendOKResponseMulti(res, parties);
-            }
-
-            let party = await this.controller.getByGuild(query.guild_id);
-            return this.sendOKResponseMulti(res, party);
-        }
-
-        return res.status(400).json({data: null});
+        return this.sendOKResponseMulti(res, parties.size <= 0 ? null : Array.from(parties.values()))
     }
 
     protected async controllerCreate(item: Party): Promise<Party> {
