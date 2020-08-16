@@ -141,7 +141,7 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.limit != null) {
-            query.take(params.limit);
+            query.limit(params.limit);
         }
 
         // Add final touches.
