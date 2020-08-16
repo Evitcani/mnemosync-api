@@ -141,13 +141,15 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.limit != null) {
-            query.limit(params.limit);
+            query.take(params.limit);
         }
 
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
             .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
+
+        console.log(query.getQuery());
 
         return query
             .getMany().then((messages) => {
