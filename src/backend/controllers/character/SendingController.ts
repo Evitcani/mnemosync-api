@@ -97,7 +97,7 @@ export class SendingController extends AbstractController<Sending> {
             .getRepository(Sending)
             .createQueryBuilder(alias);
 
-        query.leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
+        query.innerJoin(TableName.WORLD_TO_CHARACTER, secondAlias,
             `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
 
         if (params.world_id != null) {
@@ -147,13 +147,11 @@ export class SendingController extends AbstractController<Sending> {
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
-            .addOrderBy(`"${alias}"."${ColumnName.ID}"`, "ASC")
-            .distinctOn([`"${alias}"."${ColumnName.ID}"`]);
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
-        console.log(query.getQuery());
 
-        return query
-            .getMany().then((messages) => {
+
+        return getManager().query(query.getQuery()).then((messages) => {
                 if (!messages || messages.length < 1) {
                     return null;
                 }
