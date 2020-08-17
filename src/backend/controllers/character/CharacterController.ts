@@ -215,6 +215,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             `"${alias}"."${ColumnName.ID}" = "${alias3}"."${ColumnName.CHARACTER_ID}"`);
         query.addGroupBy(`"${alias}"."${ColumnName.ID}"`);
         query.whereInIds(ids);
+        query.addOrderBy(`"${alias2}"."${ColumnName.NAME}"`, "ASC");
 
         return query.getMany()
             .then((characters) => {
