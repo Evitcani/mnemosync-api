@@ -189,36 +189,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     public async getCharactersByParams(params: CharacterQuery): Promise<Character[]> {
-        let ids = await this.getNicknameByNickname(params).then((nicknames) => {
-            if (nicknames == null || nicknames.length < 1) {
-                return null;
-            }
-
-            let ids = new Set<string>();
-            nicknames.forEach((nickname) => {
-                ids.add(nickname.id);
-            });
-
-            return ids;
-        });
-
-        if (!ids) {
-            return Promise.resolve(null);
-        }
-
-        let alias = "character";
-        const alias2 = "nickname";
-        const alias3 = "world";
-        let query = this.getRepo().createQueryBuilder(alias);
-        query.innerJoin(TableName.NICKNAME, alias2,
-            `"${alias}"."${ColumnName.ID}" = "${alias2}"."${ColumnName.CHARACTER_ID}"`);
-        query.leftJoin(TableName.WORLD_TO_CHARACTER, alias3,
-            `"${alias}"."${ColumnName.ID}" = "${alias3}"."${ColumnName.CHARACTER_ID}"`);
-        query.addGroupBy(`"${alias}"."${ColumnName.ID}"`);
-        query.whereInIds(ids);
-        CharacterController.addOrderByQuery(query, alias2);
-
-        return query.getMany()
+        return this.getNicknameByNickname(params)
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
