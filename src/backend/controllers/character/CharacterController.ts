@@ -358,6 +358,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
     private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
         query.addGroupBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`);
+        query.addGroupBy(`"${nicknameAlias}"."${ColumnName.NAME}"`);
         query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
         query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
             `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
