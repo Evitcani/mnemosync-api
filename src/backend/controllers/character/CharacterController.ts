@@ -254,8 +254,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
-                `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
-            .groupBy(`"${alias}"."${ColumnName.ID}"`);
+                `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -339,6 +338,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.CHARACTER_ID}"`, "ASC");
         query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
         query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
             `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
