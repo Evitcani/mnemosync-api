@@ -129,26 +129,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             console.error("FAILED TO ADD USER TO CHARACTER.");
         }
 
-        // Add world to character mapping.
-        let worldMapping = await this.addWorldToCharacter(char.worldToCharacter);
-        if (worldMapping == null) {
-            return this.getRepo().delete(char).then(() => {
-                return null;
-            }).catch((err: Error) => {
-                console.error("ERR ::: Could not delete character after failed world mapping.");
-                console.log(err.stack);
-                return null;
-            });
-        }
-
-        // Save this ID.
-        char.worldToCharacter = worldMapping;
-        char = await this.getRepo().save(character).catch((err: Error) => {
-            console.error("ERR ::: Could not create the new character.");
-            console.log(err.stack);
-            return null;
-        });
-
         return char;
     }
 
