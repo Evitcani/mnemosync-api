@@ -254,7 +254,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
-            .leftJoinAndSelect(TableName.NICKNAME, fourthName,
+            .innerJoinAndSelect(TableName.NICKNAME, fourthName,
                 `"${alias}"."${ColumnName.ID}" = "${fourthName}"."${ColumnName.CHARACTER_ID}" AND ` +
                 `"${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
