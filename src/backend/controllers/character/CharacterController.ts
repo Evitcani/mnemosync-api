@@ -334,7 +334,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
         query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
 
-        query.printSql();
+        console.log(query.getQuery());
 
         return query
             .getMany()
