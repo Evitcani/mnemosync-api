@@ -265,7 +265,12 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .innerJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .innerJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.DISCORD_ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -338,6 +343,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         // Order by name.
         query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`);
+
+        console.log(query.getQuery());
 
         return query
             .getMany()
