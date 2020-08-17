@@ -107,8 +107,6 @@ export class SendingController extends AbstractController<Sending> {
             let str = WhereQuery.IS_TRUE_FALSE(secondAlias, ColumnName.IS_NPC, true);
             query.andWhere(str);
 
-            console.log(query.getQuery());
-
             flag = true;
         }
 
@@ -149,7 +147,8 @@ export class SendingController extends AbstractController<Sending> {
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
-            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC")
+            .distinctOn([`"${alias}"."${ColumnName.ID}"`]);
 
         console.log(query.getQuery());
 
