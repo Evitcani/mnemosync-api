@@ -321,12 +321,12 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 skip = tempSkip;
             }
 
-            query.offset(skip);
+            query.skip(skip);
         }
 
         // Limit appropriately.
         if (params.limit != null) {
-            query.limit(params.limit);
+            query.take(params.limit);
         }
 
         // Order by name.
