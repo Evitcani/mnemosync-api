@@ -254,7 +254,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
-                `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
+                `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            //.groupBy(`"${alias}"."${ColumnName.ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -317,12 +318,12 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 skip = tempSkip;
             }
 
-            query.offset(skip);
+            query.skip(skip);
         }
 
         // Limit appropriately.
         if (params.limit != null) {
-            query.limit(params.limit);
+            query.offset(params.limit);
         }
 
         // Order by name.
