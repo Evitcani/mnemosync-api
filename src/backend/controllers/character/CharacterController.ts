@@ -268,6 +268,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.ID}"`);
 
         let flag = false;
         if (params.name != null) {
