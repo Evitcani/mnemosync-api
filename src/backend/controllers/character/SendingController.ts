@@ -147,7 +147,7 @@ export class SendingController extends AbstractController<Sending> {
         // Add final touches.
         query = query
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
-            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "DESC");
+            .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         console.log(query.getQuery());
 
