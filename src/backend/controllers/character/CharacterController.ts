@@ -235,8 +235,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
-            .leftJoinAndMapOne(`${alias}.${ColumnName.WORLD_TO_CHARACTER_ID}`,
-                `${alias}.${ColumnName.WORLD_TO_CHARACTER_ID}`, firstName)
+            .leftJoinAndMapOne(`${alias}.worldToCharacter`,
+                `${alias}.worldToCharacter`, firstName)
             .leftJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
