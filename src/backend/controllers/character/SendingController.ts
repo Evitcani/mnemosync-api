@@ -79,6 +79,9 @@ export class SendingController extends AbstractController<Sending> {
                     "from_character": "msg.fromCharacter",
                     "from_nicknames": "from_character.nicknames",
                 }
+            },
+            order: {
+                createdDate: "ASC"
             }
         })
             .catch((err: Error) => {
