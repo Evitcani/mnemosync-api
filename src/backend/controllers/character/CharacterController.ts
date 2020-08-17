@@ -250,6 +250,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
+            .innerJoinAndMapOne(`${alias}.name`, TableName.NICKNAME, `${secondName}.${ColumnName.NAME}`,
+                `"${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
@@ -326,7 +328,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        CharacterController.addOrderByQuery(query, secondName);
+        //CharacterController.addOrderByQuery(query, secondName);
+        query.addOrderBy(`"${alias}"."${ColumnName.NAME}"`, "ASC");
 
         return query
             .getMany()
@@ -338,9 +341,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        query.addOrderBy(`(CASE WHEN "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
+            `"${nicknameAlias}"."${ColumnName.NAME}" ELSE () END)`, "ASC");
         query.addOrderBy(`"${nicknameAlias}"."${ColumnName.CHARACTER_ID}"`, "ASC");
         query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
-        query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
-            `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
     }
 }
