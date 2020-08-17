@@ -3,7 +3,7 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {Any, getManager, SelectQueryBuilder} from "typeorm";
+import {Any, getManager} from "typeorm";
 import {WorldToCharacter} from "../../entity/WorldToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
@@ -252,16 +252,25 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .getRepo()
             .createQueryBuilder(alias)
             .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
-            .innerJoinAndMapMany(`${alias}.nicknames`,
-                `${alias}.nicknames`, secondName)
             .innerJoinAndSelect(TableName.NICKNAME, fourthName,
                 `"${alias}"."${ColumnName.ID}" = "${fourthName}"."${ColumnName.CHARACTER_ID}" AND ` +
                 `"${fourthName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
                 `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
+        // Order by name
+        query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
+
         let flag = false;
         if (params.name != null) {
+            query.innerJoinAndMapMany(`${alias}.nicknames`,
+                `${alias}.nicknames`, secondName);
+
+            // Order by name.
+            query.addOrderBy(`(CASE WHEN "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
+                `"${secondName}"."${ColumnName.NAME}" END)`, "ASC");
+            query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
+
             let str = WhereQuery.LIKE(secondName, ColumnName.NAME, params.name);
 
             if (flag) {
@@ -321,24 +330,24 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 skip = tempSkip;
             }
 
-            query.skip(skip);
+            query.offset(skip);
         }
 
         // Limit appropriately.
         if (params.limit != null) {
-            query.take(params.limit);
+            query.limit(params.limit);
         }
-
-        // Order by name.
-        query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
-        query.addOrderBy(`(CASE WHEN "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
-            `"${secondName}"."${ColumnName.NAME}" END)`, "ASC");
-        query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
-
-        console.log(query.getQuery());
 
         return query
             .getMany()
+            .then((characters) => {
+                if (characters == null || characters.length <= 0) {
+                    return null;
+                }
+
+                // TODO: Properly load nicknames on each character.
+                return characters;
+            })
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get worlds.");
                 console.error(err);
