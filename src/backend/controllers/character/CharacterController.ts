@@ -266,7 +266,13 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .innerJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.DISCORD_ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.IS_PRIMARY_NAME}"`);
 
         let flag = false;
         if (params.name != null) {
