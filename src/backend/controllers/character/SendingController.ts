@@ -95,7 +95,7 @@ export class SendingController extends AbstractController<Sending> {
         let secondAlias = "to_character";
         let query = getManager()
             .getRepository(Sending)
-            .createQueryBuilder('"msg"');
+            .createQueryBuilder(alias);
 
         if (params.world_id != null) {
             // Now with a world query included, we have to check if it's going to/from an NPC.
@@ -136,12 +136,12 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
-        if (params.skip != null) {
-            query.skip(params.skip);
+        if (params.skip != null && params.skip > 0) {
+            query.offset(params.skip);
         }
 
         if (params.limit != null) {
-            query.take(params.limit);
+            query.limit(params.limit);
         }
 
         // Add final touches.
