@@ -247,12 +247,16 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
+        let fourthName = "party";
+        let fifthName = "funds";
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
             .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
+            .innerJoinAndMapOne(`${firstName}.party`, `${firstName}.party`, fourthName)
+            .innerJoinAndMapMany(`${fourthName}.funds`, `${fourthName}.funds`, fifthName)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
                 `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${alias}"."${ColumnName.ID}"`)
