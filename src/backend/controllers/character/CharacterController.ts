@@ -216,7 +216,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             `"${alias}"."${ColumnName.ID}" = "${alias3}"."${ColumnName.CHARACTER_ID}"`);
         query.addGroupBy(`"${alias}"."${ColumnName.ID}"`);
         query.whereInIds(ids);
-        this.addOrderByQuery(query, alias2);
+        CharacterController.addOrderByQuery(query, alias2);
 
         return query.getMany()
             .then((characters) => {
@@ -271,8 +271,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
             .addGroupBy(`"${secondName}"."${ColumnName.ID}"`)
             .addGroupBy(`"${thirdName}"."${ColumnName.DISCORD_ID}"`)
-            .addGroupBy(`"${thirdName}"."${ColumnName.CHARACTER_ID}"`)
-            .addGroupBy(`"${secondName}"."${ColumnName.IS_PRIMARY_NAME}"`);
+            .addGroupBy(`"${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -344,7 +343,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        this.addOrderByQuery(query, secondName);
+        CharacterController.addOrderByQuery(query, secondName);
 
         console.log(query.getQuery());
 
@@ -357,8 +356,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             });
     }
 
-    private addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
-        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "ASC");
+    private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        query.addGroupBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`);
+        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
         query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
             `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
     }
