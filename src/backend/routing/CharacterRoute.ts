@@ -68,11 +68,14 @@ export class CharacterRoute extends AbstractRoute<CharacterController, Character
         // If there is no world ID, we want to get the world ID of the party. Otherwise, throw an error.
         if (newWorld.worldId == null) {
             if (newWorld.partyId == null) {
+                console.error("ERR ::: Could not create character, no party ID given even though world is null.");
                 throw new Error();
             }
 
             let party: Party = await this.partyController.getById(newWorld.partyId);
             if (party.worldId == null) {
+                console.error("ERR ::: Could not create character, given party doesn't have world ID even though " +
+                    "world to character world is null.");
                 throw new Error();
             }
 

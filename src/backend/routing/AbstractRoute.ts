@@ -149,6 +149,7 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
     protected async doBasicPost(req: Request, res: Response, id?: any, path: string = "id") {
         let vo = this.getBodyFromRequest(req);
         if (!vo) {
+            console.error("ERR ::: Could not create item, VO did not convert.");
             return this.sendBadRequestResponse(res);
         }
 
@@ -160,11 +161,13 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
         try {
             await this.processVOBeforeSaving(vo);
         } catch (err) {
+            console.error("ERR ::: Could not create item, processing encountered an error.");
             return this.sendBadRequestResponse(res);
         }
 
         vo = await this.controllerCreate(vo);
         if (!vo) {
+            console.error("ERR ::: Could not create item, VO returned as null.");
             return this.sendBadRequestResponse(res);
         }
 
