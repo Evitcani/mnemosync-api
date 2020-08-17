@@ -97,10 +97,12 @@ export class SendingController extends AbstractController<Sending> {
             .getRepository(Sending)
             .createQueryBuilder(alias);
 
+        query.leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
+            `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
+
         if (params.world_id != null) {
             // Now with a world query included, we have to check if it's going to/from an NPC.
-            query.leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
-                `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
+
             query.where(WhereQuery.EQUALS(secondAlias, ColumnName.WORLD_ID, params.world_id));
             let str = WhereQuery.IS_TRUE_FALSE(secondAlias, ColumnName.IS_NPC, true);
             query.andWhere(str);
