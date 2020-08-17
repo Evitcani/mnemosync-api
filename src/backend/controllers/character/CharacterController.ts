@@ -3,7 +3,7 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {Any, getManager} from "typeorm";
+import {Any, getManager, SelectQueryBuilder} from "typeorm";
 import {WorldToCharacter} from "../../entity/WorldToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
@@ -209,13 +209,13 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         const alias2 = "nickname";
         const alias3 = "world";
         let query = this.getRepo().createQueryBuilder(alias);
-        query.innerJoinAndSelect(TableName.NICKNAME, alias2,
+        query.innerJoin(TableName.NICKNAME, alias2,
             `"${alias}"."${ColumnName.ID}" = "${alias2}"."${ColumnName.CHARACTER_ID}"`);
-        query.innerJoinAndSelect(TableName.WORLD_TO_CHARACTER, alias3,
+        query.leftJoin(TableName.WORLD_TO_CHARACTER, alias3,
             `"${alias}"."${ColumnName.ID}" = "${alias3}"."${ColumnName.CHARACTER_ID}"`);
         query.addGroupBy(`"${alias}"."${ColumnName.ID}"`);
         query.whereInIds(ids);
-        query.addOrderBy(`"${alias2}"."${ColumnName.NAME}"`, "ASC");
+        this.addOrderByQuery(query, alias2);
 
         return query.getMany()
             .then((characters) => {
@@ -342,9 +342,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        query.addOrderBy(`"${secondName}"."${ColumnName.IS_PRIMARY_NAME}"`, "ASC");
-        query.addOrderBy(`case when "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
-            `"${secondName}"."${ColumnName.NAME}" end`, "ASC");
+        this.addOrderByQuery(query, secondName);
 
         console.log(query.getQuery());
 
@@ -355,5 +353,11 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 console.error(err);
                 return null;
             });
+    }
+
+    private addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "ASC");
+        query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
+            `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
     }
 }
