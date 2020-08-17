@@ -266,7 +266,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .innerJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
                 `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
-            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`);
+            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
 
         let flag = false;
         if (params.name != null) {
