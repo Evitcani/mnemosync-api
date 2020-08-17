@@ -149,7 +149,7 @@ export class SendingController extends AbstractController<Sending> {
             .andWhere(WhereQuery.IS_FALSE_OR_NULL(alias, ColumnName.IS_REPLIED))
             .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
-
+        console.log(query.getQuery());
 
         return getManager().query(query.getQuery()).then((messages) => {
                 if (!messages || messages.length < 1) {
