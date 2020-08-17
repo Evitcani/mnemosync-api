@@ -3,7 +3,7 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {Any, getManager} from "typeorm";
+import {Any, getManager, SelectQueryBuilder} from "typeorm";
 import {WorldToCharacter} from "../../entity/WorldToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
@@ -83,7 +83,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         return this.getRepo().findOne({
             where: {id: id},
-            relations: ["worldToCharacter", "nicknames"]
+            relations: ["worldToCharacter", "nicknames", "worldToCharacter.party", "worldToCharacter.party.funds"]
         })
             .then((character) => {
                 // Check the party is valid.
@@ -117,6 +117,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         const nickname = new Nickname();
         nickname.character = character;
         nickname.name = character.name;
+        nickname.isPrimaryName = true;
 
         // Add the nickname to the character.
         character.nicknames = [];
@@ -156,7 +157,22 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let worldMapping = await this.addWorldToCharacter(char.worldToCharacter);
         if (worldMapping == null) {
             console.error("FAILED TO MAP WORLD TO CHARACTER.");
+            return this.getRepo().delete(char).then(() => {
+                return null;
+            }).catch((err: Error) => {
+                console.error("ERR ::: Could not delete character after failed nickname mapping.");
+                console.log(err.stack);
+                return null;
+            });
         }
+
+        // Save this ID.
+        char.worldToCharacter = worldMapping;
+        char = await this.getRepo().save(character).catch((err: Error) => {
+            console.error("ERR ::: Could not create the new character.");
+            console.log(err.stack);
+            return null;
+        });
 
         return char;
     }
@@ -188,30 +204,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     public async getCharactersByParams(params: CharacterQuery): Promise<Character[]> {
-        let ids = await this.getNicknameByNickname(params).then((nicknames) => {
-            if (nicknames == null || nicknames.length < 1) {
-                return null;
-            }
-
-            let ids = new Set<string>();
-            nicknames.forEach((nickname) => {
-                ids.add(nickname.characterId);
-            });
-
-            return ids;
-        });
-
-        if (!ids) {
-            return Promise.resolve(null);
-        }
-
-        return this.getRepo().find({
-            where: {
-                id: Any(Array.from(ids.values()))
-            },
-            order: {name: "ASC"},
-            relations: ["nicknames", "worldToCharacter"]
-        })
+        return this.getNicknameByNickname(params)
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
@@ -249,17 +242,25 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    private async getNicknameByNickname(params: CharacterQuery): Promise<UserToCharacter[]> {
+    private async getNicknameByNickname(params: CharacterQuery): Promise<Character[]> {
+        let alias = "character";
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
         let query = this
-            .getSecondaryRepo()
-            .createQueryBuilder(firstName)
-            .leftJoinAndSelect(TableName.NICKNAME, secondName,
-                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
-            .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
+            .getRepo()
+            .createQueryBuilder(alias)
+            .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
+            .innerJoinAndMapMany(`${alias}.nicknames`,
+                `${alias}.nicknames`, secondName)
+            .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${alias}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.DISCORD_ID}"`)
+            .addGroupBy(`"${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -314,6 +315,24 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
+        // Skip the right amount.
+        let skip: number = 0;
+        if (params.skip != null) {
+            let tempSkip = Number(params.skip);
+            if (!isNaN(tempSkip)) {
+                skip = tempSkip;
+            }
+
+            query.offset(skip);
+        }
+
+        // Limit appropriately.
+        if (params.limit != null) {
+            query.limit(params.limit);
+        }
+
+        // Order by name.
+        CharacterController.addOrderByQuery(query, secondName);
 
         return query
             .getMany()
@@ -322,5 +341,13 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 console.error(err);
                 return null;
             });
+    }
+
+    private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        query.addGroupBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`);
+        query.addGroupBy(`"${nicknameAlias}"."${ColumnName.NAME}"`);
+        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
+        query.addOrderBy(`case when "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
+            `"${nicknameAlias}"."${ColumnName.NAME}" end`, "ASC");
     }
 }

@@ -27,6 +27,9 @@ export class Nickname {
     @Column("text")
     name: string;
 
+    @Column({name: ColumnName.IS_PRIMARY_NAME, nullable: true})
+    isPrimaryName: boolean;
+
     @Column({name: ColumnName.CHARACTER_ID})
     characterId: string;
 
