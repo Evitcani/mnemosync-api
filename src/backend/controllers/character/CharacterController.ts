@@ -157,7 +157,22 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let worldMapping = await this.addWorldToCharacter(char.worldToCharacter);
         if (worldMapping == null) {
             console.error("FAILED TO MAP WORLD TO CHARACTER.");
+            return this.getRepo().delete(char).then(() => {
+                return null;
+            }).catch((err: Error) => {
+                console.error("ERR ::: Could not delete character after failed nickname mapping.");
+                console.log(err.stack);
+                return null;
+            });
         }
+
+        // Save this ID.
+        char.worldToCharacter = worldMapping;
+        char = await this.getRepo().save(character).catch((err: Error) => {
+            console.error("ERR ::: Could not create the new character.");
+            console.log(err.stack);
+            return null;
+        });
 
         return char;
     }
@@ -235,8 +250,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
-            .innerJoin(TableName.WORLD_TO_CHARACTER, firstName,
-                `"${alias}"."${ColumnName.ID}" = "${firstName}"."${ColumnName.CHARACTER_ID}"`)
+            .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
