@@ -31,7 +31,6 @@ export class Character {
     @Column("text",{ nullable: true, name: ColumnName.IMG_URL })
     imgUrl?: string;
 
-    @Column("text", {name: ColumnName.NAME})
     name: string;
 
     @Column({nullable: true, name: ColumnName.WORLD_TO_CHARACTER_ID})
