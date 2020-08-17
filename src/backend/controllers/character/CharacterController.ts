@@ -112,7 +112,25 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         })
     }
 
+    /**
+     * Allows you to get the world to character object based on the character ID it uses.
+     *
+     * @param characterId The character ID it belongs to.
+     */
+    public async getWorldToCharacterByCharacterId(characterId: string): Promise<WorldToCharacter[]> {
+        return this.getSecondaryRepo().find({where: {characterId: characterId}})
+            .catch((err: Error) => {
+                console.error(err);
+                return null;
+            });
+    }
+
     protected async create(character: Character, discordId: string): Promise<Character> {
+        // First, make sure the discord ID is there.
+        if (discordId == null) {
+            return Promise.resolve(null);
+        }
+
         // Save the character.
         let char = await this.getRepo().save(character).catch((err: Error) => {
             console.error("ERR ::: Could not create the new character.");

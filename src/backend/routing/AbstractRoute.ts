@@ -157,12 +157,27 @@ export abstract class AbstractRoute<T extends AbstractController<any>, U extends
             vo[path] = id;
         }
 
+        try {
+            await this.processVOBeforeSaving(vo);
+        } catch (err) {
+            return this.sendBadRequestResponse(res);
+        }
+
         vo = await this.controllerCreate(vo);
         if (!vo) {
             return this.sendBadRequestResponse(res);
         }
 
         return this.sendOKResponse(res, vo);
+    }
+
+    /**
+     * Processes the VO before saving. Allows extra steps.
+     *
+     * @param vo The VO from the request.
+     */
+    protected async processVOBeforeSaving(vo: J) {
+        // Does nothing by default.
     }
 
     protected getStringIdFromPath(req: Request, path?: string): string
