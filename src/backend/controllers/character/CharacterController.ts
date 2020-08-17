@@ -256,7 +256,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 `${alias}.nicknames`, secondName)
             .leftJoinAndSelect(TableName.NICKNAME, fourthName,
                 `"${alias}"."${ColumnName.ID}" = "${fourthName}"."${ColumnName.CHARACTER_ID}" AND ` +
-                `${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
+                `"${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
                 `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
