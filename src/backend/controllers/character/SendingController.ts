@@ -151,7 +151,9 @@ export class SendingController extends AbstractController<Sending> {
 
         console.log(query.getQuery());
 
-        return getManager().query(query.getQuery()).then((messages) => {
+        return query
+            .getMany()
+            .then((messages) => {
                 if (!messages || messages.length < 1) {
                     return null;
                 }
