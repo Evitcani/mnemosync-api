@@ -334,8 +334,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         // Order by name.
         CharacterController.addOrderByQuery(query, secondName);
 
-        console.log(query.getQuery());
-
         return query
             .getMany()
             .catch((err: Error) => {
