@@ -91,11 +91,11 @@ export class SendingController extends AbstractController<Sending> {
     public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let alias = "msg";
+        let alias = 'msg';
         let secondAlias = "to_character";
         let query = getManager()
             .getRepository(Sending)
-            .createQueryBuilder(alias);
+            .createQueryBuilder('"msg"');
 
         if (params.world_id != null) {
             // Now with a world query included, we have to check if it's going to/from an NPC.
@@ -141,7 +141,7 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.limit != null) {
-            query.limit(params.limit);
+            query.take(params.limit);
         }
 
         // Add final touches.
