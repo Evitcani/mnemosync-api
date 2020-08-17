@@ -34,7 +34,8 @@ export class Nickname {
     characterId: string;
 
     @ManyToOne(type => Character, {
-        eager: true
+        eager: true,
+        onDelete: "CASCADE"
     })
     @JoinColumn({name: ColumnName.CHARACTER_ID})
     character: Character;

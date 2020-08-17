@@ -36,7 +36,7 @@ export class Character {
 
     @ManyToOne(type => WorldToCharacter, {
         nullable: true,
-        cascade: true,
+        cascade: ["update", "insert"],
         onDelete: "SET NULL"
     })
     @JoinColumn({name: ColumnName.WORLD_TO_CHARACTER_ID})
@@ -44,7 +44,7 @@ export class Character {
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
         onDelete: "SET NULL",
-        cascade: true
+        cascade: ["update", "insert"]
     })
     nicknames: Nickname[];
 
