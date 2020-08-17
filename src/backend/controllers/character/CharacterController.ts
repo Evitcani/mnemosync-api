@@ -330,8 +330,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        //CharacterController.addOrderByQuery(query, secondName);
         query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
+        query.addOrderBy(`(CASE WHEN "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
+            `"${secondName}"."${ColumnName.NAME}" END)`, "ASC");
         query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
 
         console.log(query.getQuery());
@@ -343,12 +344,5 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 console.error(err);
                 return null;
             });
-    }
-
-    private static addOrderByQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
-        query.addOrderBy(`(CASE WHEN "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
-            `"${nicknameAlias}"."${ColumnName.NAME}" ELSE () END)`, "ASC");
-        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.CHARACTER_ID}"`, "ASC");
-        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}"`, "DESC");
     }
 }
