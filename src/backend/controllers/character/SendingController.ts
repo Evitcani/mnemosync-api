@@ -79,6 +79,9 @@ export class SendingController extends AbstractController<Sending> {
                     "from_character": "msg.fromCharacter",
                     "from_nicknames": "from_character.nicknames",
                 }
+            },
+            order: {
+                createdDate: "ASC"
             }
         })
             .catch((err: Error) => {
@@ -91,21 +94,21 @@ export class SendingController extends AbstractController<Sending> {
     public async getByParams(params: SendingQuery): Promise<Sending[]> {
         let flag = false, sub;
 
-        let alias = "msg";
+        let alias = 'msg';
         let secondAlias = "to_character";
         let query = getManager()
             .getRepository(Sending)
             .createQueryBuilder(alias);
 
+        query.innerJoin(TableName.WORLD_TO_CHARACTER, secondAlias,
+            `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
+
         if (params.world_id != null) {
             // Now with a world query included, we have to check if it's going to/from an NPC.
-            query.leftJoinAndSelect(TableName.WORLD_TO_CHARACTER, secondAlias,
-                `"${alias}"."${ColumnName.TO_CHARACTER_ID}" = "${secondAlias}"."${ColumnName.CHARACTER_ID}"`);
+
             query.where(WhereQuery.EQUALS(secondAlias, ColumnName.WORLD_ID, params.world_id));
             let str = WhereQuery.IS_TRUE_FALSE(secondAlias, ColumnName.IS_NPC, true);
             query.andWhere(str);
-
-            console.log(query.getQuery());
 
             flag = true;
         }
@@ -136,8 +139,14 @@ export class SendingController extends AbstractController<Sending> {
             return null;
         }
 
+        let skip: number = 0;
         if (params.skip != null) {
-            query.skip(params.skip);
+            let tempSkip = Number(params.skip);
+            if (!isNaN(tempSkip)) {
+                skip = tempSkip;
+            }
+
+            query.offset(skip);
         }
 
         if (params.limit != null) {
@@ -150,7 +159,8 @@ export class SendingController extends AbstractController<Sending> {
             .addOrderBy(`"${alias}"."${ColumnName.CREATED_DATE}"`, "ASC");
 
         return query
-            .getMany().then((messages) => {
+            .getMany()
+            .then((messages) => {
                 if (!messages || messages.length < 1) {
                     return null;
                 }

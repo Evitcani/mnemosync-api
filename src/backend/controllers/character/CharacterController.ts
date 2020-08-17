@@ -11,12 +11,25 @@ import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {UserToCharacter} from "../../entity/UserToCharacter";
 import {Party} from "../../entity/Party";
 
+/**
+ * Controller for character management.
+ */
 @injectable()
 export class CharacterController extends AbstractSecondaryController<Character, WorldToCharacter> {
+
+
+    /**
+     * Constructs a new character controller.
+     */
     constructor() {
         super(TableName.CHARACTER, TableName.WORLD_TO_CHARACTER);
     }
 
+    /**
+     * Gets the list of worlds this character belongs to.
+     *
+     * @param id The ID of the character to get the worlds for.
+     */
     public async getWorldIdsByCharacterId(id: string): Promise<Set<string>> {
         let ids = new Set<string>();
         let users = await this.getSecondaryRepo().find({where: {characterId: id}});
@@ -33,6 +46,11 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         return Promise.resolve(ids);
     }
 
+    /**
+     * Gets a list of parties this character belongs to.
+     *
+     * @param id The ID of the character to find the list of parties for.
+     */
     public async getPartyByCharacterId(id: string): Promise<Party[]> {
         return getManager().getRepository(WorldToCharacter).find({where: {characterId: id}, relations: ["party"]})
             .then((items) => {
@@ -63,18 +81,20 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return null;
         }
 
-        return this.getRepo().findOne({where: {id: id}, relations: ["worldToCharacter", "nicknames",
-                "worldToCharacter.party"]})
+        return this.getRepo().findOne({
+            where: {id: id},
+            relations: ["worldToCharacter", "nicknames"]
+        })
             .then((character) => {
                 // Check the party is valid.
 
                 return character;
             })
             .catch((err: Error) => {
-            console.error("ERR ::: Could not get character by ID.");
-            console.error(err);
-            return null;
-        });
+                console.error("ERR ::: Could not get character by ID.");
+                console.error(err);
+                return null;
+            });
     }
 
     public async save(character: Character, discordId: string): Promise<Character> {
@@ -159,7 +179,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    public async createNickname (nickname: Nickname): Promise<Nickname> {
+    public async createNickname(nickname: Nickname): Promise<Nickname> {
         return getManager().getRepository(TableName.NICKNAME).save(nickname).catch((err: Error) => {
             console.error("ERR ::: Could not create new nickname.");
             console.error(err);
@@ -190,7 +210,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 id: Any(Array.from(ids.values()))
             },
             order: {name: "ASC"},
-            relations: ["nicknames", "worldToCharacter"]})
+            relations: ["nicknames", "worldToCharacter"]
+        })
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {

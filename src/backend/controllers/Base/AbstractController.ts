@@ -2,9 +2,14 @@ import {getManager, Repository, SelectQueryBuilder} from "typeorm";
 import {NameValuePair} from "./NameValuePair";
 import {injectable, unmanaged} from "inversify";
 import {StringUtility} from "mnemoshared/dist/src/utilities/StringUtility";
+import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
+import {AbstractQuery} from "mnemoshared/dist/src/models/queries/base/AbstractQuery";
 
 @injectable()
 export abstract class AbstractController<T> {
+    /** The list of relations for this table to always be called with. */
+    protected relations: string[];
+
     /** The name of the table to get from. */
     protected tableName: string;
 
@@ -115,5 +120,35 @@ export abstract class AbstractController<T> {
                 console.error(err);
                 return false;
             });
+    }
+
+    /**
+     * Gets an ids related query.
+     *
+     * @param params
+     * @param table
+     * @param column
+     */
+    protected getIdsQuery(params: AbstractQuery, table: string, column: string): string {
+        if (params.ids != null || params.id != null) {
+            let ids = new Set<string>();
+            if (params.ids != null) {
+                if (Array.isArray(params.ids)) {
+                    if (params.ids.length > 0) {
+                        ids = new Set<string>(params.ids);
+                    }
+                } else {
+                    ids.add(params.ids);
+                }
+            }
+
+            if (params.id != null) {
+                ids.add(params.id);
+            }
+
+            return WhereQuery.IN_LIST(table, column, Array.from(ids.values()));
+        }
+
+        return null;
     }
 }
