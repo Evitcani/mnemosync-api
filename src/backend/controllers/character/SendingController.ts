@@ -145,9 +145,9 @@ export class SendingController extends AbstractController<Sending> {
             if (!isNaN(tempSkip)) {
                 skip = tempSkip;
             }
-        }
 
-        query.offset(skip + 1);
+            query.offset(skip);
+        }
 
         if (params.limit != null) {
             query.limit(params.limit);
