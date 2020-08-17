@@ -31,27 +31,26 @@ export class Character {
     @Column("text",{ nullable: true, name: ColumnName.IMG_URL })
     imgUrl?: string;
 
-    name: string;
-
     @Column({nullable: true, name: ColumnName.WORLD_TO_CHARACTER_ID})
     worldToCharacterId?: string;
 
     @ManyToOne(type => WorldToCharacter, {
         nullable: true,
+        cascade: true,
         onDelete: "SET NULL"
     })
     @JoinColumn({name: ColumnName.WORLD_TO_CHARACTER_ID})
     worldToCharacter?: WorldToCharacter;
 
     @OneToMany(type => Nickname, nickname => nickname.character, {
-        onDelete: "SET NULL"
+        onDelete: "SET NULL",
+        cascade: true
     })
     nicknames: Nickname[];
 
     @BeforeInsert()
     @BeforeUpdate()
     purifyInsertUpdate() {
-        this.name = StringUtility.escapeSQLInput(this.name);
         this.imgUrl = StringUtility.escapeSQLInput(this.imgUrl);
     }
 }

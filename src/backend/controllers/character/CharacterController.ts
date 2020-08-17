@@ -113,18 +113,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     protected async create(character: Character, discordId: string): Promise<Character> {
-        // Create nickname for the mapping.
-        const nickname = new Nickname();
-        nickname.character = character;
-        nickname.name = character.name;
-        nickname.isPrimaryName = true;
-
-        // Add the nickname to the character.
-        character.nicknames = [];
-        character.nicknames.push(nickname);
-
         // Save the character.
-
         let char = await this.getRepo().save(character).catch((err: Error) => {
             console.error("ERR ::: Could not create the new character.");
             console.log(err.stack);
@@ -135,19 +124,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
-        nickname.character = char;
-        let nick = await this.createNickname(nickname);
-
-        if (nick == null) {
-            return this.getRepo().delete(char).then(() => {
-                return null;
-            }).catch((err: Error) => {
-                console.error("ERR ::: Could not delete character after failed nickname mapping.");
-                console.log(err.stack);
-                return null;
-            });
-        }
-
         let mapping = await this.addUserToCharacter(discordId, character.id);
         if (mapping == null) {
             console.error("FAILED TO ADD USER TO CHARACTER.");
@@ -156,11 +132,10 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         // Add world to character mapping.
         let worldMapping = await this.addWorldToCharacter(char.worldToCharacter);
         if (worldMapping == null) {
-            console.error("FAILED TO MAP WORLD TO CHARACTER.");
             return this.getRepo().delete(char).then(() => {
                 return null;
             }).catch((err: Error) => {
-                console.error("ERR ::: Could not delete character after failed nickname mapping.");
+                console.error("ERR ::: Could not delete character after failed world mapping.");
                 console.log(err.stack);
                 return null;
             });

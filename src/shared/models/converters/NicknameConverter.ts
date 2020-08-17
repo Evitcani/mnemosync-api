@@ -18,6 +18,7 @@ export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> 
         dto.updatedDate = vo.updatedDate;
         dto.name = vo.name;
         dto.characterId = vo.characterId;
+        dto.isPrimaryName = vo.isPrimaryName || false;
 
         // Return
         return dto;
@@ -30,9 +31,10 @@ export class NicknameConverter extends AbstractConverter<Nickname, NicknameDTO> 
 
         // Convert simple items.
         vo.id = StringUtility.escapeSQLInput(dto.id) || undefined;
-        vo.name = StringUtility.escapeSQLInput(dto.name || null);
-        vo.characterId = StringUtility.escapeSQLInput(dto.characterId || null);
+        vo.name = StringUtility.escapeSQLInput(dto.name) || undefined;
+        vo.characterId = StringUtility.escapeSQLInput(dto.characterId) || undefined;
         vo.discordId = StringUtility.escapeSQLInput(dto.discordId || null);
+        vo.isPrimaryName = dto.isPrimaryName || false;
 
         // Return
         return vo;
