@@ -247,14 +247,16 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
+        let fourthName = "primary_name";
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
-            .innerJoinAndMapOne(`${alias}.name`, TableName.NICKNAME, `${secondName}.${ColumnName.NAME}`,
-                `"${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
             .innerJoinAndMapMany(`${alias}.nicknames`,
                 `${alias}.nicknames`, secondName)
+            .leftJoinAndSelect(TableName.NICKNAME, fourthName,
+                `"${alias}"."${ColumnName.ID}" = "${fourthName}"."${ColumnName.CHARACTER_ID}" AND ` +
+                `${secondName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
             .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
                 `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
@@ -329,7 +331,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
         // Order by name.
         //CharacterController.addOrderByQuery(query, secondName);
-        query.addOrderBy(`"${alias}"."${ColumnName.NAME}"`, "ASC");
+        query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
+        query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
 
         return query
             .getMany()
