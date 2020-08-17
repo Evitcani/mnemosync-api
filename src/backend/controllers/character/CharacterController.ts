@@ -205,12 +205,18 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
-        return this.getRepo().find({
-            where: {
-                id: Any(Array.from(ids.values()))
-            },
-            relations: ["nicknames", "worldToCharacter"]
-        })
+        let alias = "character";
+        const alias2 = "nickname";
+        const alias3 = "world";
+        let query = this.getRepo().createQueryBuilder(alias);
+        query.innerJoinAndSelect(TableName.NICKNAME, alias2,
+            `"${alias}"."${ColumnName.ID}" = "${alias2}"."${ColumnName.CHARACTER_ID}"`);
+        query.innerJoinAndSelect(TableName.WORLD_TO_CHARACTER, alias3,
+            `"${alias}"."${ColumnName.ID}" = "${alias3}"."${ColumnName.CHARACTER_ID}"`);
+        query.addGroupBy(`"${alias}"."${ColumnName.ID}"`);
+        query.whereInIds(ids);
+
+        return query.getMany()
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
