@@ -209,7 +209,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             where: {
                 id: Any(Array.from(ids.values()))
             },
-            order: {name: "ASC"},
             relations: ["nicknames", "worldToCharacter"]
         })
             .then((characters) => {
@@ -256,10 +255,11 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let query = this
             .getSecondaryRepo()
             .createQueryBuilder(firstName)
-            .leftJoinAndSelect(TableName.NICKNAME, secondName,
+            .innerJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
-            .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
-                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
+            .innerJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
+                `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
+            .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
@@ -314,6 +314,24 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             return Promise.resolve(null);
         }
 
+        // Skip the right amount.
+        let skip: number = 0;
+        if (params.skip != null) {
+            let tempSkip = Number(params.skip);
+            if (!isNaN(tempSkip)) {
+                skip = tempSkip;
+            }
+
+            query.offset(skip);
+        }
+
+        // Limit appropriately.
+        if (params.limit != null) {
+            query.limit(params.limit);
+        }
+
+        // Order by name.
+        query.addOrderBy(`"${secondName}"."${ColumnName.name}"`);
 
         return query
             .getMany()
