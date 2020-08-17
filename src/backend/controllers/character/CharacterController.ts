@@ -3,7 +3,7 @@ import {injectable} from "inversify";
 import {TableName} from "../../../shared/documentation/databases/TableName";
 import {Nickname} from "../../entity/Nickname";
 import {AbstractSecondaryController} from "../Base/AbstractSecondaryController";
-import {Any, getManager} from "typeorm";
+import {Any, getManager, SelectQueryBuilder} from "typeorm";
 import {WorldToCharacter} from "../../entity/WorldToCharacter";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {CharacterQuery} from "mnemoshared/dist/src/models/queries/CharacterQuery";
@@ -204,15 +204,41 @@ export class CharacterController extends AbstractSecondaryController<Character, 
     }
 
     public async getCharactersByParams(params: CharacterQuery): Promise<Character[]> {
-        return this.getNicknameByNickname(params)
+        let ids: string[] = await this.getNicknameByNickname(params)
             .then((characters) => {
                 // Check the party is valid.
                 if (!characters || characters.length < 1) {
                     return null;
                 }
 
-                return characters;
-            })
+                let ids = new Set<string>();
+                characters.forEach((character) => {
+                    ids.add(character.characterId);
+                });
+
+                return Array.from(ids.values());
+            });
+
+        // Setup aliases.
+        const alias = "character",
+            alias2 = "world",
+            alias3 = "nickname",
+            alias4 = "primary_name";
+
+        // Create basic query and map relations.
+        let query = this.getRepo().createQueryBuilder(alias)
+            .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, alias2)
+            .innerJoinAndMapMany(`${alias}.nicknames`, `${alias}.nicknames`, alias3);
+
+        // Add naming conventions.
+        CharacterController.addPrimaryNameQuery(query, alias4, `"${alias}"."${ColumnName.ID}"`);
+        CharacterController.addNicknameQuery(query, alias3);
+
+        // Now get by IDs.
+        query.whereInIds(ids);
+
+        // Now do the query.
+        return query.getMany()
             .catch((err: Error) => {
                 console.error("ERR ::: Could not get characters.");
                 console.error(err);
@@ -242,34 +268,24 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    private async getNicknameByNickname(params: CharacterQuery): Promise<Character[]> {
-        let alias = "character";
+    private async getNicknameByNickname(params: CharacterQuery): Promise<WorldToCharacter[]> {
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
         let fourthName = "primary_name";
         let query = this
-            .getRepo()
-            .createQueryBuilder(alias)
-            .innerJoinAndMapOne(`${alias}.worldToCharacter`, `${alias}.worldToCharacter`, firstName)
-            .innerJoinAndSelect(TableName.NICKNAME, fourthName,
-                `"${alias}"."${ColumnName.ID}" = "${fourthName}"."${ColumnName.CHARACTER_ID}" AND ` +
-                `"${fourthName}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`)
-            .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
-                `"${alias}"."${ColumnName.ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
-
-        // Order by name
-        query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
+            .getSecondaryRepo()
+            .createQueryBuilder(firstName);
+        CharacterController.addPrimaryNameQuery(query, fourthName, `"${firstName}"."${ColumnName.CHARACTER_ID}"`);
+        query.leftJoin(TableName.USER_TO_CHARACTER, thirdName,
+            `"${fourthName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`);
 
         let flag = false;
         if (params.name != null) {
-            query.innerJoinAndMapMany(`${alias}.nicknames`,
-                `${alias}.nicknames`, secondName);
-
-            // Order by name.
-            query.addOrderBy(`(CASE WHEN "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
-                `"${secondName}"."${ColumnName.NAME}" END)`, "ASC");
-            query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
+            // Add the right pieces.
+            query.innerJoinAndSelect(TableName.NICKNAME, secondName,
+                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`);
+            CharacterController.addNicknameQuery(query, secondName);
 
             let str = WhereQuery.LIKE(secondName, ColumnName.NAME, params.name);
 
@@ -345,7 +361,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                     return null;
                 }
 
-                // TODO: Properly load nicknames on each character.
                 return characters;
             })
             .catch((err: Error) => {
@@ -353,5 +368,21 @@ export class CharacterController extends AbstractSecondaryController<Character, 
                 console.error(err);
                 return null;
             });
+    }
+
+    private static addPrimaryNameQuery(query: SelectQueryBuilder<any>, alias: string, joinCondition: string): void {
+        query.innerJoinAndSelect(TableName.NICKNAME, alias,
+            `${joinCondition} = "${alias}"."${ColumnName.CHARACTER_ID}" AND ` +
+            `"${alias}"."${ColumnName.IS_PRIMARY_NAME}" IS TRUE`);
+
+        // Order by name
+        query.addOrderBy(`"${alias}"."${ColumnName.NAME}"`, "ASC");
+    }
+
+    private static addNicknameQuery(query: SelectQueryBuilder<any>, nicknameAlias: string): void {
+        // Order by name.
+        query.addOrderBy(`(CASE WHEN "${nicknameAlias}"."${ColumnName.IS_PRIMARY_NAME}" THEN ` +
+            `"${nicknameAlias}"."${ColumnName.NAME}" END)`, "ASC");
+        query.addOrderBy(`"${nicknameAlias}"."${ColumnName.NAME}"`, "ASC");
     }
 }
