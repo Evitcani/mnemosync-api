@@ -137,7 +137,7 @@ export class SendingController extends AbstractController<Sending> {
         }
 
         if (params.skip != null && params.skip > 0) {
-            query.offset(params.skip);
+            query.offset(params.skip + 1);
         }
 
         if (params.limit != null) {
