@@ -334,6 +334,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         query.addOrderBy(`"${fourthName}"."${ColumnName.NAME}"`, "ASC");
         query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`, "ASC");
 
+        query.printSql();
+
         return query
             .getMany()
             .catch((err: Error) => {
