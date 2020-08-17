@@ -247,8 +247,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
-        let fourthName = "party";
-        let fifthName = "funds";
         let query = this
             .getRepo()
             .createQueryBuilder(alias)
