@@ -196,7 +196,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
             let ids = new Set<string>();
             nicknames.forEach((nickname) => {
-                ids.add(nickname.characterId);
+                ids.add(nickname.id);
             });
 
             return ids;
@@ -256,16 +256,17 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         });
     }
 
-    private async getNicknameByNickname(params: CharacterQuery): Promise<UserToCharacter[]> {
+    private async getNicknameByNickname(params: CharacterQuery): Promise<Character[]> {
+        let alias = "character";
         let firstName = "world";
         let secondName = "nickname";
         let thirdName = "user";
         let query = this
-            .getSecondaryRepo()
-            .createQueryBuilder(firstName)
-            .innerJoinAndSelect(TableName.NICKNAME, secondName,
-                `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
-            .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
+            .getRepo()
+            .createQueryBuilder(alias)
+            .leftJoin(`"${alias}"."worldToCharacter"`, firstName)
+            .leftJoin(`"${alias}"."nicknames"`, secondName)
+            .leftJoin(TableName.USER_TO_CHARACTER, thirdName,
                 `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
