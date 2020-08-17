@@ -264,7 +264,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
             .createQueryBuilder(firstName)
             .innerJoinAndSelect(TableName.NICKNAME, secondName,
                 `"${firstName}"."${ColumnName.CHARACTER_ID}" = "${secondName}"."${ColumnName.CHARACTER_ID}"`)
-            .innerJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
+            .leftJoinAndSelect(TableName.USER_TO_CHARACTER, thirdName,
                 `"${secondName}"."${ColumnName.CHARACTER_ID}" = "${thirdName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${secondName}"."${ColumnName.CHARACTER_ID}"`)
             .addGroupBy(`"${firstName}"."${ColumnName.ID}"`)
@@ -342,7 +342,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`);
+        query.addOrderBy(`"${secondName}"."${ColumnName.IS_PRIMARY_NAME}"`, "ASC");
+        query.addOrderBy(`case when "${secondName}"."${ColumnName.IS_PRIMARY_NAME}" then ` +
+            `"${secondName}"."${ColumnName.NAME}" end`, "ASC");
 
         console.log(query.getQuery());
 

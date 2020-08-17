@@ -13,6 +13,7 @@ export class ColumnName {
     public static ID = "id";
     public static IMG_URL = "img_url";
     public static IS_NPC = "is_npc";
+    public static IS_PRIMARY_NAME = "is_primary_name";
     public static IS_REPLIED = "is_replied";
     public static MAP_URL = "map_url";
     public static NAME = "name";
