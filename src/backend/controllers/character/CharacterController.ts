@@ -338,7 +338,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         }
 
         // Order by name.
-        query.addOrderBy(`"${secondName}"."${ColumnName.name}"`);
+        query.addOrderBy(`"${secondName}"."${ColumnName.NAME}"`);
 
         return query
             .getMany()
