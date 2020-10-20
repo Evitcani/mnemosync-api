@@ -114,10 +114,7 @@ export class CharacterController extends AbstractSecondaryController<Character, 
 
     protected async create(character: Character, discordId: string): Promise<Character> {
         // Create nickname for the mapping.
-        const nickname = new Nickname();
-        nickname.character = character;
-        nickname.name = character.name;
-        nickname.isPrimaryName = true;
+        const nickname = character.nicknames[0];
 
         console.log("Name: " + nickname.name);
 
