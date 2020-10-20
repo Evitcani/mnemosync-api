@@ -52,18 +52,21 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
     protected async createNewWorld(req: Request, res: Response) {
         let query: WorldQuery = this.parseQuery(req, ["discord_id"]);
         if (!query.discord_id) {
+            console.log("No Discord ID.");
             return this.sendBadRequestResponse(res);
         }
 
         // Get the body.
         let vo: World = this.getBodyFromRequest(req);
         if (!vo) {
+            console.log("No body.");
             return this.sendBadRequestResponse(res);
         }
 
         // Create the world.
         vo = await this.controllerCreate(vo);
         if (!vo) {
+            console.log("Couldn't create.");
             return this.sendBadRequestResponse(res);
         }
 
