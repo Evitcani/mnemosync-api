@@ -119,6 +119,8 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         nickname.name = character.name;
         nickname.isPrimaryName = true;
 
+        console.log("Name: " + nickname.name);
+
         // Add the nickname to the character.
         character.nicknames = [];
         character.nicknames.push(nickname);
@@ -127,7 +129,6 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         character.id = undefined;
 
         // Save the character.
-
         let char = await this.getRepo().save(character).catch((err: Error) => {
             console.error("ERR ::: Could not create the new character.");
             console.log(err.stack);
