@@ -36,13 +36,15 @@ export class WorldController extends AbstractController<World> {
         let sanitizedDiscordId = StringUtility.escapeSQLInput(discordId);
         let sanitizedWorldId = StringUtility.escapeSQLInput(worldId);
 
-        console.log(`Values: ${sanitizedDiscordId}, ${sanitizedWorldId}`);
+        // Create the object.
+        let obj = {};
+        obj['discord_id'] = sanitizedDiscordId;
+        obj['world_id'] = sanitizedWorldId;
 
-        return getManager().getRepository(TableName.WORLD_OWNERS).save(
-            {
-                discord_id: sanitizedDiscordId,
-                world_id: sanitizedWorldId
-            }).then((ret) => {
+        return getManager().getRepository(TableName.WORLD_OWNERS).createQueryBuilder().insert()
+            .values([obj])
+            .execute()
+            .then((ret) => {
                 if (!ret) {
                     return false;
                 }
