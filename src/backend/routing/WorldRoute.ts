@@ -50,7 +50,7 @@ export class WorldRoute extends AbstractRoute<WorldController, WorldConverter, W
     }
 
     protected async createNewWorld(req: Request, res: Response) {
-        let query: WorldQuery = this.parseQuery(req, ALL_WORLD_QUERY);
+        let query: WorldQuery = this.parseQuery(req, ["discord_id"]);
         if (!query.discord_id) {
             return this.sendBadRequestResponse(res);
         }

@@ -8,6 +8,7 @@ import {WorldQuery} from "mnemoshared/dist/src/models/queries/WorldQuery";
 import {ColumnName} from "../../../shared/documentation/databases/ColumnName";
 import {WhereQuery} from "../../../shared/documentation/databases/WhereQuery";
 import {keys} from "ts-transformer-keys";
+import {WorldToUser} from "../../entity/WorldToUser";
 
 @injectable()
 export class WorldController extends AbstractController<World> {
@@ -36,17 +37,19 @@ export class WorldController extends AbstractController<World> {
         let sanitizedDiscordId = StringUtility.escapeSQLInput(discordId);
         let sanitizedWorldId = StringUtility.escapeSQLInput(worldId);
 
-        return getManager().getRepository(TableName.WORLD_OWNERS).save(
-            {
-                discord_id: sanitizedDiscordId,
-                world_id: sanitizedWorldId
-            }).then((ret) => {
+        return getManager().getRepository(WorldToUser)
+            .save({
+                discordId: `${sanitizedDiscordId}`,
+                worldId: `${sanitizedWorldId}`
+            })
+            .then((ret) => {
                 if (!ret) {
                     return false;
                 }
                 return true;
             }).catch((err: Error) => {
                 console.error("ERR ::: Could not add user to world.");
+                console.log(`Sanitized Discord ID: ${discordId}` );
                 console.error(err);
                 return false;
             });
