@@ -41,7 +41,10 @@ export class WorldController extends AbstractController<World> {
         obj['discord_id'] = sanitizedDiscordId;
         obj['world_id'] = sanitizedWorldId;
 
-        return getManager().getRepository(TableName.WORLD_OWNERS).createQueryBuilder().insert()
+        return getManager()
+            .createQueryBuilder()
+            .insert()
+            .into(TableName.WORLD_OWNERS)
             .values([obj])
             .execute()
             .then((ret) => {
