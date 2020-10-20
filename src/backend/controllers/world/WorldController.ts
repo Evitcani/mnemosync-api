@@ -36,6 +36,8 @@ export class WorldController extends AbstractController<World> {
         let sanitizedDiscordId = StringUtility.escapeSQLInput(discordId);
         let sanitizedWorldId = StringUtility.escapeSQLInput(worldId);
 
+        console.log(`Values: ${sanitizedDiscordId}, ${sanitizedWorldId}`);
+
         return getManager().getRepository(TableName.WORLD_OWNERS).save(
             {
                 discord_id: sanitizedDiscordId,
