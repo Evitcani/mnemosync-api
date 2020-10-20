@@ -36,17 +36,11 @@ export class WorldController extends AbstractController<World> {
         let sanitizedDiscordId = StringUtility.escapeSQLInput(discordId);
         let sanitizedWorldId = StringUtility.escapeSQLInput(worldId);
 
-        // Create the object.
-        let obj = {};
-        obj['discord_id'] = sanitizedDiscordId;
-        obj['world_id'] = sanitizedWorldId;
-
-        return getManager()
-            .createQueryBuilder()
-            .insert()
-            .into(TableName.WORLD_OWNERS)
-            .values([obj])
-            .execute()
+        return getManager().getRepository(TableName.WORLD_OWNERS)
+            .save({
+                discord_id: `${sanitizedDiscordId}`,
+                world_id: `${sanitizedWorldId}`
+            })
             .then((ret) => {
                 if (!ret) {
                     return false;
@@ -54,6 +48,7 @@ export class WorldController extends AbstractController<World> {
                 return true;
             }).catch((err: Error) => {
                 console.error("ERR ::: Could not add user to world.");
+                console.log(`Sanitized Discord ID: ${discordId}` );
                 console.error(err);
                 return false;
             });
