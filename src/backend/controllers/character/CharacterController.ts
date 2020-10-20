@@ -123,6 +123,9 @@ export class CharacterController extends AbstractSecondaryController<Character, 
         character.nicknames = [];
         character.nicknames.push(nickname);
 
+        // Character ID must be undefined.
+        character.id = undefined;
+
         // Save the character.
 
         let char = await this.getRepo().save(character).catch((err: Error) => {
