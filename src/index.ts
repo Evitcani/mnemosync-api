@@ -17,9 +17,12 @@ createConnection({
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     synchronize: true,
+    ssl: true,
     extra: {
-        ssl: true
-    }
+        ssl: {
+            rejectUnauthorized: false,
+        }
+    },
 }).then(() => {
     app.setup();
 }).catch((err: Error) => {
