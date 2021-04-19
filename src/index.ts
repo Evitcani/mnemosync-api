@@ -13,6 +13,8 @@ createConnection({
     entities: [
         __dirname + "/backend/entity/**/*.js"
     ],
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     synchronize: true,
 }).then(() => {
     app.setup();
